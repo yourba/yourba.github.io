@@ -1,0 +1,168 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>标签: Cloudflare Pages | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="website">
+<meta property="og:title" content="Yourba的博客">
+<meta property="og:url" content="https://yourba.github.io/tags/Cloudflare-Pages/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:author" content="Yourba">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://yourba.github.io/tags/Cloudflare-Pages/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '标签: Cloudflare Pages',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'tag'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="not-home-page" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="page-site-info"><h1 id="site-title">Cloudflare Pages</h1></div></header><main class="layout" id="content-inner"><div id="tag"><div class="article-sort-title">标签 - Cloudflare Pages</div><div class="article-sort"><div class="article-sort-item year">2026</div><div class="article-sort-item no-article-cover"><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-07-05T10:30:00.000Z" title="发表于 2026-07-05 18:30:00">2026-07-05</time></div><a class="article-sort-item-title" href="/2026/07/05/pystudio-termux-mirror-manifest-lessons/" title="PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站">PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站</a></div></div><div class="article-sort-item no-article-cover"><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-07-05T09:40:42.000Z" title="发表于 2026-07-05 17:40:42">2026-07-05</time></div><a class="article-sort-item-title" href="/2026/07/05/pystudio-runtime-manifest-package-manager/" title="把 Android IDE 的运行时依赖做成清单：PyStudio 包管理踩坑记录">把 Android IDE 的运行时依赖做成清单：PyStudio 包管理踩坑记录</a></div></div><div class="article-sort-item no-article-cover"><div class="article-sort-item-info"><div class="article-sort-item-time"><i class="far fa-calendar-alt"></i><time class="post-meta-date-created" datetime="2026-07-05T08:45:00.000Z" title="发表于 2026-07-05 16:45:00">2026-07-05</time></div><a class="article-sort-item-title" href="/2026/07/05/cloudflare-huawei-dns-acceleration/" title="Cloudflare Pages + 华为云 DNS 分线路加速：原理和操作步骤">Cloudflare Pages + 华为云 DNS 分线路加速：原理和操作步骤</a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">10</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-android-runtime-path-lessons/" title="PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot">PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot</a><time datetime="2026-07-05T10:40:00.000Z" title="发表于 2026-07-05 18:40:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-mirror-manifest-lessons/" title="PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站">PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站</a><time datetime="2026-07-05T10:30:00.000Z" title="发表于 2026-07-05 18:30:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-package-manager-design/" title="PyStudio Termux 构建踩坑记（二）：像 Termux pkg 一样拆包，而不是发布工具链大包">PyStudio Termux 构建踩坑记（二）：像 Termux pkg 一样拆包，而不是发布工具链大包</a><time datetime="2026-07-05T10:20:00.000Z" title="发表于 2026-07-05 18:20:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-build-system-lessons/" title="PyStudio Termux 构建踩坑记（一）：从 bootstrap 大包到可维护构建体系">PyStudio Termux 构建踩坑记（一）：从 bootstrap 大包到可维护构建体系</a><time datetime="2026-07-05T10:10:00.000Z" title="发表于 2026-07-05 18:10:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/sora-editor-treesitter-lsp-lessons/" title="Sora Editor 上做代码高亮和纠错：Tree-sitter、LSP 与终端包的边界">Sora Editor 上做代码高亮和纠错：Tree-sitter、LSP 与终端包的边界</a><time datetime="2026-07-05T09:40:47.000Z" title="发表于 2026-07-05 17:40:47">2026-07-05</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list expandBtn" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/"><span class="card-category-list-name">技术分析</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%8A%98%E8%85%BE/"><span class="card-category-list-name">技术折腾</span><span class="card-category-list-count">7</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/AI-%E5%BA%94%E7%94%A8%E9%83%A8%E7%BD%B2/" style="font-size: 1.15em; color: rgb(64, 161, 184);">AI 应用部署</a><a href="/tags/Android/" style="font-size: 1.45em; color: rgb(50, 155, 50);">Android</a><a href="/tags/Cloudflare/" style="font-size: 1.15em; color: rgb(50, 70, 157);">Cloudflare</a><a href="/tags/Cloudflare-Pages/" style="font-size: 1.3em; color: rgb(199, 50, 50);">Cloudflare Pages</a><a href="/tags/DNS/" style="font-size: 1.15em; color: rgb(50, 57, 90);">DNS</a><a href="/tags/Debian/" style="font-size: 1.15em; color: rgb(73, 54, 112);">Debian</a><a href="/tags/GitHub-Actions/" style="font-size: 1.22em; color: rgb(50, 50, 50);">GitHub Actions</a><a href="/tags/Gradio/" style="font-size: 1.15em; color: rgb(50, 161, 112);">Gradio</a><a href="/tags/Hugging-Face/" style="font-size: 1.15em; color: rgb(155, 50, 50);">Hugging Face</a><a href="/tags/Jetpack-Compose/" style="font-size: 1.15em; color: rgb(152, 180, 170);">Jetpack Compose</a><a href="/tags/LSP/" style="font-size: 1.15em; color: rgb(85, 50, 51);">LSP</a><a href="/tags/ModelScope/" style="font-size: 1.15em; color: rgb(77, 146, 184);">ModelScope</a><a href="/tags/PyStudio/" style="font-size: 1.45em; color: rgb(171, 190, 50);">PyStudio</a><a href="/tags/Sora-Editor/" style="font-size: 1.15em; color: rgb(122, 91, 50);">Sora Editor</a><a href="/tags/Spaces/" style="font-size: 1.15em; color: rgb(50, 184, 117);">Spaces</a><a href="/tags/Termux/" style="font-size: 1.38em; color: rgb(124, 50, 50);">Termux</a><a href="/tags/Tree-sitter/" style="font-size: 1.15em; color: rgb(118, 103, 50);">Tree-sitter</a><a href="/tags/npm/" style="font-size: 1.15em; color: rgb(50, 78, 132);">npm</a><a href="/tags/pip/" style="font-size: 1.15em; color: rgb(129, 154, 189);">pip</a><a href="/tags/proot/" style="font-size: 1.22em; color: rgb(51, 143, 50);">proot</a><a href="/tags/seccomp/" style="font-size: 1.15em; color: rgb(50, 50, 50);">seccomp</a><a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 1.22em; color: rgb(105, 134, 50);">包管理</a><a href="/tags/%E5%8C%BB%E7%96%97%E5%BD%B1%E5%83%8F/" style="font-size: 1.15em; color: rgb(50, 50, 91);">医疗影像</a><a href="/tags/%E5%8D%8E%E4%B8%BA%E4%BA%91-DNS/" style="font-size: 1.15em; color: rgb(150, 139, 50);">华为云 DNS</a><a href="/tags/%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" style="font-size: 1.15em; color: rgb(122, 69, 50);">文件管理</a><a href="/tags/%E6%9E%84%E5%BB%BA%E7%B3%BB%E7%BB%9F/" style="font-size: 1.15em; color: rgb(190, 73, 148);">构建系统</a><a href="/tags/%E7%BB%88%E7%AB%AF/" style="font-size: 1.15em; color: rgb(153, 50, 170);">终端</a><a href="/tags/%E7%BD%91%E7%AB%99%E5%8A%A0%E9%80%9F/" style="font-size: 1.15em; color: rgb(50, 54, 50);">网站加速</a><a href="/tags/%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/" style="font-size: 1.15em; color: rgb(50, 125, 50);">镜像加速</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/07/">
+            <span class="card-archive-list-date">
+              七月 2026
+            </span>
+            <span class="card-archive-list-count">10</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">10</div></div><div class="webinfo-item"><div class="item-name">运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2026-05-28T08:47:19.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-07-05T16:00:59.766Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

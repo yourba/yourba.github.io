@@ -1,0 +1,53 @@
+nav#pagination {
+  border-radius: 8px;
+}
+
+@font-face {
+  font-family: 'HYTMR';
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/Rosemoe/Rosemoe.github.io/font/HYTangMeiRen55W.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/Rosemoe/Rosemoe.github.io/font/JetBrainsMono-Regular.woff2') format('woff2');
+}
+
+:root {
+  --highlight-figure-shadow: 0 3px 8px 6px rgba(7, 17, 27, 0.08);
+}
+
+#article-container figure.highlight {
+  border-radius: 4px;
+  box-shadow: var(--highlight-figure-shadow);
+}
+
+.avatar-home-link {
+  display: inline-block;
+  line-height: 0;
+}
+
+.avatar-home-link img {
+  cursor: pointer;
+}
+
+.flink-empty {
+  margin: 1rem 0 1.5rem;
+  padding: 1.25rem;
+  border: 1px dashed rgba(73, 177, 245, 0.45);
+  border-radius: 8px;
+  background: rgba(73, 177, 245, 0.08);
+  text-align: center;
+}
+
+.flink-empty-title {
+  margin-bottom: 0.35rem;
+  color: var(--font-color);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.flink-empty p {
+  margin: 0;
+}
