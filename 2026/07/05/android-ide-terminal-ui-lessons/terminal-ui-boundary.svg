@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="手机 IDE 工作台">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#0ea5e9"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecfeff"/>
+      <stop offset="52%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" rx="34" fill="url(#bg)"/>
+  <path d="M 70 530 C 210 430, 330 610, 485 495 S 760 370, 910 480 1070 445, 1130 360" stroke="#22c55e" stroke-width="16" opacity="0.10" fill="none" stroke-linecap="round"/>
+  <rect x="38" y="36" width="1124" height="608" rx="32" fill="#ffffff" stroke="#e2e8f0" filter="url(#shadow)" opacity="0.94"/>
+  <text x="600" y="94" text-anchor="middle" font-size="34" font-weight="780" fill="#0f172a" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">手机 IDE 工作台</text>
+  <text x="600" y="137" text-anchor="middle" font-size="18" font-weight="520" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">终端、侧栏、文件和键盘各守边界</text>
+  <rect x="460" y="188" width="280" height="360" rx="34" fill="#111827" stroke="#1f2937" stroke-width="3"/>
+<rect x="478" y="222" width="244" height="298" rx="24" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+<rect x="508" y="254" width="184" height="90" rx="18" fill="#0f172a" stroke="#0f172a" stroke-width="2"/>
+<line x1="532" y1="286" x2="666" y2="286" stroke="#22c55e" stroke-width="5" stroke-linecap="round"/>
+<line x1="532" y1="312" x2="620" y2="312" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+<rect x="508" y="368" width="184" height="52" rx="16" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+<rect x="508" y="440" width="184" height="98" rx="18" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<circle cx="600.0" cy="204" r="5" fill="#94a3b8" stroke-width="2"/>
+<rect x="110" y="250" width="250" height="210" rx="28" fill="#ecfeff" stroke="#0ea5e9" stroke-width="2"/>
+<text x="235" y="305" text-anchor="middle" font-size="28" font-weight="760" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">文件侧栏</text>
+<text x="235" y="344" text-anchor="middle" font-size="19" font-weight="520" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">独立路径</text>
+<rect x="850" y="245" width="230" height="210" rx="28" fill="#f0fdfa" stroke="#22c55e" stroke-width="2"/>
+<text x="965" y="305" text-anchor="middle" font-size="28" font-weight="760" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">会话池</text>
+<text x="965" y="344" text-anchor="middle" font-size="19" font-weight="520" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">Runtime 管</text>
+<rect x="428" y="488" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="470" y="488" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="512" y="488" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="554" y="488" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="596" y="488" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="638" y="488" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="680" y="488" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="722" y="488" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="764" y="488" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="440" y="526" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="482" y="526" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="524" y="526" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="566" y="526" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="608" y="526" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="650" y="526" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="692" y="526" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="734" y="526" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="776" y="526" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="452" y="564" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="494" y="564" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="536" y="564" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="578" y="564" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="620" y="564" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="662" y="564" width="32" height="28" rx="8" fill="#ffe4e6" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="704" y="564" width="32" height="28" rx="8" fill="#dbeafe" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="746" y="564" width="32" height="28" rx="8" fill="#dcfce7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="788" y="564" width="32" height="28" rx="8" fill="#fef3c7" stroke="#d8e2ee" stroke-width="1"/>
+<rect x="458" y="612" width="318" height="30" rx="12" fill="#f8fafc" stroke="#0ea5e9" stroke-width="2"/>
+<path d="M360 340 C410 320 430 315 460 318" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M740 320 C790 305 820 304 850 315" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M600 488 C600 455 600 430 600 398" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="458" y="570" width="284" height="52" rx="22" fill="#fff7ed" stroke="#f97316" stroke-width="2" opacity="0.96"/>
+<circle cx="492" cy="604" r="15" fill="#f97316" opacity="0.18" stroke-width="2"/>
+<text x="600.0" y="591.0" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">键盘 inset</text>
+</svg>

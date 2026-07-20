@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="小 bootstrap，大生态">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#d97706"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecfdf5"/>
+      <stop offset="52%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#fffbeb"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" rx="34" fill="url(#bg)"/>
+  <path d="M 70 530 C 210 430, 330 610, 485 495 S 760 370, 910 480 1070 445, 1130 360" stroke="#10b981" stroke-width="16" opacity="0.10" fill="none" stroke-linecap="round"/>
+  <rect x="38" y="36" width="1124" height="608" rx="32" fill="#ffffff" stroke="#e2e8f0" filter="url(#shadow)" opacity="0.94"/>
+  <text x="600" y="94" text-anchor="middle" font-size="34" font-weight="780" fill="#0f172a" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">小 bootstrap，大生态</text>
+  <text x="600" y="137" text-anchor="middle" font-size="18" font-weight="520" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">基础环境越克制，后续包管理越有空间</text>
+  <rect x="470" y="270" width="260" height="155" rx="34" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+<text x="600" y="332" text-anchor="middle" font-size="34" font-weight="800" fill="#15803d" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">bootstrap</text>
+<text x="600" y="378" text-anchor="middle" font-size="24" font-weight="560" fill="#15803d" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">小而稳定</text>
+<rect x="135" y="255" width="190" height="115" rx="22" fill="#f0fdfa" stroke="#14b8a6" stroke-width="2" opacity="0.96"/>
+<circle cx="169" cy="289" r="15" fill="#14b8a6" opacity="0.18" stroke-width="2"/>
+<text x="230.0" y="307.5" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">Python</text>
+<text x="230.0" y="344.5" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">可选包</text>
+<rect x="170" y="435" width="190" height="115" rx="22" fill="#fff7ed" stroke="#f97316" stroke-width="2" opacity="0.96"/>
+<circle cx="204" cy="469" r="15" fill="#f97316" opacity="0.18" stroke-width="2"/>
+<text x="265.0" y="487.5" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">C/C++</text>
+<text x="265.0" y="524.5" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">工具链</text>
+<rect x="840" y="250" width="190" height="115" rx="22" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2" opacity="0.96"/>
+<circle cx="874" cy="284" r="15" fill="#8b5cf6" opacity="0.18" stroke-width="2"/>
+<text x="935.0" y="302.5" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">proot</text>
+<text x="935.0" y="339.5" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">独立验收</text>
+<rect x="810" y="435" width="220" height="115" rx="22" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2" opacity="0.96"/>
+<circle cx="844" cy="469" r="15" fill="#0ea5e9" opacity="0.18" stroke-width="2"/>
+<text x="920.0" y="487.5" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">manifest</text>
+<text x="920.0" y="524.5" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">发现入口</text>
+<path d="M470 340 C405 310 360 305 325 310" fill="none" stroke="#14b8a6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M500 420 C420 470 390 490 360 493" fill="none" stroke="#f97316" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M730 335 C790 305 815 302 840 305" fill="none" stroke="#8b5cf6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M700 420 C760 470 790 490 810 493" fill="none" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</svg>

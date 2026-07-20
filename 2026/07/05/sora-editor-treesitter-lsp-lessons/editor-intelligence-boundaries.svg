@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="代码智能三层">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0fdfa"/>
+      <stop offset="52%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f5f3ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="680" rx="34" fill="url(#bg)"/>
+  <path d="M 70 530 C 210 430, 330 610, 485 495 S 760 370, 910 480 1070 445, 1130 360" stroke="#14b8a6" stroke-width="16" opacity="0.10" fill="none" stroke-linecap="round"/>
+  <rect x="38" y="36" width="1124" height="608" rx="32" fill="#ffffff" stroke="#e2e8f0" filter="url(#shadow)" opacity="0.94"/>
+  <text x="600" y="94" text-anchor="middle" font-size="34" font-weight="780" fill="#0f172a" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">代码智能三层</text>
+  <text x="600" y="137" text-anchor="middle" font-size="18" font-weight="520" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">高亮、终端命令、语义能力不是一回事</text>
+  <rect x="465" y="205" width="270" height="315" rx="34" fill="#111827" stroke="#1f2937" stroke-width="3"/>
+<rect x="483" y="239" width="234" height="253" rx="24" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+<rect x="513" y="271" width="174" height="90" rx="18" fill="#0f172a" stroke="#0f172a" stroke-width="2"/>
+<line x1="537" y1="303" x2="661" y2="303" stroke="#22c55e" stroke-width="5" stroke-linecap="round"/>
+<line x1="537" y1="329" x2="615" y2="329" stroke="#38bdf8" stroke-width="5" stroke-linecap="round"/>
+<rect x="513" y="385" width="174" height="52" rx="16" fill="#e0f2fe" stroke="#8b5cf6" stroke-width="2"/>
+<rect x="513" y="457" width="174" height="98" rx="18" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+<circle cx="600.0" cy="221" r="5" fill="#94a3b8" stroke-width="2"/>
+<rect x="110" y="230" width="230" height="120" rx="22" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2" opacity="0.96"/>
+<circle cx="144" cy="264" r="15" fill="#8b5cf6" opacity="0.18" stroke-width="2"/>
+<text x="225.0" y="285.0" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">Tree-sitter</text>
+<text x="225.0" y="322.0" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">结构解析</text>
+<rect x="110" y="420" width="230" height="120" rx="22" fill="#ecfeff" stroke="#06b6d4" stroke-width="2" opacity="0.96"/>
+<circle cx="144" cy="454" r="15" fill="#06b6d4" opacity="0.18" stroke-width="2"/>
+<text x="225.0" y="475.0" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">CLI</text>
+<text x="225.0" y="512.0" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">终端工具</text>
+<rect x="860" y="320" width="230" height="120" rx="22" fill="#dcfce7" stroke="#22c55e" stroke-width="2" opacity="0.96"/>
+<circle cx="894" cy="354" r="15" fill="#22c55e" opacity="0.18" stroke-width="2"/>
+<text x="975.0" y="375.0" text-anchor="middle" font-size="25" font-weight="750" fill="#172033" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">LSP</text>
+<text x="975.0" y="412.0" text-anchor="middle" font-size="16" font-weight="500" fill="#64748b" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">语义服务</text>
+<path d="M340 290 C405 270 430 285 465 315" fill="none" stroke="#8b5cf6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M340 480 C405 455 430 430 465 405" fill="none" stroke="#06b6d4" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<path d="M735 365 C790 350 815 360 860 380" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="600" y="570" text-anchor="middle" font-size="24" font-weight="700" fill="#334155" font-family="Inter, PingFang SC, Microsoft YaHei, Arial, sans-serif">三层能力分开验收，别把安装当集成</text>
+</svg>
