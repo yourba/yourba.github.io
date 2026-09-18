@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 380" width="820" height="380" role="img" aria-label="固件实现与独立参考实现的逐字节对拍">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/><stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="820" height="380" rx="18" fill="url(#bg3)"/>
+
+  <rect x="34" y="60" width="306" height="180" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="58" y="92" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">固件里的 C++ 实现</text>
+  <text x="58" y="112" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">从 Go 参考实现移植过来</text>
+  <rect x="58" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="80" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="102" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="124" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="146" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="168" y="128" width="18" height="18" rx="3" fill="#ef4444"/>
+    <rect x="190" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="212" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="234" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="256" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="278" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="300" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="322" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="344" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="58" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="80" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="102" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="124" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="146" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="168" y="150" width="18" height="18" rx="3" fill="#ef4444"/>
+    <rect x="190" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="212" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="234" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="256" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="278" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="300" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="322" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="344" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+
+  <rect x="480" y="60" width="306" height="180" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="504" y="92" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">另写的 Python 参考实现</text>
+  <text x="504" y="112" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">独立实现，不共用一套代码</text>
+  <rect x="504" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="526" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="548" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="570" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="592" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="614" y="128" width="18" height="18" rx="3" fill="#ef4444"/>
+    <rect x="636" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="658" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="680" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="702" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="724" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="746" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="768" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="790" y="128" width="18" height="18" rx="3" fill="#dbeafe"/>
+    <rect x="504" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="526" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="548" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="570" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="592" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="614" y="150" width="18" height="18" rx="3" fill="#ef4444"/>
+    <rect x="636" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="658" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="680" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="702" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="724" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="746" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="768" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+    <rect x="790" y="150" width="18" height="18" rx="3" fill="#e0f2fe"/>
+
+  <circle cx="410" cy="150" r="40" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+  <text x="410" y="142" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" fill="#059669">=</text>
+  <text x="410" y="166" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#059669">逐字节</text>
+
+  <path d="M63 158 l0 44 l58 44" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="129" y="252" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#dc2626">字节不一致</text>
+  <path d="M509 158 l0 44 l58 44" fill="none" stroke="#ef4444" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="575" y="252" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#dc2626">同一位置</text>
+
+  <text x="410" y="290" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="16" fill="#334155">真实 challenge + 含中文的密码，两边必须一字不差</text>
+  <text x="410" y="318" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">用同一种算法再写一遍验证自己，等于没验证；独立实现对拍，一次就抓出两处缓冲区问题</text>
+  <text x="410" y="342" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">xEncode 的 key 只该取前 4 个 word，info / enc 数组也偏小</text>
+</svg>

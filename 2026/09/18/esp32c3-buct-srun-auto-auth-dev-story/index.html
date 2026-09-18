@@ -1,0 +1,214 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="用 ESP32-C3 实现深澜（Srun）校园网自动认证的开发记录：协议分析与掉线判定、加密实现的交叉验证、串口无输出的定位过程、HTTP 连接挂起与读超时问题，以及发布前的凭证清理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查">
+<meta property="og:url" content="https://yourba.github.io/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="用 ESP32-C3 实现深澜（Srun）校园网自动认证的开发记录：协议分析与掉线判定、加密实现的交叉验证、串口无输出的定位过程、HTTP 连接挂起与读超时问题，以及发布前的凭证清理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-09-18T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-18T04:13:52.388Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="ESP32">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="校园网">
+<meta property="article:tag" content="Srun">
+<meta property="article:tag" content="Arduino">
+<meta property="article:tag" content="调试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查",
+  "url": "https://yourba.github.io/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-09-18T04:00:00.000Z",
+  "dateModified": "2026-09-18T04:13:52.388Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-18T04:00:00.000Z" title="发表于 2026-09-18 12:00:00">2026-09-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-18T04:13:52.388Z" title="更新于 2026-09-18 12:13:52">2026-09-18</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/">技术分析</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>宿舍校园网采用深澜（Srun）认证，掉线频繁，每天早晨恢复供电后需要手动登录一次。为解决这个问题，我用一块十几元的 ESP32-C3 实现了自动认证。</p>
+<p>整体思路是：开发板以 STA 模式接入路由器 WiFi，周期性探测网络连通性，检测到掉线后按浏览器的行为完成一次门户登录。校园网认证按 IP 生效，路由器工作在 NAT 模式，因此开发板完成认证后，局域网内所有设备一并恢复联网。路由器无需刷机，也无需安装插件。</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/cover.svg" alt="一块 ESP32-C3 小板子连着路由器"></p>
+<span id="more"></span>
+
+<h2 id="一、协议分析：掉线判定与登录流程"><a href="#一、协议分析：掉线判定与登录流程" class="headerlink" title="一、协议分析：掉线判定与登录流程"></a>一、协议分析：掉线判定与登录流程</h2><p>编码之前，先在已认证的电脑上抓取门户请求，确认几项事实。</p>
+<p>掉线判定是第一个关键点。门户劫持时 <code>generate_204</code> 返回 200 与一段 HTML，并非常见的 302 跳转。判定逻辑因此必须只接受 204，返回 200 一律视为掉线。</p>
+<p>登录流程为标准 Srun 三步：查询状态、获取 token、提交登录。密码经过 HMAC-MD5，info 字段使用自定义 xencode 与变种 base64，最后附带 SHA-1 校验和。完整接口如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">连通性探测    http://connect.rom.miui.com/generate_204</span><br><span class="line">             http://wifi.vivo.com.cn/generate_204      轮换探测池，避免单点误判</span><br><span class="line">             http://www.qualcomm.cn/generate_204</span><br><span class="line"></span><br><span class="line">状态查询      http://tree.buct.edu.cn/cgi-bin/rad_user_info</span><br><span class="line">获取 token    http://tree.buct.edu.cn/cgi-bin/get_challenge</span><br><span class="line">提交登录      http://tree.buct.edu.cn/cgi-bin/srun_portal?action=login</span><br></pre></td></tr></table></figure>
+
+<p>探测之所以轮换三个不同厂商的 <code>generate_204</code> 端点，是因为单个端点偶发异常会被直接误判成掉线。门户一侧同时保留域名与 IP 两种访问方式，DNS 异常时仍能完成登录。</p>
+<p>加密部分参考了 GitHub 上的 Go 实现，逐函数移植到 C++。</p>
+<p><code>ac_id</code> 这类参数不能直接复用：公开项目里多为 20，实际抓包得到的取值是 1，不同校区并不一致。</p>
+<p>整体拓扑如下：</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/topology.svg" alt="认证拓扑：门户、路由器与局域网设备"></p>
+<h2 id="二、加密实现与交叉验证"><a href="#二、加密实现与交叉验证" class="headerlink" title="二、加密实现与交叉验证"></a>二、加密实现与交叉验证</h2><p>加密代码移植完成后，我做了一次交叉验证：把固件中的 C++ 代码编译到 PC 上执行，与另一份独立编写的 Python 实现逐字节比对。输入使用门户返回的真实 challenge，密码包含中文字符。</p>
+<p>首次比对即不一致。定位到两处缓冲区问题：xEncode 中 challenge 长度为 16 个 word，而 key 缓冲区仅按 4 个 word 分配，溢出检查直接返回 0（参考实现实际只读取前 4 个 word）；<code>buildInfo</code> 所需字节数比调用方提供的数组多一个。</p>
+<p>这两处缺陷在设备上的唯一表现是登录失败，串口日志没有任何可用线索。</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/crypto-compare.svg" alt="固件实现与独立参考实现的逐字节对拍"></p>
+<p>验证脚本不能用同一套算法再实现一遍，同构实现不具备验证价值，必须另写一份独立实现。</p>
+<h2 id="三、串口无输出：从-CH340-假设到-USB-枚举"><a href="#三、串口无输出：从-CH340-假设到-USB-枚举" class="headerlink" title="三、串口无输出：从 CH340 假设到 USB 枚举"></a>三、串口无输出：从 CH340 假设到 USB 枚举</h2><p>固件烧录成功，串口监视器没有任何输出。</p>
+<p>最初的假设是 CH340 方案，<code>Serial</code> 映射到 UART0，问题出在监听时机。于是写了一个脚本，在打开串口时拉 RTS 复位开发板，从上电开始抓取日志，仍然没有输出。</p>
+<p>第二个假设是 C3 的原生 USB 需要启用 CDC。加入编译标志、调整 DTR&#x2F;RTS 时序反复尝试，依旧没有输出，其中一次还把开发板复位进了下载模式。</p>
+<p>最终依据是 USB 设备枚举记录：VID:PID 为 303A:1001，属于 ESP32-C3 片内 USB-Serial-JTAG，并非 CH340（1a86:7523）。此前参考的引脚文档由 AI 生成，其中”CH340 串口方案”这一条并不成立。真实原因是 IDE 默认未启用 USB CDC，<code>Serial</code> 被编译到 GPIO20&#x2F;21 上的 UART0，日志始终发往一个不存在的串口。</p>
+<p>修复方式只是：在 IDE 菜单中启用 USB CDC On Boot，代码无需改动。</p>
+<p>随后遇到工具链版本差异。PlatformIO 使用 esp32 core 2.x 可以编译，Arduino IDE 安装的 core 3.3.11 基于 mbedtls 3.x，编译时报告 <code>mbedtls_sha1_ret</code> 未声明，该 API 在 3.x 中更名为 <code>mbedtls_sha1</code>。改名后两个环境都能通过，再次对拍确认输出未变。此后每处修改，我都用 IDE 的工具链在命令行复现一次编译。</p>
+<h2 id="四、LED-误判、RMT-资源耗尽与功耗"><a href="#四、LED-误判、RMT-资源耗尽与功耗" class="headerlink" title="四、LED 误判、RMT 资源耗尽与功耗"></a>四、LED 误判、RMT 资源耗尽与功耗</h2><p>随后出现三个现象：板载蓝灯常亮、手动注销后长时间未重登、串口停止输出。三者实际同源。</p>
+<p>LED 部分先有判断错误。商家例程中 GPIO8 用于驱动 WS2812，据此把状态指示改成了 RGB 彩色输出；实测反馈是板载只有一颗单色蓝色 LED，那份例程驱动的是外接灯带。</p>
+<p>这个误判引入了整个项目中最隐蔽的缺陷。在线状态下，旧代码每次 loop 都调用 <code>neopixelWrite()</code>，频率达每秒数千次。arduino-esp32 3.x 中该函数基于 RMT 外设，高频重复调用会耗尽 RMT 通道，系统随之停止响应。时间线吻合：进入在线状态约二十秒后彻底静默，此时注销自然不会触发重登。</p>
+<p>发热来自 <code>WiFi.setSleep(false)</code>，射频常开，代价是芯片温度持续偏高。改回 modem sleep 后温度正常，功耗约降三成；30 秒的探测周期完全可以接受 modem sleep 的唤醒延迟。</p>
+<p>LED 最终回到 <code>digitalWrite</code> 加闪烁频率的方案：3 秒一短闪表示在线，1Hz 表示连接 WiFi，4Hz 表示认证中，8Hz 表示账号密码错误。选择频率而非亮灭，是因为闪烁模式不受 LED 极性影响。</p>
+<h2 id="五、HTTP-层：连接挂起与读超时"><a href="#五、HTTP-层：连接挂起与读超时" class="headerlink" title="五、HTTP 层：连接挂起与读超时"></a>五、HTTP 层：连接挂起与读超时</h2><p>这一层耗时最长。加入分层诊断日志后，串口输出把阻塞点定位得很清楚：</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/serial-hang.svg" alt="串口日志里的卡死点与分层诊断"></p>
+<p>DNS 在 2ms 内返回一个被劫持的 IP，这是未认证状态下的正常行为。我在 PC 上验证过，该 IP 本身可达，200ms 即可返回 204，因此问题不在网络，而在 <code>HTTPClient</code>：面对这类劫持网关，其连接状态机会永久挂起，<code>setConnectTimeout</code> 不生效。</p>
+<p>修复方式是下移一层：不再使用 <code>HTTPClient</code>，改用 <code>WiFiClient</code> 手写 HTTP&#x2F;1.0 请求，连接超时通过 <code>connect(host, port, timeout_ms)</code> 三参数重载显式传入。一处改动覆盖了探测、登录与登出。</p>
+<p>改用裸客户端后请求可通，但每个请求固定耗时 8 秒，正好等于超时值。原因是劫持网关收到响应后不主动关闭连接，忽略 <code>Connection: close</code>，<code>readString()</code> 只能等待读超时。</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/http-hang.svg" alt="劫持网关不断开连接导致的请求等待"></p>
+<p>改为按 <code>Content-Length</code> 读取固定字节后立即关闭连接；204 响应没有 body，直接返回。单次请求从 8 秒降到数百毫秒。</p>
+<p>日志设计上的结论是：操作前后都要输出日志。只在返回后打印，请求挂起时系统没有任何输出，只能知道阻塞发生，无法知道阻塞位置。</p>
+<h2 id="六、JSONP-响应残留"><a href="#六、JSONP-响应残留" class="headerlink" title="六、JSONP 响应残留"></a>六、JSONP 响应残留</h2><p>功能基本正常后，日志中反复出现 <code>unexpected portal response</code>。对比请求与响应的 callback 名发现问题：登录请求发出的是 <code>…64214</code>，而打印出的响应以 <code>…64116(&#123;&quot;challenge&quot;</code> 开头，属于上一步 challenge 请求的残留。<code>login()</code> 中两次请求复用同一个 <code>String body</code>，<code>httpGet</code> 入口未清空，读取时又采用追加方式，登录响应被拼接到残留内容之后。</p>
+<p>两次登录实际都成功了，该缺陷仅导致一次多余重试，但它在日志中表现为”门户返回异常”，容易把排查引向协议方向。修复是在 <code>httpGet</code> 入口增加一行 <code>body = &quot;&quot;</code>。</p>
+<p>调试阶段把所有间隔参数调小，使完整链路在一分钟内跑完，验证通过后再恢复为探测 30 秒、门户核对 30 分钟、退避 5→10→30→60 秒。另有一项兜底：每 30 分钟强制查询一次门户状态，在线账号不符时执行重登，避免探测结果误判。</p>
+<p>关于定时模式的讨论值得一提。宿舍 23 点断电、次日 4:30 恢复供电，最初考虑实现定时认证；实际上断电本身就是定时器，恢复供电后设备上电，固件启动即自动完成连接 WiFi、探测与认证。</p>
+<p><img src="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/morning.svg" alt="清晨来电后设备上电自动认证"></p>
+<p>发布到 GitHub 前做了凭证扫描。<code>Config.h</code> 中的 WiFi 密码、校园网密码与学号全部替换为占位符，调试期的 PlatformIO 副本与包含真实账号的对拍脚本均未纳入仓库。公开仓库发布硬件项目时这一步不能省略：凭证一旦进入提交历史，删除文件也无法清除。</p>
+<p>代码位于 <a target="_blank" rel="noopener" href="https://github.com/vg188/buct-srun-esp32">vg188&#x2F;buct-srun-esp32</a>，同样使用深澜认证系统的学校修改 <code>Config.h</code> 即可使用。</p>
+<p>最终部署形态很普通：一块插在路由器 USB 口上的开发板，夜间随断电关机，早晨恢复供电后数秒内完成认证，之后全天保持守护。协议与加密大约只占三分之一的工作量，其余时间都花在实机问题的定位上。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/ESP32/">ESP32</a><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/%E6%A0%A1%E5%9B%AD%E7%BD%91/">校园网</a><a class="post-meta__tags" href="/tags/Srun/">Srun</a><a class="post-meta__tags" href="/tags/Arduino/">Arduino</a><a class="post-meta__tags" href="/tags/%E8%B0%83%E8%AF%95/">调试</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/08/27/free-llm-api-key-channels/" title="免费 LLM API Key 渠道清单（转载留存）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">免费 LLM API Key 渠道清单（转载留存）</div></div><div class="info-2"><div class="info-item-1">这篇是转载留存。原始整理来自 BIGFA 的 免费 API Key 渠道分享 | 持续更新（原文最后编辑 2026-08-26），我按三类重排成表格存一份在自己这儿，免得哪天原站或这些渠道链接失效就找不回来了。推荐指数沿用原作者的评级，我没有逐个实测。   一、免费用高端模型（数据可能被蒸馏）   渠道 说明 入口 原文评级    JustDoWork GitHub 注册，每日签到送额度 https://api.justwoker.icu/register?aff=N7Su ⭐⭐⭐⭐⭐   Agent Router GitHub 注册，每日签到送额度；签到需退出再登录才生效，只支持 Codex 和 Claude Code 原生调用 https://agentrouter.org/register?aff=o0ML ⭐⭐⭐⭐⭐   Jasper 免费分组不消耗积分，等于白用 https://api.yjs.im/sign-up?aff=UiTe ⭐⭐⭐⭐⭐   TaBiAI GitHub 注册，每日签到送额度 https://tabitoken.com/sign-up?aff=A9...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">12</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">40</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90%EF%BC%9A%E6%8E%89%E7%BA%BF%E5%88%A4%E5%AE%9A%E4%B8%8E%E7%99%BB%E5%BD%95%E6%B5%81%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">一、协议分析：掉线判定与登录流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%8A%A0%E5%AF%86%E5%AE%9E%E7%8E%B0%E4%B8%8E%E4%BA%A4%E5%8F%89%E9%AA%8C%E8%AF%81"><span class="toc-number">2.</span> <span class="toc-text">二、加密实现与交叉验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E4%B8%B2%E5%8F%A3%E6%97%A0%E8%BE%93%E5%87%BA%EF%BC%9A%E4%BB%8E-CH340-%E5%81%87%E8%AE%BE%E5%88%B0-USB-%E6%9E%9A%E4%B8%BE"><span class="toc-number">3.</span> <span class="toc-text">三、串口无输出：从 CH340 假设到 USB 枚举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81LED-%E8%AF%AF%E5%88%A4%E3%80%81RMT-%E8%B5%84%E6%BA%90%E8%80%97%E5%B0%BD%E4%B8%8E%E5%8A%9F%E8%80%97"><span class="toc-number">4.</span> <span class="toc-text">四、LED 误判、RMT 资源耗尽与功耗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81HTTP-%E5%B1%82%EF%BC%9A%E8%BF%9E%E6%8E%A5%E6%8C%82%E8%B5%B7%E4%B8%8E%E8%AF%BB%E8%B6%85%E6%97%B6"><span class="toc-number">5.</span> <span class="toc-text">五、HTTP 层：连接挂起与读超时</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81JSONP-%E5%93%8D%E5%BA%94%E6%AE%8B%E7%95%99"><span class="toc-number">6.</span> <span class="toc-text">六、JSONP 响应残留</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/" title="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</a><time datetime="2026-09-18T04:00:00.000Z" title="发表于 2026-09-18 12:00:00">2026-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/27/free-llm-api-key-channels/" title="免费 LLM API Key 渠道清单（转载留存）">免费 LLM API Key 渠道清单（转载留存）</a><time datetime="2026-08-27T13:20:00.000Z" title="发表于 2026-08-27 21:20:00">2026-08-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-android-runtime-path-lessons/" title="PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot">PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot</a><time datetime="2026-07-05T10:40:00.000Z" title="发表于 2026-07-05 18:40:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-mirror-manifest-lessons/" title="PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站">PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站</a><time datetime="2026-07-05T10:30:00.000Z" title="发表于 2026-07-05 18:30:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-package-manager-design/" title="PyStudio Termux 构建踩坑记（二）：像 Termux pkg 一样拆包，而不是发布工具链大包">PyStudio Termux 构建踩坑记（二）：像 Termux pkg 一样拆包，而不是发布工具链大包</a><time datetime="2026-07-05T10:20:00.000Z" title="发表于 2026-07-05 18:20:00">2026-07-05</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

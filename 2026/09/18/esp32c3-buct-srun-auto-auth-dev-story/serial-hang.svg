@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" width="840" height="440" role="img" aria-label="串口日志卡死点与分层诊断">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/><stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="840" height="440" rx="18" fill="url(#bg4)"/>
+
+  <rect x="34" y="56" width="446" height="316" rx="14" fill="#0f172a"/>
+  <circle cx="58" cy="78" r="5" fill="#ef4444"/>
+  <circle cx="76" cy="78" r="5" fill="#f59e0b"/>
+  <circle cx="94" cy="78" r="5" fill="#22c55e"/>
+  <text x="120" y="83" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">串口监视器 115200</text>
+  <text x="66" y="102" font-family="monospace" font-size="12.5" fill="#64748b">== BUCT srun auto-auth agent ==</text>
+  <text x="66" y="128" font-family="monospace" font-size="12.5" fill="#e2e8f0">[   2s] WiFi connected, ip=192.168.x.x</text>
+  <text x="66" y="154" font-family="monospace" font-size="12.5" fill="#86efac">[   2s] DIAG: gateway TCP OK</text>
+  <text x="66" y="180" font-family="monospace" font-size="12.5" fill="#86efac">[   2s] DIAG: DNS OK -&gt; 202.69.4.32 (2ms)</text>
+  <text x="66" y="206" font-family="monospace" font-size="12.5" fill="#e2e8f0">[   2s] DIAG: calling probeOnline ...</text>
+  <text x="66" y="232" font-family="monospace" font-size="12.5" fill="#e2e8f0">[   2s] HTTP GET -&gt; .../generate_204</text>
+  <text x="66" y="258" font-family="monospace" font-size="12.5" fill="#fca5a5">...... 之后一行也不再打印</text>
+  <rect x="58" y="298" width="196" height="30" rx="8" fill="#7f1d1d"/>
+  <text x="156" y="318" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#fecaca">卡死点：GET 发出后永不返回</text>
+
+  <g>
+    <rect x="520" y="70" width="270" height="60" rx="10" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+    <text x="544" y="96" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">网关 TCP</text>
+    <text x="760" y="98" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" fill="#10b981">✓</text>
+  </g>
+  <g>
+    <rect x="520" y="146" width="270" height="60" rx="10" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+    <text x="544" y="172" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">DNS 解析</text>
+    <text x="760" y="174" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" fill="#10b981">✓</text>
+  </g>
+  <g>
+    <rect x="520" y="222" width="270" height="60" rx="10" fill="#ffffff" stroke="#ef4444" stroke-width="2"/>
+    <text x="544" y="248" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">HTTPClient</text>
+    <text x="760" y="250" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="18" fill="#ef4444">✗</text>
+  </g>
+  <text x="655" y="316" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">网关通、DNS 通、HTTP 库挂住</text>
+
+  <text x="420" y="404" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="16" fill="#334155">每一层、每一步的前后都打日志，才知道卡在哪</text>
+  <text x="420" y="428" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">只在操作返回后打日志，请求挂住时系统一片死寂，排查只能靠猜</text>
+</svg>

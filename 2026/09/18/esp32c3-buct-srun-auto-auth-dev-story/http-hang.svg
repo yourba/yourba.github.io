@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 340" width="800" height="340" role="img" aria-label="劫持网关不断开连接导致请求等待超时">
+  <defs>
+    <linearGradient id="bg5" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/><stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="340" rx="18" fill="url(#bg5)"/>
+
+  <rect x="44" y="52" width="180" height="86" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="134" y="86" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">WiFiClient</text>
+  <text x="134" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">发完请求等对方收尾</text>
+
+  <rect x="576" y="52" width="180" height="86" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="666" y="86" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">劫持网关</text>
+  <text x="666" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">收到响应就是不关门</text>
+
+  <line x1="224" y1="95" x2="572" y2="95" stroke="#94a3b8" stroke-width="3" stroke-dasharray="8 6"/>
+  <text x="398" y="80" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">Connection: close 被无视</text>
+  <circle cx="398" cy="95" r="16" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="398" y="101" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#b45309">8s</text>
+
+  <text x="400" y="184" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">改之前：读超时干等到 8 秒才返回</text>
+
+  <line x1="60" y1="212" x2="740" y2="212" stroke="#e2e8f0" stroke-width="2"/>
+
+  <rect x="44" y="238" width="180" height="66" rx="12" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+  <text x="134" y="270" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">按 Content-Length</text>
+  <text x="134" y="290" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">读够字节立刻关闭</text>
+
+  <rect x="576" y="238" width="180" height="66" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+  <text x="666" y="270" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#059669">250 ms</text>
+  <text x="666" y="290" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">204 探测直接返回</text>
+
+  <line x1="224" y1="271" x2="572" y2="271" stroke="#10b981" stroke-width="3"/>
+  <text x="398" y="256" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#059669">不再依赖对方主动关门</text>
+</svg>
