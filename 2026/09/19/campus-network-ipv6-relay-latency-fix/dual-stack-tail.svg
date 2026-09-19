@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 400" width="840" height="400" role="img" aria-label="50 路并发 TCP 建连耗时对比：修复前 IPv4、修复前 IPv6、修复后 IPv4">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/>
+      <stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="840" height="400" rx="18" fill="url(#bg2)"/>
+
+  <text x="40" y="40" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">同一目标 50 路并发 TCP 建连（毫秒）</text>
+  <text x="40" y="62" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#64748b">三组都没有失败请求，差别全在最大值上</text>
+
+  <!-- 网格 -->
+  <g font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">
+    <line x1="260" y1="86" x2="260" y2="336" stroke="#e2e8f0"/>
+    <line x1="360" y1="86" x2="360" y2="336" stroke="#e2e8f0"/>
+    <line x1="460" y1="86" x2="460" y2="336" stroke="#e2e8f0"/>
+    <line x1="560" y1="86" x2="560" y2="336" stroke="#e2e8f0"/>
+    <line x1="660" y1="86" x2="660" y2="336" stroke="#e2e8f0"/>
+    <line x1="760" y1="86" x2="760" y2="336" stroke="#e2e8f0"/>
+    <text x="260" y="352">0</text>
+    <text x="360" y="352">500</text>
+    <text x="460" y="352">1000</text>
+    <text x="560" y="352">1500</text>
+    <text x="660" y="352">2000</text>
+    <text x="760" y="352">2500</text>
+  </g>
+
+  <!-- 组 1：修复前 IPv4 -->
+  <text x="248" y="118" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">修复前 · IPv4</text>
+  <text x="248" y="136" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">50/50 成功</text>
+  <rect x="260" y="100" width="8.2" height="20" rx="3" fill="#93c5fd"/>
+  <text x="276" y="115" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">平均 41</text>
+  <rect x="260" y="126" width="50.4" height="20" rx="3" fill="#2563eb"/>
+  <text x="318" y="141" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#1d4ed8">最大 252</text>
+
+  <!-- 组 2：修复前 IPv6 -->
+  <text x="248" y="208" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">修复前 · IPv6</text>
+  <text x="248" y="226" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">50/50 成功</text>
+  <rect x="260" y="190" width="44" height="20" rx="3" fill="#fca5a5"/>
+  <text x="312" y="205" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">平均 220</text>
+  <rect x="260" y="216" width="500.8" height="20" rx="3" fill="#dc2626"/>
+  <text x="500" y="231" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#ffffff">最大 2504 ms —— 页面停在这里</text>
+
+  <!-- 组 3：修复后 -->
+  <text x="248" y="298" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">修复后 · 纯 IPv4</text>
+  <text x="248" y="316" text-anchor="end" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">50/50 成功 · IPv6 请求 0</text>
+  <rect x="260" y="280" width="7.8" height="20" rx="3" fill="#86efac"/>
+  <text x="276" y="295" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">平均 39</text>
+  <rect x="260" y="306" width="48.6" height="20" rx="3" fill="#16a34a"/>
+  <text x="316" y="321" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">最大 243</text>
+
+  <!-- 参考线：轴上限 2500 ms -->
+  <line x1="760" y1="86" x2="760" y2="336" stroke="#e2e8f0"/>
+
+  <rect x="40" y="362" width="760" height="26" rx="6" fill="#f1f5f9"/>
+  <text x="56" y="379" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#475569">更早一轮 40 路混合并发里，有一路直接 3 秒建连超时；同一时刻 ping 路由器仍是平均 1 ms、0% 丢包。</text>
+</svg>

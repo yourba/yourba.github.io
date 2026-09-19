@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" width="840" height="440" role="img" aria-label="宿舍网络链路分层：电脑、BE5000、校园首跳与分方向出口，IPv6 中继为本次故障域">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/>
+    </marker>
+    <marker id="arGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#94a3b8"/>
+    </marker>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/>
+      <stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="840" height="440" rx="18" fill="url(#bg)"/>
+  <text x="40" y="40" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">链路分层：每一段单独测，才知道该找谁</text>
+
+  <!-- 电脑 -->
+  <g>
+    <rect x="36" y="72" width="150" height="92" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="52" y="88" width="118" height="34" rx="5" fill="#f1f5f9"/>
+    <rect x="96" y="122" width="30" height="4" rx="2" fill="#e2e8f0"/>
+    <text x="111" y="146" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">电脑（网线）</text>
+    <text x="111" y="186" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">1 Gbps · 错误与丢弃 0</text>
+  </g>
+
+  <!-- BE5000 -->
+  <g>
+    <rect x="240" y="72" width="164" height="92" rx="12" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="256" y="88" width="132" height="30" rx="5" fill="#eff6ff"/>
+    <circle cx="268" cy="103" r="3.5" fill="#22c55e"/>
+    <circle cx="279" cy="103" r="3.5" fill="#22c55e"/>
+    <text x="332" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#1d4ed8">NAT</text>
+    <text x="322" y="140" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">小米 BE5000</text>
+    <text x="322" y="186" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">CPU 0 · 内存 45% · QoS 关</text>
+  </g>
+
+  <!-- 校园首跳 -->
+  <g>
+    <rect x="456" y="72" width="150" height="92" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="472" y="88" width="118" height="30" rx="5" fill="#f1f5f9"/>
+    <text x="531" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">10.10.30.13</text>
+    <text x="531" y="140" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="14" fill="#334155">校园首跳</text>
+    <text x="531" y="186" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#94a3b8">1 ms · 0% 丢包</text>
+  </g>
+
+  <!-- 分方向出口 -->
+  <g>
+    <rect x="660" y="58" width="150" height="188" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="735" y="80" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">出口分方向</text>
+    <rect x="674" y="92" width="122" height="28" rx="5" fill="#f0fdf4"/>
+    <text x="680" y="110" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">电信 4ms 436M</text>
+    <rect x="674" y="126" width="122" height="28" rx="5" fill="#f0fdf4"/>
+    <text x="680" y="144" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">联通 11ms 正常</text>
+    <rect x="674" y="160" width="122" height="28" rx="5" fill="#fffbeb"/>
+    <text x="680" y="178" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b45309">移动 29ms 7.8M</text>
+    <rect x="674" y="194" width="122" height="28" rx="5" fill="#fef2f2"/>
+    <text x="680" y="212" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b91c1c">教育网 39ms 2.3M</text>
+    <text x="735" y="238" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">单线程吞吐</text>
+  </g>
+
+  <!-- 主链路连线 -->
+  <line x1="186" y1="118" x2="236" y2="118" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="211" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#2563eb">&lt;1ms</text>
+  <line x1="404" y1="118" x2="452" y2="118" stroke="#2563eb" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="428" y="108" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#2563eb">WAN</text>
+  <line x1="606" y1="118" x2="656" y2="140" stroke="#94a3b8" stroke-width="2" marker-end="url(#arGray)"/>
+
+  <!-- IPv6 中继故障域 -->
+  <line x1="322" y1="200" x2="322" y2="248" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arRed)"/>
+  <text x="334" y="222" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b91c1c">双栈应用会优先尝试 IPv6</text>
+
+  <g>
+    <rect x="200" y="252" width="248" height="100" rx="12" fill="#fef2f2" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5"/>
+    <text x="324" y="278" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#b91c1c">IPv6 中继：pi_relay</text>
+    <text x="324" y="300" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#7f1d1d">学校只给一个 /64，没有 PD</text>
+    <text x="324" y="320" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#7f1d1d">50 路并发建连最大 2504 ms</text>
+    <text x="324" y="342" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#b91c1c">← 本次真正修掉的一段</text>
+  </g>
+
+  <!-- 对照实验卡片 -->
+  <g>
+    <rect x="480" y="252" width="330" height="100" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <rect x="498" y="268" width="72" height="22" rx="5" fill="#f1f5f9"/>
+    <text x="534" y="284" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">对照实验</text>
+    <text x="498" y="316" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">网线直插宿舍墙口，体感更顺</text>
+    <text x="498" y="336" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">绕过 BE5000 的中继实现，就不再有 2.5 秒长尾</text>
+  </g>
+
+  <!-- 底部结论条 -->
+  <rect x="36" y="386" width="766" height="34" rx="8" fill="#f1f5f9"/>
+  <text x="52" y="408" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="12" fill="#475569">结论：路由器负载正常、局域网干净；出口分方向异常修不了，IPv6 中继长尾修得了。两件事都成立，但主次反了。</text>
+</svg>

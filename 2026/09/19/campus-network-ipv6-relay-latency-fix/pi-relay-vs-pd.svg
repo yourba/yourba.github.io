@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" width="840" height="440" role="img" aria-label="pi_relay 与 DHCPv6-PD 两种 IPv6 结构对比">
+  <defs>
+    <marker id="arB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#dc2626"/>
+    </marker>
+    <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f9fbfd"/>
+      <stop offset="1" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="840" height="440" rx="18" fill="url(#bg3)"/>
+  <text x="40" y="38" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="15" fill="#334155">同样是"路由器有 IPv6"，两种结构的差别在哪</text>
+
+  <!-- ===== 上：pi_relay ===== -->
+  <rect x="28" y="58" width="784" height="168" rx="14" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="48" y="84" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#b91c1c">实际：pi_relay（前缀中继）</text>
+
+  <g>
+    <rect x="52" y="100" width="150" height="72" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="127" y="128" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">校园网</text>
+    <text x="127" y="150" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">只给 WAN 一个 /64</text>
+  </g>
+  <line x1="202" y1="136" x2="248" y2="136" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arR)"/>
+  <text x="225" y="126" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#b91c1c">RA/RS</text>
+
+  <g>
+    <rect x="252" y="94" width="200" height="92" rx="10" fill="#ffffff" stroke="#dc2626" stroke-width="2"/>
+    <text x="352" y="120" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">BE5000</text>
+    <rect x="268" y="130" width="168" height="24" rx="5" fill="#fee2e2"/>
+    <text x="352" y="147" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#7f1d1d">中继邻居发现，不做路由</text>
+    <text x="352" y="174" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">无独立前缀可分配</text>
+  </g>
+  <line x1="452" y1="136" x2="498" y2="136" stroke="#dc2626" stroke-width="2.5" marker-end="url(#arR)"/>
+
+  <g>
+    <rect x="502" y="100" width="176" height="72" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="590" y="126" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">电脑</text>
+    <text x="590" y="148" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">仍在校园那个 /64 里</text>
+    <text x="590" y="164" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">网关还是校园侧地址</text>
+  </g>
+  <text x="694" y="122" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b91c1c">建连长尾</text>
+  <text x="694" y="140" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b91c1c">平均 220 ms</text>
+  <text x="694" y="158" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#b91c1c">最大 2504 ms</text>
+
+  <text x="48" y="212" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#7f1d1d">直插墙口时电脑自己发 RS、收 RA，这层中继被整个跳过 —— 所以"直连更顺"。</text>
+
+  <!-- ===== 下：DHCPv6-PD ===== -->
+  <rect x="28" y="238" width="784" height="168" rx="14" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="48" y="264" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#15803d">理想：DHCPv6-PD（前缀委派）</text>
+
+  <g>
+    <rect x="52" y="280" width="150" height="72" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="127" y="308" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">校园网</text>
+    <text x="127" y="330" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">下发 /56 或 /60</text>
+  </g>
+  <line x1="202" y1="316" x2="248" y2="316" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arB)"/>
+  <text x="225" y="306" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#2563eb">PD</text>
+
+  <g>
+    <rect x="252" y="274" width="200" height="92" rx="10" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+    <text x="352" y="300" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">BE5000</text>
+    <rect x="268" y="310" width="168" height="24" rx="5" fill="#dcfce7"/>
+    <text x="352" y="327" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#14532d">正常 IPv6 路由 + 防火墙</text>
+    <text x="352" y="354" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">自己切出 /64 下发</text>
+  </g>
+  <line x1="452" y1="316" x2="498" y2="316" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arB)"/>
+
+  <g>
+    <rect x="502" y="280" width="176" height="72" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="590" y="306" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="13" fill="#334155">电脑</text>
+    <text x="590" y="328" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#64748b">独立 /64 网段</text>
+    <text x="590" y="344" text-anchor="middle" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="10" fill="#94a3b8">内网结构与 IPv4 对齐</text>
+  </g>
+  <text x="694" y="302" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">没有中继这一跳，</text>
+  <text x="694" y="320" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">保留完整 IPv6，</text>
+  <text x="694" y="338" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#15803d">但要看学校配不配</text>
+
+  <text x="48" y="392" font-family="system-ui,'PingFang SC','Microsoft YaHei',sans-serif" font-size="11" fill="#166534">用户侧变不出一个可路由前缀，所以这条只能向网络中心确认：宿舍有线是否支持 DHCPv6 Prefix Delegation。</text>
+</svg>

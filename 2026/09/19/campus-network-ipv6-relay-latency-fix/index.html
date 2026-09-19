@@ -1,0 +1,482 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="小米 BE5000 在只下发 &#x2F;64、无 DHCPv6-PD 的校园网下运行于 pi_relay 中继模式，导致 50 路并发 TCP 建连出现 2.5 秒长尾。记录分层定位、并发复现、双栈拆分、可逆修复与前后实测数据，并给出五种方案的取舍和一份排查清单。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录">
+<meta property="og:url" content="https://yourba.github.io/2026/09/19/campus-network-ipv6-relay-latency-fix/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="小米 BE5000 在只下发 &#x2F;64、无 DHCPv6-PD 的校园网下运行于 pi_relay 中继模式，导致 50 路并发 TCP 建连出现 2.5 秒长尾。记录分层定位、并发复现、双栈拆分、可逆修复与前后实测数据，并给出五种方案的取舍和一份排查清单。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-09-19T05:30:00.000Z">
+<meta property="article:modified_time" content="2026-09-19T05:40:13.475Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="校园网">
+<meta property="article:tag" content="路由器">
+<meta property="article:tag" content="IPv6">
+<meta property="article:tag" content="网络诊断">
+<meta property="article:tag" content="小米BE5000">
+<meta property="article:tag" content="PowerShell">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录",
+  "url": "https://yourba.github.io/2026/09/19/campus-network-ipv6-relay-latency-fix/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-09-19T05:30:00.000Z",
+  "dateModified": "2026-09-19T05:40:13.475Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/09/19/campus-network-ipv6-relay-latency-fix/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-09-19T05:30:00.000Z" title="发表于 2026-09-19 13:30:00">2026-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-09-19T05:40:13.475Z" title="更新于 2026-09-19 13:40:13">2026-09-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/">技术分析</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>症状有三条：抖音视频能播但评论一直转圈，图片偶发加载失败；游戏延迟显示绿色但操作有滞后；部分网站整页打不开，刷新后恢复。</p>
+<p>设备是小米 BE5000（固件 1.0.91），电脑走网线。此前一轮报障已经把校园网出口拥塞定为主因，结论写着”与用户侧设备无关”。</p>
+<p>实际结果是两件事叠加：校园网出口分方向异常仍然存在，用户侧修不了；直接造成本次卡顿的是路由器自己的 IPv6 中继。关闭路由器 IPv6 后，50 路并发的最大 TCP 建连时间从 2504 ms 降到 243 ms。</p>
+<span id="more"></span>
+
+<h2 id="一、分层定位"><a href="#一、分层定位" class="headerlink" title="一、分层定位"></a>一、分层定位</h2><p>第一轮只做只读测量，不改配置。</p>
+<table>
+<thead>
+<tr>
+<th>层</th>
+<th>测什么</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>网卡</td>
+<td>协商速率、错误与丢弃计数</td>
+<td>1 Gbps 全双工，计数全 0</td>
+</tr>
+<tr>
+<td>电脑 → 路由器</td>
+<td>100 包 ping <code>192.168.31.1</code></td>
+<td>全回，平均 1 ms，最大 3 ms</td>
+</tr>
+<tr>
+<td>路由器 → 校园首跳</td>
+<td><code>10.10.30.13</code></td>
+<td>1 ms，0% 丢包</td>
+</tr>
+<tr>
+<td>出口分方向</td>
+<td>电信、联通、移动、教育网各一个靶标</td>
+<td>电信 4 ms、联通 11 ms 正常；移动 29 ms、教育网 39 ms 偏慢</td>
+</tr>
+<tr>
+<td>DNS</td>
+<td>四个 resolver 各查 5 次计时</td>
+<td>1–2 ms，无失败</td>
+</tr>
+</tbody></table>
+<p>路由器后台读数：CPU 负载 0，内存 45%，QoS 关闭，在线 3 台设备，WAN 是校园网下发的 <code>10.12.x.x/20</code> 地址，MTU 1500。</p>
+<p>同一时刻电信方向 436 Mbps，教育网方向单线程 2.3 Mbps。这组数据把慢点定位在校园网出口之后，但它解释不了上面的三条症状。</p>
+<p><img src="/2026/09/19/campus-network-ipv6-relay-latency-fix/cover.svg" alt="链路分层与故障域划分"></p>
+<h2 id="二、空闲-ping-测不出转发层故障"><a href="#二、空闲-ping-测不出转发层故障" class="headerlink" title="二、空闲 ping 测不出转发层故障"></a>二、空闲 ping 测不出转发层故障</h2><p>补充一条信息：网线直插宿舍墙口时体感更顺。这与第一层的结论冲突。如果慢点全在出口之后，绕不绕路由器不该有区别。</p>
+<p>按可证伪的形式重排假设：</p>
+<table>
+<thead>
+<tr>
+<th>假设</th>
+<th>预测</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IPv6 路径异常（中继质量或 PMTU 黑洞）</td>
+<td>同一目标 IPv6 明显慢于 IPv4，或大包失败</td>
+</tr>
+<tr>
+<td>路由器 DNS 转发超时</td>
+<td>经 <code>192.168.31.1</code> 解析有长尾，直查公共 DNS 正常</td>
+</tr>
+<tr>
+<td>硬件转发 &#x2F; NAT 路径抖动</td>
+<td>DNS 与 IPv6 正常，但并发 HTTPS 有长尾，且路由器负载仍低</td>
+</tr>
+<tr>
+<td>出口分方向拥塞</td>
+<td>不同运营商方向吞吐差异大</td>
+</tr>
+</tbody></table>
+<p>第四条已有证据，但它无法解释”绕过路由器更顺”，只能算放大器。</p>
+<p>四条假设都指向偶发，改用并发复现。40 路并发拉抖音首页，同一时刻对路由器的 ping 仍是平均 1 ms、0% 丢包，但 40 路中有一路 TCP 建连 3 秒超时，其余拉长到 215–470 ms，而这个站平时建连只有 20–50 ms。</p>
+<p>这就是症状的来源：页面加载要并发拉几十到上百个资源，整体耗时取决于最慢的那一条；游戏测延迟只测自己那条 UDP 会话。用平均值判断链路健康会漏掉这类故障。</p>
+<h2 id="三、双栈分开压"><a href="#三、双栈分开压" class="headerlink" title="三、双栈分开压"></a>三、双栈分开压</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 同一目标，分别强制 IPv4 / IPv6，各打 50 路并发</span></span><br><span class="line"><span class="variable">$u</span> = <span class="string">&quot;https://www.douyin.com/&quot;</span></span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$fam</span> <span class="keyword">in</span> <span class="string">&quot;-4&quot;</span>, <span class="string">&quot;-6&quot;</span>) &#123;</span><br><span class="line">  <span class="string">&quot;=== <span class="variable">$fam</span> ===&quot;</span></span><br><span class="line">  <span class="variable">$sb</span> = &#123;</span><br><span class="line">    <span class="keyword">param</span>(<span class="variable">$x</span>, <span class="variable">$f</span>)</span><br><span class="line">    <span class="variable">$w</span> = <span class="string">&quot;%&#123;http_code&#125;,%&#123;time_connect&#125;,&quot;</span></span><br><span class="line">    <span class="variable">$w</span> += <span class="string">&quot;%&#123;time_starttransfer&#125;,%&#123;time_total&#125;&quot;</span></span><br><span class="line">    curl.exe <span class="literal">-sS</span> <span class="literal">-L</span> <span class="literal">--noproxy</span> <span class="string">&quot;*&quot;</span> <span class="variable">$f</span> <span class="literal">-o</span> NUL `</span><br><span class="line">      <span class="literal">--connect-timeout</span> <span class="number">3</span> <span class="literal">--max-time</span> <span class="number">8</span> <span class="literal">-w</span> <span class="variable">$w</span> <span class="variable">$x</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable">$jobs</span> = <span class="number">1</span>..<span class="number">50</span> | <span class="built_in">ForEach-Object</span> &#123;</span><br><span class="line">    <span class="built_in">Start-Job</span> <span class="literal">-ScriptBlock</span> <span class="variable">$sb</span> <span class="literal">-ArgumentList</span> <span class="variable">$u</span>, <span class="variable">$fam</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable">$null</span> = <span class="built_in">Wait-Job</span> <span class="variable">$jobs</span></span><br><span class="line">  <span class="variable">$r</span> = <span class="selector-tag">@</span>(<span class="variable">$jobs</span> | <span class="built_in">ForEach-Object</span> &#123; <span class="built_in">Receive-Job</span> <span class="variable">$_</span> &#125;)</span><br><span class="line">  <span class="built_in">Remove-Job</span> <span class="variable">$jobs</span></span><br><span class="line">  <span class="variable">$ok</span> = <span class="selector-tag">@</span>(<span class="variable">$r</span> | <span class="built_in">Where-Object</span> &#123; <span class="variable">$_</span> <span class="operator">-like</span> <span class="string">&quot;200,*&quot;</span> &#125;)</span><br><span class="line">  <span class="variable">$c</span> = <span class="selector-tag">@</span>(<span class="variable">$ok</span> | <span class="built_in">ForEach-Object</span> &#123; [<span class="built_in">double</span>]((<span class="variable">$_</span> <span class="operator">-split</span> <span class="string">&quot;,&quot;</span>)[<span class="number">1</span>]) &#125;)</span><br><span class="line">  <span class="variable">$avg</span> = [<span class="type">math</span>]::Round((<span class="variable">$c</span> | <span class="built_in">Measure-Object</span> <span class="literal">-Average</span>).Average * <span class="number">1000</span>)</span><br><span class="line">  <span class="variable">$max</span> = [<span class="type">math</span>]::Round((<span class="variable">$c</span> | <span class="built_in">Measure-Object</span> <span class="literal">-Maximum</span>).Maximum * <span class="number">1000</span>)</span><br><span class="line">  <span class="variable">$fail</span> = <span class="variable">$r</span>.Count - <span class="variable">$ok</span>.Count</span><br><span class="line">  <span class="string">&quot;ok=<span class="variable">$</span>(<span class="variable">$ok</span>.Count) fail=<span class="variable">$fail</span> avg=<span class="variable">$</span>&#123;avg&#125;ms max=<span class="variable">$</span>&#123;max&#125;ms&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>协议栈</th>
+<th>成功</th>
+<th>建连平均</th>
+<th>建连最大</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IPv4</td>
+<td>50&#x2F;50</td>
+<td>41 ms</td>
+<td>252 ms</td>
+</tr>
+<tr>
+<td>IPv6</td>
+<td>50&#x2F;50</td>
+<td>220 ms</td>
+<td>2504 ms</td>
+</tr>
+</tbody></table>
+<p><img src="/2026/09/19/campus-network-ipv6-relay-latency-fix/dual-stack-tail.svg" alt="双栈并发建连长尾对比"></p>
+<p>IPv6 没有失败请求，平均值也不算异常，问题全在最大值上。</p>
+<p>DNS 假设同时被排除：四个 resolver 各查 5 次，路由器转发没有长尾也没有失败。</p>
+<p>另一组按 PMTU 黑洞思路做的探测失败了。用 <code>ping -6</code> 向三个 IPv6 靶标打 1452、1440、1400、1280 四种载荷，全部 0 回复。1280 是 IPv6 强制最小 MTU，连它都不回说明不是分片问题，而是目标根本不回 ICMPv6；随后单独测 443 和 80 端口，各 100 次全部连通。这组探测不能作为证据。IPv6 环境下 ping 不通是常态，判断健康度要用 TCP 建连。</p>
+<h2 id="四、根因：pi-relay"><a href="#四、根因：pi-relay" class="headerlink" title="四、根因：pi_relay"></a>四、根因：pi_relay</h2><p><code>xqnetwork/ipv6_status</code> 返回如下。真实前缀和接口标识符已替换为 RFC 3849 文档前缀 <code>2001:db8::/32</code>，只保留结构：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;ifname&quot;</span><span class="punctuation">:</span> <span class="string">&quot;ae_wan&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ipv6_mode&quot;</span><span class="punctuation">:</span> <span class="string">&quot;pi_relay&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;wanType&quot;</span><span class="punctuation">:</span> <span class="string">&quot;pi_relay&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ip6addr&quot;</span><span class="punctuation">:</span>        <span class="punctuation">[</span><span class="string">&quot;2001:db8:1f00:230::a1/64&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;lan_ip6addr&quot;</span><span class="punctuation">:</span>    <span class="punctuation">[</span><span class="string">&quot;2001:db8:1f00:230::b2/64&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;lan_ip6prefix&quot;</span><span class="punctuation">:</span>  <span class="punctuation">[</span><span class="string">&quot;2001:db8:1f00:230::&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;ip6gw&quot;</span><span class="punctuation">:</span> <span class="string">&quot;fe80::1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;peerdns&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>pi_relay</code> 决定了问题的形状。正常结构下路由器应通过 DHCPv6-PD 拿到比 &#x2F;64 更大的前缀（&#x2F;60 或 &#x2F;56），自行切分 &#x2F;64 下发给 LAN，LAN 是一段独立地址空间。这里学校只给了 WAN 一个 &#x2F;64，LAN 用的还是同一个前缀，路由器无法做路由，只能中继邻居发现报文，让电脑直接在校园网那个 &#x2F;64 里取地址。</p>
+<p><img src="/2026/09/19/campus-network-ipv6-relay-latency-fix/pi-relay-vs-pd.svg" alt="pi_relay 与 DHCPv6-PD 两种结构"></p>
+<p>直插墙口时电脑自己发 RS、收 RA，这层中继被整个跳过，所以体感更顺。</p>
+<p>IPv6 转发本身没有额外开销，出问题的是没有 PD 时的中继模式和这版固件的实现质量。<code>hwnat</code> 的 <code>force_start</code> 读数为 0（硬件 NAT 强制开关关闭），当时也列为嫌疑，但改它会导致路由器重启、影响面比 IPv6 大，排除 IPv6 之后未再处理。</p>
+<h2 id="五、修复与验证"><a href="#五、修复与验证" class="headerlink" title="五、修复与验证"></a>五、修复与验证</h2><p>先在客户端禁用 IPv6：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Disable-NetAdapterBinding</span> <span class="literal">-Name</span> <span class="string">&quot;以太网&quot;</span> <span class="literal">-ComponentID</span> ms_tcpip6</span><br></pre></td></tr></table></figure>
+
+<p>返回拒绝访问，改网卡绑定需要管理员权限。改路由器反而更合适：影响面覆盖全部设备，回滚只需把开关拨回去。</p>
+<p>登录走固件的 <code>xqsystem/login</code>，密码按 <code>sha256(nonce + sha256(密码 + 固件常量))</code> 做摘要，管理密码从本地文件读取、不回显。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET  xqnetwork/get_wan6_switch_v2   -&gt;  enabled = 1</span><br><span class="line">POST xqnetwork/set_wan6_switch_v2   -&gt;  enabled = 0,  code = 0</span><br><span class="line">GET  xqnetwork/get_wan6_switch_v2   -&gt;  enabled = 0</span><br></pre></td></tr></table></figure>
+
+<p>客户端 <code>ipconfig /renew</code> 后只剩链路本地地址，全局 IPv6 地址与 <code>::/0</code> 默认路由撤销，IPv4、网关和校园认证连接不变。</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>修复前</th>
+<th>修复后</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>50 路并发成功 &#x2F; 失败</td>
+<td>IPv4 50&#x2F;0，IPv6 50&#x2F;0</td>
+<td>50&#x2F;0，走 IPv6 的请求为 0</td>
+</tr>
+<tr>
+<td>建连平均</td>
+<td>41 ms &#x2F; 220 ms</td>
+<td>39 ms</td>
+</tr>
+<tr>
+<td>建连最大</td>
+<td>252 ms &#x2F; 2504 ms</td>
+<td>243 ms</td>
+</tr>
+<tr>
+<td>本机 → 路由器</td>
+<td>平均 1 ms</td>
+<td>50&#x2F;50，平均 1 ms，最大 1 ms</td>
+</tr>
+<tr>
+<td>抖音主页（连续 10 次）</td>
+<td></td>
+<td>0.10–0.28 s</td>
+</tr>
+<tr>
+<td>抖音静态 CDN</td>
+<td></td>
+<td>0.025–0.10 s</td>
+</tr>
+<tr>
+<td>哔哩哔哩主页</td>
+<td></td>
+<td>0.07–0.11 s</td>
+</tr>
+<tr>
+<td>图片 CDN</td>
+<td></td>
+<td>0.03–0.08 s</td>
+</tr>
+</tbody></table>
+<p>改动只有这一个开关。全局关闭意味着所有连这台路由器的设备一起改走 IPv4，它们手上的旧连接不会自动迁移，改完需要重开应用。</p>
+<p>结论适用于这台 BE5000、1.0.91 固件、只下发 &#x2F;64 的校园网。可复用的是判据和实验设计，不是”关 IPv6”这个动作。</p>
+<h2 id="六、用户侧修不了的部分"><a href="#六、用户侧修不了的部分" class="headerlink" title="六、用户侧修不了的部分"></a>六、用户侧修不了的部分</h2><p>关掉 IPv6 后重测分方向吞吐：</p>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>靶标</th>
+<th>下载</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电信</td>
+<td>华为云镜像</td>
+<td>302 Mbps</td>
+</tr>
+<tr>
+<td>移动</td>
+<td>网易镜像</td>
+<td>44 Mbps</td>
+</tr>
+<tr>
+<td>教育网</td>
+<td>USTC 镜像</td>
+<td>4.5 Mbps</td>
+</tr>
+</tbody></table>
+<p><code>223.5.5.5</code> 平均 4 ms、20 包 0 丢包。同一时刻电信方向能跑 300 Mbps，说明不是总带宽、账号限速或终端性能，而是校园网到不同上游的分方向问题。</p>
+<p>上一轮为排除用户侧做过一次 A&#x2F;B：同一根墙线、同一个 <code>10.12.x.x</code> 内网地址、同一个 NAT 出口，分别在”经路由器”和”直连墙口”两种接法下测同一批目标 IP，结果一致甚至直连更差。</p>
+<table>
+<thead>
+<tr>
+<th>目标</th>
+<th>经路由器 12:37</th>
+<th>直连墙口 13:19</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>校园首跳</td>
+<td>0% 丢包 &#x2F; 2 ms</td>
+<td>0% 丢包 &#x2F; 1 ms</td>
+</tr>
+<tr>
+<td>网易 &#x2F; 移动</td>
+<td>5% &#x2F; 53 ms &#x2F; 4 Mbps</td>
+<td>10% &#x2F; 56 ms &#x2F; 1 Mbps</td>
+</tr>
+<tr>
+<td>华为云 &#x2F; 电信</td>
+<td>7.5% &#x2F; 28 ms &#x2F; 9 Mbps</td>
+<td>1 Mbps</td>
+</tr>
+</tbody></table>
+<p>其余排除项：MTU 1472 不分片可通，非路径 MTU 黑洞；下行 301 Mbps 满载时 RTT 从 29 升到 43 ms，非缓冲膨胀；用 <code>ping -i</code> 让对端分别看到 TTL 127&#x2F;128&#x2F;129，丢包率 4%&#x2F;10%&#x2F;4% 无规律，非针对 NAT 终端的策略。最有说服力的是路由器内置测速，测速源就是 WAN 口本身，不经 NAT 不经电脑，故障期间连测三次为 1.41 &#x2F; 1.13 &#x2F; 1.51 Mbps 下行。</p>
+<p>这些整理进了一份报障文本。配套留了个常驻脚本，每 60 秒采一轮五个方向的时延、抖动、丢包和 WAN 实时流量，追加进 <code>.diag\watch.csv</code>。四天后它记录了移动方向从 45–47 ms &#x2F; 10% 丢包恢复到 29 ms &#x2F; 0%，同时教育网从 21 ms 劣化到 39 ms。有连续采样，方向性变化才可比较。</p>
+<p>另有一条至今有效的分流优化，校内域名走校园 DNS、其余走公共 DNS，重启不丢：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Add-DnsClientNrptRule</span> <span class="literal">-Namespace</span> <span class="selector-tag">@</span>(<span class="string">&quot;buct.edu.cn&quot;</span>, <span class="string">&quot;.buct.edu.cn&quot;</span>) `</span><br><span class="line">  <span class="literal">-NameServers</span> <span class="selector-tag">@</span>(<span class="string">&quot;202.4.130.100&quot;</span>, <span class="string">&quot;202.4.130.101&quot;</span>, <span class="string">&quot;223.5.5.5&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、IPv4-与-IPv6-的取舍"><a href="#七、IPv4-与-IPv6-的取舍" class="headerlink" title="七、IPv4 与 IPv6 的取舍"></a>七、IPv4 与 IPv6 的取舍</h2><table>
+<thead>
+<tr>
+<th>项目</th>
+<th>IPv4</th>
+<th>IPv6</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>宿舍内工作方式</td>
+<td>BE5000 做 NAT，多设备共用一个内网地址</td>
+<td>理想是路由器获 PD 前缀再分配，实际是同前缀中继</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>最成熟</td>
+<td>大部分支持，不是全部</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>取决于路径</td>
+<td>协议本身不比 IPv4 慢，受中继实现与上游质量影响</td>
+</tr>
+<tr>
+<td>对体验的影响</td>
+<td>—</td>
+<td>双栈应用优先试 IPv6，评论、头像、图片分属不同 CDN</td>
+</tr>
+</tbody></table>
+<p>表格最后一行是本次问题的成因：主文档走 IPv4 很快，评论和图片走 IPv6 很慢，页面卡在后者上。</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>收益</th>
+<th>代价</th>
+<th>适用条件</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>路由器全局关闭 IPv6（当前做法）</td>
+<td>长尾消失，全设备统一</td>
+<td>纯 IPv6 校内资源不可达</td>
+<td>不需要 IPv6</td>
+</tr>
+<tr>
+<td>终端设 IPv4 优先、IPv6 后备</td>
+<td>保留 IPv6 能力</td>
+<td>手机等设备仍受中继影响，部分应用自选栈</td>
+<td>需要 IPv6</td>
+</tr>
+<tr>
+<td>向学校申请 DHCPv6-PD</td>
+<td>结构正确，保留完整 IPv6</td>
+<td>取决于网络中心是否配置</td>
+<td>长期解法</td>
+</tr>
+<tr>
+<td>改 AP &#x2F; 桥接模式</td>
+<td>绕过中继与 NAT</td>
+<td>多设备各自认证、可能限终端数或绑 MAC、防火墙与设备隔离消失、内网结构变更</td>
+<td>确认账号支持多终端</td>
+</tr>
+<tr>
+<td>刷第三方固件或 NAT66</td>
+<td>可精细控制 NDP Proxy</td>
+<td>变砖风险，且修不了上游路由质量</td>
+<td>不推荐</td>
+</tr>
+</tbody></table>
+<p>顺序建议：先关闭；确实需要 IPv6 时退到终端优先级方案；同时向网络中心确认宿舍有线是否支持 DHCPv6 Prefix Delegation。不要把 <code>pi_relay</code> 留作长期默认路径。</p>
+<h2 id="八、排查清单"><a href="#八、排查清单" class="headerlink" title="八、排查清单"></a>八、排查清单</h2><p>按顺序执行，前一层不干净则后面的测量无效：</p>
+<ol>
+<li>网卡协商速率与错误、丢弃计数</li>
+<li>电脑 → 网关连打 100 包，记录最大值而不是平均值</li>
+<li>网关 → 校园或运营商首跳</li>
+<li>分方向吞吐，至少电信、联通、移动、教育网各一个镜像靶标</li>
+<li>多 resolver 的 DNS 计时</li>
+<li>以上正常但仍有卡顿：40–50 路并发打同一目标，看建连最大值</li>
+<li><code>curl -4</code> 与 <code>curl -6</code> 分开各压一轮</li>
+</ol>
+<p>判据：</p>
+<ul>
+<li>平均值正常、最大值离谱即为长尾，页面卡顿量级与最大值对应。</li>
+<li>空闲 ping 不能排除转发层故障。</li>
+<li>IPv6 的 ICMP 不通是常态，用 TCP 建连判断。</li>
+<li>“绕过路由器更顺”与既有结论冲突时，先重排结论，不要补测。</li>
+</ul>
+<p>以下动作在当时条件下都不必做：恢复出厂（根因是固件默认中继模式，重置后仍在）、改 DNS（DNS 正常，只会增加变量）、开 QoS 或限速（CPU 负载 0，排队不在路由器）、为 160 MHz 换信道（本机走网线，且宿舍频谱拥挤）、测出长尾前刷固件。</p>
+<p>9 月 11 日同一套流程复用于一次新的变慢：网卡与网关正常，国内靶标 3–4 ms 且 0 丢包，<code>1.1.1.1</code> 平均 105 ms，Cloudflare 下载 6.7–19.1 Mbps，本机后台流量接近 0。国内全好、只有跨境差，判定为国际出口或跨境路由，未改动任何配置，定位耗时约 15 分钟。</p>
+<p>遗留问题：关闭 IPv6 之后路由器网页后台提示管理密码错误，同一密码走 <code>xqsystem/login</code> 可正常取得会话令牌，说明密码未变，故障在登录页的 nonce 生成与提交链路，当时未查完。</p>
+<h2 id="九、小结"><a href="#九、小结" class="headerlink" title="九、小结"></a>九、小结</h2><p>“直连更顺”这条主观描述是本次唯一有效的实验线索。它与既有结论冲突时，该怀疑的是既有结论：几天前写下的”与用户侧设备无关”作为报障结论成立，作为排查终点不成立。另一个可迁移的点是判据选择，测速工具报的是单条会话的平均值，页面加载取决于并发会话中最慢的那一条，所以要盯最大建连时间和并发失败率。</p>
+<p>BE5000 的转发性能没有变化，教育网方向仍是 4.5 Mbps，报障文本尚未提交。变化是 2.5 秒长尾消失，以及下次变慢时有了一套明确的测量顺序。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%A0%A1%E5%9B%AD%E7%BD%91/">校园网</a><a class="post-meta__tags" href="/tags/%E8%B7%AF%E7%94%B1%E5%99%A8/">路由器</a><a class="post-meta__tags" href="/tags/IPv6/">IPv6</a><a class="post-meta__tags" href="/tags/%E7%BD%91%E7%BB%9C%E8%AF%8A%E6%96%AD/">网络诊断</a><a class="post-meta__tags" href="/tags/%E5%B0%8F%E7%B1%B3BE5000/">小米BE5000</a><a class="post-meta__tags" href="/tags/PowerShell/">PowerShell</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/" title="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</div></div><div class="info-2"><div class="info-item-1">宿舍校园网采用深澜（Srun）认证，掉线频繁，每天早晨恢复供电后需要手动登录一次。为解决这个问题，我用一块十几元的 ESP32-C3 实现了自动认证。 整体思路是：开发板以 STA 模式接入路由器 WiFi，周期性探测网络连通性，检测到掉线后按浏览器的行为完成一次门户登录。校园网认证按 IP 生效，路由器工作在 NAT 模式，因此开发板完成认证后，局域网内所有设备一并恢复联网。路由器无需刷机，也无需安装插件。    一、协议分析：掉线判定与登录流程编码之前，先在已认证的电脑上抓取门户请求，确认几项事实。 掉线判定是第一个关键点。门户劫持时 generate_204 返回 200 与一段 HTML，并非常见的 302 跳转。判定逻辑因此必须只接受 204，返回 200 一律视为掉线。 登录流程为标准 Srun 三步：查询状态、获取 token、提交登录。密码经过 HMAC-MD5，info 字段使用自定义 xencode 与变种 base64，最后附带 SHA-1 校验和。完整接口如下： 1234567连通性探测    http://connect.rom.miui.com/gen...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/" title="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-09-18</div><div class="info-item-2">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</div></div><div class="info-2"><div class="info-item-1">宿舍校园网采用深澜（Srun）认证，掉线频繁，每天早晨恢复供电后需要手动登录一次。为解决这个问题，我用一块十几元的 ESP32-C3 实现了自动认证。 整体思路是：开发板以 STA 模式接入路由器 WiFi，周期性探测网络连通性，检测到掉线后按浏览器的行为完成一次门户登录。校园网认证按 IP 生效，路由器工作在 NAT 模式，因此开发板完成认证后，局域网内所有设备一并恢复联网。路由器无需刷机，也无需安装插件。    一、协议分析：掉线判定与登录流程编码之前，先在已认证的电脑上抓取门户请求，确认几项事实。 掉线判定是第一个关键点。门户劫持时 generate_204 返回 200 与一段 HTML，并非常见的 302 跳转。判定逻辑因此必须只接受 204，返回 200 一律视为掉线。 登录流程为标准 Srun 三步：查询状态、获取 token、提交登录。密码经过 HMAC-MD5，info 字段使用自定义 xencode 与变种 base64，最后附带 SHA-1 校验和。完整接口如下： 1234567连通性探测    http://connect.rom.miui.com/gen...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">13</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">45</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%88%86%E5%B1%82%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.</span> <span class="toc-text">一、分层定位</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%A9%BA%E9%97%B2-ping-%E6%B5%8B%E4%B8%8D%E5%87%BA%E8%BD%AC%E5%8F%91%E5%B1%82%E6%95%85%E9%9A%9C"><span class="toc-number">2.</span> <span class="toc-text">二、空闲 ping 测不出转发层故障</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%8F%8C%E6%A0%88%E5%88%86%E5%BC%80%E5%8E%8B"><span class="toc-number">3.</span> <span class="toc-text">三、双栈分开压</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%A0%B9%E5%9B%A0%EF%BC%9Api-relay"><span class="toc-number">4.</span> <span class="toc-text">四、根因：pi_relay</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E4%BF%AE%E5%A4%8D%E4%B8%8E%E9%AA%8C%E8%AF%81"><span class="toc-number">5.</span> <span class="toc-text">五、修复与验证</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E7%94%A8%E6%88%B7%E4%BE%A7%E4%BF%AE%E4%B8%8D%E4%BA%86%E7%9A%84%E9%83%A8%E5%88%86"><span class="toc-number">6.</span> <span class="toc-text">六、用户侧修不了的部分</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81IPv4-%E4%B8%8E-IPv6-%E7%9A%84%E5%8F%96%E8%88%8D"><span class="toc-number">7.</span> <span class="toc-text">七、IPv4 与 IPv6 的取舍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E6%8E%92%E6%9F%A5%E6%B8%85%E5%8D%95"><span class="toc-number">8.</span> <span class="toc-text">八、排查清单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81%E5%B0%8F%E7%BB%93"><span class="toc-number">9.</span> <span class="toc-text">九、小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/19/campus-network-ipv6-relay-latency-fix/" title="校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录">校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录</a><time datetime="2026-09-19T05:30:00.000Z" title="发表于 2026-09-19 13:30:00">2026-09-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/" title="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</a><time datetime="2026-09-18T04:00:00.000Z" title="发表于 2026-09-18 12:00:00">2026-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/27/free-llm-api-key-channels/" title="免费 LLM API Key 渠道清单（转载留存）">免费 LLM API Key 渠道清单（转载留存）</a><time datetime="2026-08-27T13:20:00.000Z" title="发表于 2026-08-27 21:20:00">2026-08-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-android-runtime-path-lessons/" title="PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot">PyStudio Termux 构建踩坑记（四）：Android 私有目录里的路径、npm、pip 和 proot</a><time datetime="2026-07-05T10:40:00.000Z" title="发表于 2026-07-05 18:40:00">2026-07-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/07/05/pystudio-termux-mirror-manifest-lessons/" title="PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站">PyStudio Termux 构建踩坑记（三）：Gitee、ModelScope 和 Cloudflare Pages 清单站</a><time datetime="2026-07-05T10:30:00.000Z" title="发表于 2026-07-05 18:30:00">2026-07-05</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
