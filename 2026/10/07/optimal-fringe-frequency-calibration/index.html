@@ -1,0 +1,731 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>最优条纹频率怎么选：从误差公式到标定与推荐算法 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="推导 fλ(f) 推荐分数，详解白板采集、调制幅值估计、五段光强模型、逐像素拟合、全局汇总和近优频率集合，附计算示意图与可运行代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="最优条纹频率怎么选：从误差公式到标定与推荐算法">
+<meta property="og:url" content="https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="推导 fλ(f) 推荐分数，详解白板采集、调制幅值估计、五段光强模型、逐像素拟合、全局汇总和近优频率集合，附计算示意图与可运行代码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/cover.svg">
+<meta property="article:published_time" content="2026-10-07T06:30:00.000Z">
+<meta property="article:modified_time" content="2026-10-07T06:30:00.000Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="三维测量">
+<meta property="article:tag" content="条纹投影">
+<meta property="article:tag" content="相位展开">
+<meta property="article:tag" content="MEMS">
+<meta property="article:tag" content="参数标定">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/cover.svg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "最优条纹频率怎么选：从误差公式到标定与推荐算法",
+  "url": "https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/",
+  "image": "https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/cover.svg",
+  "datePublished": "2026-10-07T06:30:00.000Z",
+  "dateModified": "2026-10-07T06:30:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/10/07/optimal-fringe-frequency-calibration/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '最优条纹频率怎么选：从误差公式到标定与推荐算法',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2026/10/07/optimal-fringe-frequency-calibration/cover.svg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">最优条纹频率怎么选：从误差公式到标定与推荐算法</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">最优条纹频率怎么选：从误差公式到标定与推荐算法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-07T06:30:00.000Z" title="发表于 2026-10-07 14:30:00">2026-10-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-07T06:30:00.000Z" title="更新于 2026-10-07 14:30:00">2026-10-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%8A%80%E6%9C%AF%E5%88%86%E6%9E%90/">技术分析</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>增加条纹数量，相同的位置变化会产生更大的相位变化，按理说更容易测准。可条纹太密时，相机看到的明暗起伏又会变弱，甚至接近噪声。到底该选哪一个频率？</p>
+<p>不能只挑画面最清楚的，也不能把别人的“最优 88 个周期”直接填进自己的设备。需要先测出系统在各个频率下的调制幅值，再把它与位置灵敏度放在同一个误差模型里比较。</p>
+<p>这篇沿着“推导目标 → 采集标定数据 → 拟合 → 搜索 → 实测验收”展开。主线是扫描式条纹投影的窗口平滑模型；有关数据筛选、全局误差优化和近优集合的做法，会明确标为工程扩展。所有曲线都是本文公式计算的教学示意，不冒充硬件实验结果。</p>
+<span id="more"></span>
+
+<p>如果还不熟悉背景亮度 A、调制幅值 B、包裹相位和相位展开，可以先看<a href="/2026/10/07/fringe-projection-phase-learning/">条纹测量基础：相移、展开与深度学习</a>。这里不再重复整套基础，重点回答频率怎样选。</p>
+<h2 id="先说清楚：选的是条纹数量，不是相移步数"><a href="#先说清楚：选的是条纹数量，不是相移步数" class="headerlink" title="先说清楚：选的是条纹数量，不是相移步数"></a>先说清楚：选的是条纹数量，不是相移步数</h2><table>
+<thead>
+<tr>
+<th>量</th>
+<th>本文记号</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>条纹数量</td>
+<td>f</td>
+<td>规定投影范围内的完整周期数</td>
+</tr>
+<tr>
+<td>空间频率</td>
+<td>ν</td>
+<td>单位空间长度内的周期数</td>
+</tr>
+<tr>
+<td>条纹周期宽度</td>
+<td>T_f</td>
+<td>一次“亮→暗→亮”占据的长度</td>
+</tr>
+<tr>
+<td>相移步数</td>
+<td>N</td>
+<td>一组相移图像的张数</td>
+</tr>
+<tr>
+<td>投影帧率</td>
+<td>fps</td>
+<td>每秒投出多少幅图案</td>
+</tr>
+</tbody></table>
+<p>若投影范围宽度为 \(L\)，则：</p>
+
+\[
+\nu=\frac fL,\qquad T_f=\frac Lf.
+\]
+
+
+<p>例如在 100 mm 的范围内投 80 个周期，空间频率是 0.8 周期&#x2F;mm，一个周期宽 1.25 mm。用 6 步相移测量它，意味着拍 6 张相同密度、不同偏移的条纹图，不是只投 6 个周期。</p>
+<p>讨论最优值时，范围定义必须一致。原模型按特定扫描角区间定义条纹数，不能把半幅与整幅扫描范围的数值直接比较。实际投影器还可能按投影坐标而不是毫米设置频率，需要通过几何关系换算。</p>
+<p>对于多频展开，本文主要选择的是最后负责精细测量的最高频率。低频、中频怎样配合，以及总共需要多少帧，仍是另外的设计问题。</p>
+<h2 id="为什么推荐分数是-fλ-f"><a href="#为什么推荐分数是-fλ-f" class="headerlink" title="为什么推荐分数是 fλ(f)"></a>为什么推荐分数是 fλ(f)</h2><h3 id="更密的条纹，提高位置灵敏度"><a href="#更密的条纹，提高位置灵敏度" class="headerlink" title="更密的条纹，提高位置灵敏度"></a>更密的条纹，提高位置灵敏度</h3><p>先用一维线性编码理解相位与位置的关系：</p>
+
+\[
+\Phi(x)=\frac{2\pi f}{L}x+\Phi_0.
+\]
+
+
+<p>其中 \(x\) 是编码方向的位置，\(\Phi_0\) 是相位基准。位置变化 \(\Delta x\) 产生：</p>
+
+\[
+\Delta\Phi=\frac{2\pi f}{L}\Delta x.
+\]
+
+
+<p>取 \(L=100\) mm，位置差为 0.1 mm。20 个周期产生约 0.126 rad 的相位变化，100 个周期则产生约 0.628 rad。后者放大了同一位置差的相位响应。</p>
+<p>这说明高频编码更敏感，还不能单独证明它更准确。相位本身能读得多稳定，也要算进去。</p>
+<h3 id="调制幅值下降，相位噪声会变大"><a href="#调制幅值下降，相位噪声会变大" class="headerlink" title="调制幅值下降，相位噪声会变大"></a>调制幅值下降，相位噪声会变大</h3><p>相移图像满足：</p>
+
+\[
+I_n=A+B(f)\cos(\phi-\delta_n).
+\]
+
+
+\(A\) 是背景亮度，\(B(f)\) 是当前频率下的明暗起伏幅度。在线激光扫描系统中，有限宽度的光带会把邻近位置的光混合起来，高频起伏往往更容易衰减。
+
+<p>在等步相移、小幅独立同方差亮度噪声条件下，常用近似为：</p>
+
+\[
+\sigma_\phi\approx\sqrt{\frac2N}\frac{\sigma_I}{B(f)}.
+\]
+
+
+\(\sigma_I\) 是亮度噪声标准差，\(\sigma_\phi\) 是相位误差标准差。幅值越小，同样的亮度噪声就越容易影响角度估计。运动、饱和、谐波和整周期展开错误不在这个简化公式里。
+
+<h3 id="把相位误差换到共同的位置尺度"><a href="#把相位误差换到共同的位置尺度" class="headerlink" title="把相位误差换到共同的位置尺度"></a>把相位误差换到共同的位置尺度</h3><p>由编码关系反求位置：</p>
+
+\[
+x=\frac{L}{2\pi f}(\Phi-\Phi_0).
+\]
+
+
+<p>在展开正确、误差足够小时，误差传播给出：</p>
+
+\[
+\begin{aligned}
+\sigma_x&\approx\frac{L}{2\pi f}\sigma_\Phi,\\
+&\approx\frac{L}{2\pi f}\sqrt{\frac2N}\frac{\sigma_I}{B(f)}.
+\end{aligned}
+\]
+
+
+<p>固定范围、步数和噪声条件后：</p>
+
+\[
+\sigma_x\propto\frac1{fB(f)}.
+\]
+
+
+<p>所以，不能拿高频和低频的原始相位误差直接比位置精度。高频相位数值即使更抖，换成相同空间尺度后仍可能更准。</p>
+<p>这里的 \(x\) 是编码位置，不是任何装置都通用的深度公式。要预测三维坐标误差，还需经过实际标定映射的局部导数，也就是几何误差传播系数。</p>
+<h3 id="用衰减因子描述幅值变化"><a href="#用衰减因子描述幅值变化" class="headerlink" title="用衰减因子描述幅值变化"></a>用衰减因子描述幅值变化</h3><p>窗口平滑模型把调制幅值写成：</p>
+
+\[
+B(f)=(A-\varepsilon)\lambda(f).
+\]
+
+
+\(\varepsilon\) 表示环境光贡献，\(\lambda(f)\) 是调制幅值的保留比例。若平均投影贡献 \(A-\varepsilon\) 不随频率明显改变：
+
+
+\[
+\sigma_x\propto\frac1{f\lambda(f)}.
+\]
+
+
+<p>于是推荐分数与最优选择就是：</p>
+
+\[
+\begin{aligned}
+Q(f)&=f\lambda(f),\\
+f_{\mathrm{opt}}&=\underset{f\in\mathcal F}{\arg\max}\ Q(f).
+\end{aligned}
+\]
+
+
+\(\mathcal F\) 是允许使用的频率集合，arg max 的意思是“找出让分数最大的那个频率”。这个乘积来自误差传播，不是随意给两个指标加权。
+
+<h2 id="一个算得出来的例子：条纹更清楚，不代表位置更准"><a href="#一个算得出来的例子：条纹更清楚，不代表位置更准" class="headerlink" title="一个算得出来的例子：条纹更清楚，不代表位置更准"></a>一个算得出来的例子：条纹更清楚，不代表位置更准</h2><p>先用高斯平滑做教学示例，它便于解析计算，但不是后文五段模型的拟合结果。设投影宽度为 100 mm，高斯空间权重的标准差为 0.2 mm。</p>
+<p>这里用 \(s\) 表示高斯标准差，它不是直接等于光带的直径或半高全宽。没有统一线宽定义时，不能把设备标注的宽度直接填进来。</p>
+<p>高斯权重对正弦的幅值响应是：</p>
+
+\[
+\lambda(f)=\exp\left[-2\pi^2s^2\left(\frac fL\right)^2\right].
+\]
+
+
+<p><img src="/2026/10/07/optimal-fringe-frequency-calibration/frequency-tradeoff.svg" alt="高斯教学模型中，频率提高时调制幅值下降，推荐分数先升后降，归一化位置误差在80个周期附近最低"></p>
+<p><em>图 1：同一模型的三种观察方式。上图看幅值，中图看推荐分数，下图看相对位置误差。示例参数 L&#x3D;100 mm、s&#x3D;0.2 mm；不是实测数据。</em></p>
+<table>
+<thead>
+<tr>
+<th align="right">条纹数 f</th>
+<th align="right">幅值保留比例 λ</th>
+<th align="right">分数 Q</th>
+<th align="right">预测误差相对最优值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">20</td>
+<td align="right">0.969</td>
+<td align="right">19.38</td>
+<td align="right">2.49 倍</td>
+</tr>
+<tr>
+<td align="right">40</td>
+<td align="right">0.881</td>
+<td align="right">35.25</td>
+<td align="right">1.37 倍</td>
+</tr>
+<tr>
+<td align="right">60</td>
+<td align="right">0.753</td>
+<td align="right">45.15</td>
+<td align="right">1.07 倍</td>
+</tr>
+<tr>
+<td align="right">80</td>
+<td align="right">0.603</td>
+<td align="right">48.26</td>
+<td align="right">1.00 倍</td>
+</tr>
+<tr>
+<td align="right">100</td>
+<td align="right">0.454</td>
+<td align="right">45.40</td>
+<td align="right">1.06 倍</td>
+</tr>
+<tr>
+<td align="right">120</td>
+<td align="right">0.321</td>
+<td align="right">38.49</td>
+<td align="right">1.25 倍</td>
+</tr>
+<tr>
+<td align="right">160</td>
+<td align="right">0.132</td>
+<td align="right">21.20</td>
+<td align="right">2.28 倍</td>
+</tr>
+</tbody></table>
+<p>20 个周期保留了很高的幅值，但位置灵敏度低；160 个周期虽然密，幅值已经损失太多。80 附近更合适。</p>
+<p>还可以直接求导检查。将指数中的系数记为 \(c\)：</p>
+
+\[
+\begin{aligned}
+c&=\frac{2\pi^2s^2}{L^2},\\
+Q(f)&=f\exp(-cf^2),\\
+Q'(f)&=\exp(-cf^2)(1-2cf^2).
+\end{aligned}
+\]
+
+
+<p>正频率上的最优点为：</p>
+
+\[
+f_{\mathrm{opt}}=\frac{L}{2\pi s}\approx79.58.
+\]
+
+
+<p>若候选值限定为 1 到 200 的整数，结果就是 80。在这个特定高斯模型中，连续最优点的幅值保留比例为 \(e^{-1/2}\approx0.607\)。这不意味着其他光束也应在“对比度降到六成”时选频率。</p>
+<h2 id="标定之前，要准备哪些数据"><a href="#标定之前，要准备哪些数据" class="headerlink" title="标定之前，要准备哪些数据"></a>标定之前，要准备哪些数据</h2><p>实际算法不能预先知道光束的响应曲线，要测量它。</p>
+<p><img src="/2026/10/07/optimal-fringe-frequency-calibration/calibration-workflow.svg" alt="最优频率标定流程，从固定相机和激光设置、白板多频采集、提取幅值，到逐像素拟合、候选搜索和实际重建验收"></p>
+<p><em>图 2：主体是模型标定与搜索；有效像素筛选、保留频率验证和最终验收是本文补充的工程质量检查。</em></p>
+<h3 id="白板、工作距离和固定设置"><a href="#白板、工作距离和固定设置" class="headerlink" title="白板、工作距离和固定设置"></a>白板、工作距离和固定设置</h3><p>选用稳定、近似漫反射的白色平面目标，避免强光泽、纹理、遮挡和饱和。它是帮助分离系统响应的标定目标，不限制以后只能测白色物体。</p>
+<p>同一个距离位置上，比较不同频率时应固定曝光、增益、激光功率、相移步数和图案调制方式。关闭自动曝光与自动增益，保持相机在有效对焦范围内。频率变了，曝光也跟着变，测得的幅值就不再只反映频率响应。</p>
+<p>沿工作深度移动白板，在多个距离重复。每次移动后等目标稳定再采集，记录距离、曝光、功率和相机设置。扫描式投影减少了某些投影端离焦问题，但相机的景深仍然有限。</p>
+<h3 id="频率点怎么安排"><a href="#频率点怎么安排" class="headerlink" title="频率点怎么安排"></a>频率点怎么安排</h3><p>一种已报道的采样设置是：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1, 5, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200</span><br></pre></td></tr></table></figure>
+
+<p>每个频率采集 6 步相移，单个距离需要 12×6&#x3D;72 张基础图像。假设自行安排 5 个距离，就是 360 张，还不包括暗场和重复采集。这里的五个距离只是采集量示例，不是规定。</p>
+<p>采样应覆盖衰减较小的低频、可能出现最优点的区域，以及衰减明显的较高频。可以先粗采，再在峰值附近加密。只测峰值左边几个点，却把模型一路外推到很高的频率，得到的“最优值”可能没有数据支持。</p>
+<p>对实际实现，数据可组织为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">images[distance, frequency, phase_step, y, x]</span><br><span class="line">background[distance, y, x]</span><br><span class="line">valid_mask[distance, frequency, y, x]</span><br></pre></td></tr></table></figure>
+
+<p>这里强调坐标含义，不要求一次把全部图片装入内存。逐距离、逐图块处理同样可以完成标定。</p>
+<h2 id="从相移图计算-A、B-和衰减因子"><a href="#从相移图计算-A、B-和衰减因子" class="headerlink" title="从相移图计算 A、B 和衰减因子"></a>从相移图计算 A、B 和衰减因子</h2><p>对某个像素、某个距离和某个频率的一组相移图，使用与前文一致的减号约定，计算：</p>
+
+\[
+\begin{aligned}
+\delta_n&=\frac{2\pi n}{N},\\
+A&=\frac1N\sum_{n=0}^{N-1}I_n,\\
+M&=\sum_{n=0}^{N-1}I_n\sin\delta_n,\\
+D&=\sum_{n=0}^{N-1}I_n\cos\delta_n,\\
+B&=\frac2N\sqrt{M^2+D^2}.
+\end{aligned}
+\]
+
+
+<p>于是：</p>
+
+\[
+\lambda=\frac{B}{A-\varepsilon}.
+\]
+
+
+<p>暗环境下近似为 \(\lambda=B/A\)。例如 \(A=120\)、\(B=72\)、环境光可忽略，得到 0.6；更高频率下若 \(A\) 仍为 120、\(B\) 降到 36，就得到 0.3。</p>
+<p>原始资料有一处正文把这个比例写成倒数。由幅值定义可知应为 B&#x2F;A，复现时不能直接照抄。并且，这种归一化依赖投影调制和成像线性条件；若图案本来就没有采用完整的正弦调制，响应比例还会包含调制深度。</p>
+<h3 id="环境光与黑电平"><a href="#环境光与黑电平" class="headerlink" title="环境光与黑电平"></a>环境光与黑电平</h3><p>在同样曝光、增益、环境条件下关闭投影光，可以估计环境背景。相机黑电平等电子偏置还需要按设备校正方式处理，不应算作有效的平均投影贡献。</p>
+<p>分母接近零时不要继续相除。白板暗部、遮挡和低信号区域的比值容易剧烈波动，应该标记无效，而不是让异常值参与后面的拟合。</p>
+<h3 id="幅值估计在噪声底附近有偏"><a href="#幅值估计在噪声底附近有偏" class="headerlink" title="幅值估计在噪声底附近有偏"></a>幅值估计在噪声底附近有偏</h3><p>即使真实条纹幅值为零，噪声也会让 M、D 的平方和大于零。因此，用模长估计出来的 B 通常不会恰好为零。</p>
+<p>如果高频端已经没有有效条纹，却把这些噪声幅值当作真实响应，拟合曲线就可能被抬高，进而错误推荐很高的频率。</p>
+<p>工程上至少需要筛除：</p>
+<ul>
+<li>达到饱和值或明显波峰截断的像素；</li>
+<li>背景校正后过暗、调制幅值接近噪声底的像素；</li>
+<li>坏点、遮挡、采集期间移动的区域；</li>
+<li>相移波形残差异常，明显不符合正弦模型的区域。</li>
+</ul>
+<p>阈值应由相机噪声与重复采集决定。后文代码中的阈值仅演示接口，不是所有相机通用的设定。</p>
+<h2 id="用五段光强模型拟合-λ-f"><a href="#用五段光强模型拟合-λ-f" class="headerlink" title="用五段光强模型拟合 λ(f)"></a>用五段光强模型拟合 λ(f)</h2><h3 id="分段是在描述什么"><a href="#分段是在描述什么" class="headerlink" title="分段是在描述什么"></a>分段是在描述什么</h3><p>线激光不是没有厚度的一条数学直线。它在扫描方向上的空间光强分布，会影响每个位置积累到的光。</p>
+<p>把光带总宽度记为 W，分成五段，每段宽度为 \(\ell=W/5\)。五段的相对光强分别为 \(c_{-2}\) 到 \(c_2\)。</p>
+<p><img src="/2026/10/07/optimal-fringe-frequency-calibration/five-segment-profile.svg" alt="五段对称光强示意，中央段和内外两对段分别贡献归一化权重，区分总宽度W与单段宽度ell"></p>
+<p><em>图 3：用 1、2、4、2、1 作为教学权重。图中的数值不是对真实激光器的测量，也不是固定的最佳分布。</em></p>
+<p>对于近似对称的分布，在模型适用的响应区间内，可以写成：</p>
+
+\[
+\begin{aligned}
+G(f)&=a_2+a_3\cos(2a_1f)\\
+&\quad+a_4\cos(4a_1f),\\
+\lambda(f)&=\operatorname{sinc}(a_1f)G(f).
+\end{aligned}
+\]
+
+
+<p>此处采用 \(\operatorname{sinc}(z)=\sin z/z\)，在零点按极限取 1。NumPy 的 np.sinc 使用另一种常见定义：np.sinc(x)&#x3D;sin(πx)&#x2F;(πx)，所以代码应写成 np.sinc(a1*f&#x2F;np.pi) 才对应这里的表达式。</p>
+<p>定义总权重 \(C=\sum_{k=-2}^{2}c_k\) 后：</p>
+
+\[
+\begin{aligned}
+a_1&=\frac{\pi\ell}{L},\\
+a_2&=\frac{c_0}{C},\\
+a_3&=\frac{c_{-1}+c_1}{C},\\
+a_4&=\frac{c_{-2}+c_2}{C}.
+\end{aligned}
+\]
+
+
+\(a_1\) 控制空间宽度相对投影范围的尺度，另外三项分别表示中央段、内侧两段和外侧两段的贡献。在严格归一化定义下，它们非负，且和为 1。如果额外加入投影调制深度等比例项，应明确把它与这些权重分开。
+
+<p>同样是“线宽”，总宽度 W、单段宽度 ℓ、高斯标准差 s 都不同。混用会让最优频率差出一个常数倍，而程序可能仍然正常运行。</p>
+<h3 id="非线性最小二乘怎么用"><a href="#非线性最小二乘怎么用" class="headerlink" title="非线性最小二乘怎么用"></a>非线性最小二乘怎么用</h3><p>每个像素得到若干实测点 \((f_i,\lambda_i)\)，通过拟合寻找模型参数。为了让公式更好读，先把残差记为 \(r_i\)：</p>
+
+\[
+\begin{aligned}
+\boldsymbol a&=(a_1,a_2,a_3,a_4),\\
+r_i(\boldsymbol a)&=\hat\lambda(f_i;\boldsymbol a)-\lambda_i,\\
+\hat{\boldsymbol a}&=\arg\min_{\boldsymbol a}\sum_i w_i r_i^2(\boldsymbol a).
+\end{aligned}
+\]
+
+
+<p>残差是预测值与实测值之差；最小二乘最小化残差平方和。参数进入 sinc 和余弦函数，因此这是非线性拟合。权重 \(w_i\) 可以全取 1，也可以根据重复测量的不确定度设置，降低不可靠数据的影响。</p>
+<p>原方法使用最小二乘。以下是实现时的额外建议：</p>
+<ol>
+<li>给参数合理的物理边界，不让负光强或不合理线宽拟合噪声。</li>
+<li>尝试多个合理初值，避免只接受一次局部收敛结果。</li>
+<li>记录逐像素残差和失效掩膜，不只报告整幅图平均误差。</li>
+<li>预留部分频率或独立重复采集作验证，检查模型能否预测没参与拟合的数据。</li>
+<li>只在经过采样支持的区间内推荐。最优点跑到搜索边界，应提示范围可能不足。</li>
+</ol>
+<p>如果某些像素无法可靠拟合，应返回无效标志，而不是随手用周围均值填成“已标定”。邻域约束可以另做扩展，但会引入新的空间假设。</p>
+<h3 id="正负响应与不对称光束不能忽略"><a href="#正负响应与不对称光束不能忽略" class="headerlink" title="正负响应与不对称光束不能忽略"></a>正负响应与不对称光束不能忽略</h3><p>通过模长计算的 B 非负，但 sinc 与余弦组合的传递系数在部分频段可能为负。负响应会伴随相位翻转，不只是幅值数字换了符号。</p>
+<p>因此，不应在任意频段直接拿有符号曲线拟合 B&#x2F;A，更不能静默裁掉负值。初次实现可以限定在响应符号明确、幅值充足且经过验证的工作区间；若需要跨过零点，必须分别处理幅值和相位。</p>
+<p>不对称光束还可能引入额外相位偏移。原模型也讨论了使相关正弦项抵消的频率关系，例如单段宽度与条纹周期之比接近半整数。但正弦项为零不自动保证幅值非零、相位分支正确，更不能把这个条件脱离信号强度单独用来选频率。</p>
+<h2 id="搜索时先定义允许使用的候选集合"><a href="#搜索时先定义允许使用的候选集合" class="headerlink" title="搜索时先定义允许使用的候选集合"></a>搜索时先定义允许使用的候选集合</h2><p>得到模型以后，对每个像素 p、距离位置 j 计算：</p>
+
+\[
+f^*_{p,j}=\underset{f\in\mathcal F}{\arg\max}\ f\lambda_{p,j}(f).
+\]
+
+
+<p>如果只考虑 10 到 180 的整数，一共 171 个候选，逐个计算即可。响应曲线可能有多个局部峰值，这时有限集合枚举比依赖一个初值的局部优化更容易检查。</p>
+<p>整数周期是常见图案设计选择，但不是所有设备在数学上只能用整数频率。候选集合应来自实际编码和硬件接口。</p>
+<p>候选值进入评分前，需要同时满足：</p>
+<table>
+<thead>
+<tr>
+<th>约束</th>
+<th>检查内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>模型有效性</td>
+<td>在已验证的频率区间内，响应分支明确</td>
+</tr>
+<tr>
+<td>有效信号</td>
+<td>调制幅值高于噪声底，饱和和失效比例可接受</td>
+</tr>
+<tr>
+<td>投影采样</td>
+<td>每个周期有足够有效采样，波形可实现</td>
+</tr>
+<tr>
+<td>相机采样</td>
+<td>局部条纹没有严重混叠，倾斜表面也要检查</td>
+</tr>
+<tr>
+<td>展开方案</td>
+<td>低频到高频的级次恢复可靠</td>
+</tr>
+<tr>
+<td>工作范围</td>
+<td>覆盖目标距离与关键区域，不只在中心点有效</td>
+</tr>
+</tbody></table>
+<p>Nyquist 条件只是某些混叠问题的理论底线，不是高精度解相的验收标准。尤其在陡峭表面，局部成像条纹可能比白板标定时更密。</p>
+<p>如果允许的候选频率本来就很少，也可以每个都实际采集，直接比较 \(f\lambda\)，不一定要先拟合。模型的价值主要在物理解释、频率点之间的估计和数据降噪，不是增加步骤本身。</p>
+<h2 id="从每个像素的最优值，到设备的一个设置"><a href="#从每个像素的最优值，到设备的一个设置" class="headerlink" title="从每个像素的最优值，到设备的一个设置"></a>从每个像素的最优值，到设备的一个设置</h2><h3 id="原方法：先求局部最优，再汇总平均"><a href="#原方法：先求局部最优，再汇总平均" class="headerlink" title="原方法：先求局部最优，再汇总平均"></a>原方法：先求局部最优，再汇总平均</h3><p>扫描位置、光路和工作距离不同，参数也可能不同，所以会得到一张最优频率图，而不是一开始就得到一个数字。</p>
+<p>原方法在每个距离求所有像素的最优频率，然后取均值，再对工作空间的多个位置取均值：</p>
+
+\[
+\begin{aligned}
+\bar f_j&=\frac1{P_j}\sum_{p\in V_j}f^*_{p,j},\\
+f_{\mathrm{final}}&=\frac1J\sum_{j=1}^{J}\bar f_j.
+\end{aligned}
+\]
+
+
+\(V_j\) 是第 j 个距离的有效像素集合，\(P_j\) 是其数量。实现时排除无效像素，是实际数据质量控制。最终均值若不属于允许集合，应映射到可用候选，并检查相邻选择。
+
+<p>一个已报道的系统在约 220–280 mm 的工作空间汇总得到 88 个周期。这是该系统的标定结果，不是方法给所有设备规定的答案。</p>
+<h3 id="工程扩展：平均局部最优，不一定最小化全局误差"><a href="#工程扩展：平均局部最优，不一定最小化全局误差" class="headerlink" title="工程扩展：平均局部最优，不一定最小化全局误差"></a>工程扩展：平均局部最优，不一定最小化全局误差</h3><p>两个操作一般不等价：</p>
+
+\[
+\operatorname{mean}(\arg\max Q_p)
+\ne
+\arg\max(\operatorname{mean}Q_p).
+\]
+
+
+<p>更不用说，它们也未必等价于最小化重建坐标的平均误差。有些像素在峰值附近很平坦，另一些像素在稍高频率就迅速失去信号；简单平均各自的峰值位置，没有考虑这种差别。</p>
+<p>若目标是全局平均方差，可以在明确噪声和几何系数后，直接对所有有效区域评价同一个候选频率：</p>
+
+\[
+\begin{aligned}
+\sigma_{p,j}(f)&=\frac{C_{p,j}}{f\lambda_{p,j}(f)},\\
+f^*&=\arg\min_{f\in\mathcal F}\sum_{j,p}w_{p,j}\sigma_{p,j}^2(f).
+\end{aligned}
+\]
+
+
+\(C_{p,j}\) 汇总噪声、平均亮度和必要的几何误差传播系数。它是否能视为与频率无关，也要验证。\(w_{p,j}\) 表示应用权重，可以优先照顾常用距离或关键测量区域。
+
+<p>还有一种选择是优化误差的高分位数，而不是平均值。这样可以照顾表现较差的区域，但可能牺牲平均精度。这里没有唯一正确的权重，关键是声明“推荐”在优化什么。</p>
+<p>无论采用哪种汇总，都不要让不同频率各自剔除一批困难像素后直接比平均值。应使用可比的公共评估区域，或显式加入有效覆盖率约束，否则“更准”可能只是删掉了更多坏点。</p>
+<h2 id="用近优集合替代一个过于精确的数字"><a href="#用近优集合替代一个过于精确的数字" class="headerlink" title="用近优集合替代一个过于精确的数字"></a>用近优集合替代一个过于精确的数字</h2><p>如果 80 和 88 的预测误差差别很小，但 88 更容易加入现有展开链，就没有必要为了数学峰值强行更改整套编码。</p>
+<p>设允许保留最优分数的比例为 \(\eta\)，定义：</p>
+
+\[
+\mathcal F_\eta=
+\{f\in\mathcal F:Q(f)\geq\eta Q_{\max}\}.
+\]
+
+
+<p>若 \(\eta=0.95\)，在同一误差模型下，集合中各频率的预测标准差不超过最佳值的 \(1/0.95\approx1.053\) 倍，也就是多约 5.3%。这是标准差的容差，不是方差的 5%。</p>
+<p><img src="/2026/10/07/optimal-fringe-frequency-calibration/near-optimal-set.svg" alt="推荐分数的95%近优集合，在高斯教学示例中为63到98个整数周期，并标出可用离散候选与最优80"></p>
+<p><em>图 4：浅色带表示分数至少达到最优值的 95%。灰色点演示一组设备可能允许的离散候选，不能把带内任意数值都视为硬件可用。</em></p>
+<p>在前面的高斯示例中，1 到 200 的整数搜索给出最优 80，95% 近优集合为 63 到 98。这个例子只有一个连续峰，所以集合刚好是连续区间；真实响应有多个峰或硬件只允许部分值时，必须保留候选列表，不能只报告最小值和最大值。</p>
+<p>还应区分“近优容差”和“统计置信区间”。95% 分数阈值是人为选择的工程容差，并不是说真实最优频率有 95% 概率落在这里。若要估计标定不确定性，可以对重复数据重新拟合、重新搜索，观察结果如何变化。</p>
+<h2 id="一段能运行的推荐代码"><a href="#一段能运行的推荐代码" class="headerlink" title="一段能运行的推荐代码"></a>一段能运行的推荐代码</h2><p>下面只用 Python 标准库，演示从已有衰减曲线到候选评分的过程。高斯曲线是教学输入，没有做白板采集或五段参数拟合，也没有替代真实的展开可靠性检查。</p>
+<p>代码返回近优候选列表，而不是默认它们连续。模拟设备约束通过 allowed 参数传入，幅值下限通过 min_lambda 演示。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">gaussian_lambda</span>(<span class="params">f, width=<span class="number">100.0</span>, sigma=<span class="number">0.2</span></span>):</span><br><span class="line">    <span class="keyword">if</span> width &lt;= <span class="number">0</span> <span class="keyword">or</span> sigma &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;width and sigma must be positive&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> math.exp(-<span class="number">2</span> * math.pi**<span class="number">2</span> * sigma**<span class="number">2</span> * (f / width)**<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">recommend</span>(<span class="params">allowed, attenuation, eta=<span class="number">0.95</span>, min_lambda=<span class="number">0.05</span></span>):</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="number">0</span> &lt; eta &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;eta must be in (0, 1]&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> <span class="number">0</span> &lt; min_lambda &lt;= <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;min_lambda must be in (0, 1]&quot;</span>)</span><br><span class="line"></span><br><span class="line">    scores = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> <span class="built_in">sorted</span>(<span class="built_in">set</span>(allowed)):</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> math.isfinite(f) <span class="keyword">or</span> f &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        lam = attenuation(f)</span><br><span class="line">        <span class="comment"># This example expects a positive, normalized amplitude response.</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> math.isfinite(lam) <span class="keyword">or</span> <span class="keyword">not</span> min_lambda &lt;= lam &lt;= <span class="number">1</span>:</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        scores[f] = f * lam</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> scores:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;No reliable candidate frequency&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Equal scores retain the lower frequency because keys are sorted.</span></span><br><span class="line">    best = <span class="built_in">max</span>(scores, key=scores.get)</span><br><span class="line">    threshold = eta * scores[best]</span><br><span class="line">    near = [f <span class="keyword">for</span> f, score <span class="keyword">in</span> scores.items() <span class="keyword">if</span> score &gt;= threshold]</span><br><span class="line">    <span class="keyword">return</span> best, near, scores</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    best, near, scores = recommend(<span class="built_in">range</span>(<span class="number">1</span>, <span class="number">201</span>), gaussian_lambda)</span><br><span class="line">    <span class="keyword">assert</span> best == <span class="number">80</span></span><br><span class="line">    <span class="keyword">assert</span> near == <span class="built_in">list</span>(<span class="built_in">range</span>(<span class="number">63</span>, <span class="number">99</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;best:&quot;</span>, best)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Q_best: <span class="subst">&#123;scores[best]:<span class="number">.5</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;near:&quot;</span>, near[<span class="number">0</span>], <span class="string">&quot;..&quot;</span>, near[-<span class="number">1</span>], <span class="string">&quot;count:&quot;</span>, <span class="built_in">len</span>(near))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Example hardware restriction: only these frequencies are available.</span></span><br><span class="line">    allowed = [<span class="number">60</span>, <span class="number">72</span>, <span class="number">88</span>, <span class="number">100</span>, <span class="number">120</span>]</span><br><span class="line">    best2, near2, _ = recommend(allowed, gaussian_lambda)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;restricted best:&quot;</span>, best2)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;restricted near:&quot;</span>, near2)</span><br></pre></td></tr></table></figure>
+
+<p>保存为 <code>recommend_frequency.py</code>，运行 <code>python recommend_frequency.py</code>。预期输出：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">best: 80</span><br><span class="line">Q_best: 48.26482</span><br><span class="line">near: 63 .. 98 count: 36</span><br><span class="line">restricted best: 72</span><br><span class="line">restricted near: [72, 88]</span><br></pre></td></tr></table></figure>
+
+<p>受限候选中，72 的分数略高于 88，所以选择 72；两者都落在相应的近优集合里。这里完全来自教学参数与候选表，不能用于推断真实装置的最优值。</p>
+<p>若把 attenuation 换成实测插值或拟合函数，搜索部分可以复用。但要先限定有效区间；有符号的五段传递系数不能直接交给这个“正幅值响应”接口，也不能随意取绝对值忽略相位分支。</p>
+<h2 id="推荐值出来后，还要过三道验收"><a href="#推荐值出来后，还要过三道验收" class="headerlink" title="推荐值出来后，还要过三道验收"></a>推荐值出来后，还要过三道验收</h2><h3 id="相位展开：小误差模型不包含整周期误判"><a href="#相位展开：小误差模型不包含整周期误判" class="headerlink" title="相位展开：小误差模型不包含整周期误判"></a>相位展开：小误差模型不包含整周期误判</h3>\(f\lambda(f)\) 评价的是展开正确条件下的局部误差。级次错一档，就是一个完整周期的错误，不是公式中的轻微噪声。
+
+<p>高频要放进实际展开链验证，不能只把最后一个频率改掉。对层级展开，低频误差会按频率比放大，跨度过大可能把细频率级次推过取整边界。需要检查实际场景的展开失效率，而不只是白板上的包裹相位平不平滑。</p>
+<h3 id="噪声与曝光：不固定时，应改用更一般的评分"><a href="#噪声与曝光：不固定时，应改用更一般的评分" class="headerlink" title="噪声与曝光：不固定时，应改用更一般的评分"></a>噪声与曝光：不固定时，应改用更一般的评分</h3><p>如果频率变化时，曝光、功率、背景或噪声也显著变化，不能再只用 \(f\lambda\)。在相同步数、小噪声假设下，更一般的分数是：</p>
+
+\[
+S(f)=\frac{fB(f)}{\sigma_I(f)}.
+\]
+
+
+<p>若相移步数 N 也变化，还要考虑 \(\sqrt N\) 与采集时间预算。真实噪声可能依赖亮度并具有不同来源，这时最好直接使用经验证的误差模型，而不是把固定噪声公式无限推广。</p>
+<h3 id="重建验证：重复性与绝对偏差分开报告"><a href="#重建验证：重复性与绝对偏差分开报告" class="headerlink" title="重建验证：重复性与绝对偏差分开报告"></a>重建验证：重复性与绝对偏差分开报告</h3><p>推荐频率及其邻近候选都应重建实际目标，分别检查重复性、参考尺寸偏差、有效覆盖率、边缘和台阶表现。相同物体反复得到一样的错误尺寸，说明重复性好，但准确度并不好。</p>
+<p>还可以观察模型是否把最优值推到搜索边界。如果是，就补采样或报告“最优点尚未被当前范围包围”，而不是输出一个看似确定的数字。</p>
+<h2 id="一个推荐结果应该交代什么"><a href="#一个推荐结果应该交代什么" class="headerlink" title="一个推荐结果应该交代什么"></a>一个推荐结果应该交代什么</h2><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>为什么需要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>推荐周期数与范围定义</td>
+<td>防止整幅、半幅或不同视场之间混用</td>
+</tr>
+<tr>
+<td>对应空间频率和周期宽度</td>
+<td>便于与线宽、采样尺度比较</td>
+</tr>
+<tr>
+<td>工作距离、曝光、增益、功率、相移步数</td>
+<td>说明标定结果在哪些条件下有效</td>
+</tr>
+<tr>
+<td>允许集合与近优候选列表</td>
+<td>给展开方案和硬件设计留出选择</td>
+</tr>
+<tr>
+<td>拟合误差及有效像素比例</td>
+<td>防止模型只适用于少数好像素</td>
+</tr>
+<tr>
+<td>汇总目标与权重</td>
+<td>说明优化的是平均误差、关键区域还是尾部风险</td>
+</tr>
+<tr>
+<td>展开失效率</td>
+<td>补上局部小噪声模型看不到的错误</td>
+</tr>
+<tr>
+<td>重复性与参考误差</td>
+<td>区分稳定和准确</td>
+</tr>
+</tbody></table>
+<p>光源、焦点、曝光策略或工作范围明显变化后，应重新检查模型，而不是永久沿用一次标定值。是否完整重标，可先通过少量验证频率判断原曲线是否仍然成立。</p>
+<h2 id="记住优化对象，而不是记住某个频率"><a href="#记住优化对象，而不是记住某个频率" class="headerlink" title="记住优化对象，而不是记住某个频率"></a>记住优化对象，而不是记住某个频率</h2><p>这套方法做的是一件具体的事：在可靠的候选集合里，比较位置灵敏度提高与调制幅值损失，找到预测位置误差较小的选择。</p>
+<p>首次实现不必马上追求复杂的全局优化。先在一个白板距离采集几组频率，画出实测 B、归一化 λ 与 fλ 三条曲线，再拿峰值附近的几个候选做重复重建。如果数据都没有覆盖峰值，或者展开已经出错，增加优化器复杂度并不能解决问题。</p>
+<h2 id="资料与延伸阅读"><a href="#资料与延伸阅读" class="headerlink" title="资料与延伸阅读"></a>资料与延伸阅读</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1016/j.measurement.2024.115852">窗口平滑建模、逐像素标定及最优条纹数量方法</a>：重点对应模型标定与频率选择部分。</li>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1016/j.optlaseng.2018.04.019">相移算法、误差和相位展开基础</a>。</li>
+<li><a href="/2026/10/07/fringe-projection-phase-learning/">本站基础教程：从条纹到三维</a>。</li>
+</ul>
+<p>本文的高斯曲线、五段示意、流程和封面均为自行绘制。原方法的局部最优均值策略，与本文建议的加权误差、有效覆盖率和近优集合应分开理解；示例代码只验证推荐计算，没有宣称完成硬件标定。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%B8%89%E7%BB%B4%E6%B5%8B%E9%87%8F/">三维测量</a><a class="post-meta__tags" href="/tags/%E6%9D%A1%E7%BA%B9%E6%8A%95%E5%BD%B1/">条纹投影</a><a class="post-meta__tags" href="/tags/%E7%9B%B8%E4%BD%8D%E5%B1%95%E5%BC%80/">相位展开</a><a class="post-meta__tags" href="/tags/MEMS/">MEMS</a><a class="post-meta__tags" href="/tags/%E5%8F%82%E6%95%B0%E6%A0%87%E5%AE%9A/">参数标定</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">52</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E6%B8%85%E6%A5%9A%EF%BC%9A%E9%80%89%E7%9A%84%E6%98%AF%E6%9D%A1%E7%BA%B9%E6%95%B0%E9%87%8F%EF%BC%8C%E4%B8%8D%E6%98%AF%E7%9B%B8%E7%A7%BB%E6%AD%A5%E6%95%B0"><span class="toc-number">1.</span> <span class="toc-text">先说清楚：选的是条纹数量，不是相移步数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8E%A8%E8%8D%90%E5%88%86%E6%95%B0%E6%98%AF-f%CE%BB-f"><span class="toc-number">2.</span> <span class="toc-text">为什么推荐分数是 fλ(f)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%AF%86%E7%9A%84%E6%9D%A1%E7%BA%B9%EF%BC%8C%E6%8F%90%E9%AB%98%E4%BD%8D%E7%BD%AE%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="toc-number">2.1.</span> <span class="toc-text">更密的条纹，提高位置灵敏度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%88%B6%E5%B9%85%E5%80%BC%E4%B8%8B%E9%99%8D%EF%BC%8C%E7%9B%B8%E4%BD%8D%E5%99%AA%E5%A3%B0%E4%BC%9A%E5%8F%98%E5%A4%A7"><span class="toc-number">2.2.</span> <span class="toc-text">调制幅值下降，相位噪声会变大</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%8A%E7%9B%B8%E4%BD%8D%E8%AF%AF%E5%B7%AE%E6%8D%A2%E5%88%B0%E5%85%B1%E5%90%8C%E7%9A%84%E4%BD%8D%E7%BD%AE%E5%B0%BA%E5%BA%A6"><span class="toc-number">2.3.</span> <span class="toc-text">把相位误差换到共同的位置尺度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E8%A1%B0%E5%87%8F%E5%9B%A0%E5%AD%90%E6%8F%8F%E8%BF%B0%E5%B9%85%E5%80%BC%E5%8F%98%E5%8C%96"><span class="toc-number">2.4.</span> <span class="toc-text">用衰减因子描述幅值变化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E7%AE%97%E5%BE%97%E5%87%BA%E6%9D%A5%E7%9A%84%E4%BE%8B%E5%AD%90%EF%BC%9A%E6%9D%A1%E7%BA%B9%E6%9B%B4%E6%B8%85%E6%A5%9A%EF%BC%8C%E4%B8%8D%E4%BB%A3%E8%A1%A8%E4%BD%8D%E7%BD%AE%E6%9B%B4%E5%87%86"><span class="toc-number">3.</span> <span class="toc-text">一个算得出来的例子：条纹更清楚，不代表位置更准</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%87%E5%AE%9A%E4%B9%8B%E5%89%8D%EF%BC%8C%E8%A6%81%E5%87%86%E5%A4%87%E5%93%AA%E4%BA%9B%E6%95%B0%E6%8D%AE"><span class="toc-number">4.</span> <span class="toc-text">标定之前，要准备哪些数据</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%99%BD%E6%9D%BF%E3%80%81%E5%B7%A5%E4%BD%9C%E8%B7%9D%E7%A6%BB%E5%92%8C%E5%9B%BA%E5%AE%9A%E8%AE%BE%E7%BD%AE"><span class="toc-number">4.1.</span> <span class="toc-text">白板、工作距离和固定设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%91%E7%8E%87%E7%82%B9%E6%80%8E%E4%B9%88%E5%AE%89%E6%8E%92"><span class="toc-number">4.2.</span> <span class="toc-text">频率点怎么安排</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%9B%B8%E7%A7%BB%E5%9B%BE%E8%AE%A1%E7%AE%97-A%E3%80%81B-%E5%92%8C%E8%A1%B0%E5%87%8F%E5%9B%A0%E5%AD%90"><span class="toc-number">5.</span> <span class="toc-text">从相移图计算 A、B 和衰减因子</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%85%89%E4%B8%8E%E9%BB%91%E7%94%B5%E5%B9%B3"><span class="toc-number">5.1.</span> <span class="toc-text">环境光与黑电平</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%85%E5%80%BC%E4%BC%B0%E8%AE%A1%E5%9C%A8%E5%99%AA%E5%A3%B0%E5%BA%95%E9%99%84%E8%BF%91%E6%9C%89%E5%81%8F"><span class="toc-number">5.2.</span> <span class="toc-text">幅值估计在噪声底附近有偏</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E4%BA%94%E6%AE%B5%E5%85%89%E5%BC%BA%E6%A8%A1%E5%9E%8B%E6%8B%9F%E5%90%88-%CE%BB-f"><span class="toc-number">6.</span> <span class="toc-text">用五段光强模型拟合 λ(f)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E6%AE%B5%E6%98%AF%E5%9C%A8%E6%8F%8F%E8%BF%B0%E4%BB%80%E4%B9%88"><span class="toc-number">6.1.</span> <span class="toc-text">分段是在描述什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E7%BA%BF%E6%80%A7%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%80%8E%E4%B9%88%E7%94%A8"><span class="toc-number">6.2.</span> <span class="toc-text">非线性最小二乘怎么用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E8%B4%9F%E5%93%8D%E5%BA%94%E4%B8%8E%E4%B8%8D%E5%AF%B9%E7%A7%B0%E5%85%89%E6%9D%9F%E4%B8%8D%E8%83%BD%E5%BF%BD%E7%95%A5"><span class="toc-number">6.3.</span> <span class="toc-text">正负响应与不对称光束不能忽略</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E6%97%B6%E5%85%88%E5%AE%9A%E4%B9%89%E5%85%81%E8%AE%B8%E4%BD%BF%E7%94%A8%E7%9A%84%E5%80%99%E9%80%89%E9%9B%86%E5%90%88"><span class="toc-number">7.</span> <span class="toc-text">搜索时先定义允许使用的候选集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E6%AF%8F%E4%B8%AA%E5%83%8F%E7%B4%A0%E7%9A%84%E6%9C%80%E4%BC%98%E5%80%BC%EF%BC%8C%E5%88%B0%E8%AE%BE%E5%A4%87%E7%9A%84%E4%B8%80%E4%B8%AA%E8%AE%BE%E7%BD%AE"><span class="toc-number">8.</span> <span class="toc-text">从每个像素的最优值，到设备的一个设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E6%96%B9%E6%B3%95%EF%BC%9A%E5%85%88%E6%B1%82%E5%B1%80%E9%83%A8%E6%9C%80%E4%BC%98%EF%BC%8C%E5%86%8D%E6%B1%87%E6%80%BB%E5%B9%B3%E5%9D%87"><span class="toc-number">8.1.</span> <span class="toc-text">原方法：先求局部最优，再汇总平均</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E7%A8%8B%E6%89%A9%E5%B1%95%EF%BC%9A%E5%B9%B3%E5%9D%87%E5%B1%80%E9%83%A8%E6%9C%80%E4%BC%98%EF%BC%8C%E4%B8%8D%E4%B8%80%E5%AE%9A%E6%9C%80%E5%B0%8F%E5%8C%96%E5%85%A8%E5%B1%80%E8%AF%AF%E5%B7%AE"><span class="toc-number">8.2.</span> <span class="toc-text">工程扩展：平均局部最优，不一定最小化全局误差</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E8%BF%91%E4%BC%98%E9%9B%86%E5%90%88%E6%9B%BF%E4%BB%A3%E4%B8%80%E4%B8%AA%E8%BF%87%E4%BA%8E%E7%B2%BE%E7%A1%AE%E7%9A%84%E6%95%B0%E5%AD%97"><span class="toc-number">9.</span> <span class="toc-text">用近优集合替代一个过于精确的数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E6%AE%B5%E8%83%BD%E8%BF%90%E8%A1%8C%E7%9A%84%E6%8E%A8%E8%8D%90%E4%BB%A3%E7%A0%81"><span class="toc-number">10.</span> <span class="toc-text">一段能运行的推荐代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E8%8D%90%E5%80%BC%E5%87%BA%E6%9D%A5%E5%90%8E%EF%BC%8C%E8%BF%98%E8%A6%81%E8%BF%87%E4%B8%89%E9%81%93%E9%AA%8C%E6%94%B6"><span class="toc-number">11.</span> <span class="toc-text">推荐值出来后，还要过三道验收</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E4%BD%8D%E5%B1%95%E5%BC%80%EF%BC%9A%E5%B0%8F%E8%AF%AF%E5%B7%AE%E6%A8%A1%E5%9E%8B%E4%B8%8D%E5%8C%85%E5%90%AB%E6%95%B4%E5%91%A8%E6%9C%9F%E8%AF%AF%E5%88%A4"><span class="toc-number">11.1.</span> <span class="toc-text">相位展开：小误差模型不包含整周期误判</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%99%AA%E5%A3%B0%E4%B8%8E%E6%9B%9D%E5%85%89%EF%BC%9A%E4%B8%8D%E5%9B%BA%E5%AE%9A%E6%97%B6%EF%BC%8C%E5%BA%94%E6%94%B9%E7%94%A8%E6%9B%B4%E4%B8%80%E8%88%AC%E7%9A%84%E8%AF%84%E5%88%86"><span class="toc-number">11.2.</span> <span class="toc-text">噪声与曝光：不固定时，应改用更一般的评分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E5%BB%BA%E9%AA%8C%E8%AF%81%EF%BC%9A%E9%87%8D%E5%A4%8D%E6%80%A7%E4%B8%8E%E7%BB%9D%E5%AF%B9%E5%81%8F%E5%B7%AE%E5%88%86%E5%BC%80%E6%8A%A5%E5%91%8A"><span class="toc-number">11.3.</span> <span class="toc-text">重建验证：重复性与绝对偏差分开报告</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E4%B8%AA%E6%8E%A8%E8%8D%90%E7%BB%93%E6%9E%9C%E5%BA%94%E8%AF%A5%E4%BA%A4%E4%BB%A3%E4%BB%80%E4%B9%88"><span class="toc-number">12.</span> <span class="toc-text">一个推荐结果应该交代什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%B0%E4%BD%8F%E4%BC%98%E5%8C%96%E5%AF%B9%E8%B1%A1%EF%BC%8C%E8%80%8C%E4%B8%8D%E6%98%AF%E8%AE%B0%E4%BD%8F%E6%9F%90%E4%B8%AA%E9%A2%91%E7%8E%87"><span class="toc-number">13.</span> <span class="toc-text">记住优化对象，而不是记住某个频率</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%96%99%E4%B8%8E%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB"><span class="toc-number">14.</span> <span class="toc-text">资料与延伸阅读</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法"><img src="/2026/10/07/optimal-fringe-frequency-calibration/cover.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="最优条纹频率怎么选：从误差公式到标定与推荐算法"/></a><div class="content"><a class="title" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法">最优条纹频率怎么选：从误差公式到标定与推荐算法</a><time datetime="2026-10-07T06:30:00.000Z" title="发表于 2026-10-07 14:30:00">2026-10-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img src="/2026/10/07/fringe-projection-phase-learning/cover.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从条纹到三维：相移、相位展开、深度学习与激光线宽"/></a><div class="content"><a class="title" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽">从条纹到三维：相移、相位展开、深度学习与激光线宽</a><time datetime="2026-10-06T16:00:00.000Z" title="发表于 2026-10-07 00:00:00">2026-10-07</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/19/campus-network-ipv6-relay-latency-fix/" title="校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录">校园网路由器 IPv6 中继长尾：一次卡顿的定位与优化记录</a><time datetime="2026-09-19T05:30:00.000Z" title="发表于 2026-09-19 13:30:00">2026-09-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/09/18/esp32c3-buct-srun-auto-auth-dev-story/" title="基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查">基于 ESP32-C3 的校园网自动认证：从协议分析到实机问题排查</a><time datetime="2026-09-18T04:00:00.000Z" title="发表于 2026-09-18 12:00:00">2026-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/27/free-llm-api-key-channels/" title="免费 LLM API Key 渠道清单（转载留存）">免费 LLM API Key 渠道清单（转载留存）</a><time datetime="2026-08-27T13:20:00.000Z" title="发表于 2026-08-27 21:20:00">2026-08-27</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
