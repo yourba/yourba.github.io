@@ -1,0 +1,429 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>U-Net：用于生物医学图像分割的卷积网络 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="U-Net 原始论文全文中文翻译：收缩路径与扩张路径、重叠切块策略、弹性变形数据增强与加权损失。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="U-Net：用于生物医学图像分割的卷积网络">
+<meta property="og:url" content="https://yourba.github.io/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="U-Net 原始论文全文中文翻译：收缩路径与扩张路径、重叠切块策略、弹性变形数据增强与加权损失。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-30T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-30T12:00:00.000Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="图像分割">
+<meta property="article:tag" content="U-Net">
+<meta property="article:tag" content="生物医学图像">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "U-Net：用于生物医学图像分割的卷积网络",
+  "url": "https://yourba.github.io/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-10-30T12:00:00.000Z",
+  "dateModified": "2026-10-30T12:00:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'U-Net：用于生物医学图像分割的卷积网络',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">U-Net：用于生物医学图像分割的卷积网络</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">U-Net：用于生物医学图像分割的卷积网络</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T12:00:00.000Z" title="更新于 2026-10-30 20:00:00">2026-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">论文翻译</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p><strong>原文信息</strong></p>
+<p>Olaf Ronneberger, Philipp Fischer, Thomas Brox. <em>U-Net: Convolutional Networks for Biomedical Image Segmentation</em>. arXiv:1505.04597v1 [cs.CV], 2015.</p>
+<p>单位：德国弗赖堡大学计算机科学系、BIOSS 生物信号研究中心。</p>
+<p>以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。</p>
+</blockquote>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>人们普遍认为，成功训练深度网络需要数千个带标注的训练样本。本文提出一种网络与训练策略，它强烈依赖数据增强，从而更高效地利用可用的标注样本。该架构由一条用于捕获上下文的收缩路径和一条对称的、能够实现精确定位的扩张路径组成。我们表明，这样的网络可以从极少量图像端到端训练，并在 ISBI 电子显微镜图像堆栈中神经元结构分割挑战赛上优于此前的最佳方法（滑动窗口卷积网络）。使用在透射光显微图像（相差和 DIC）上训练的同一网络，我们在 2015 年 ISBI 细胞追踪挑战赛的这些类别中以较大优势获胜。此外，该网络速度很快：在当时的 GPU 上，分割一幅 512×512 图像耗时不到一秒。完整实现（基于 Caffe）与训练好的网络可在 <a target="_blank" rel="noopener" href="http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net">http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net</a> 获取。</p>
+<span id="more"></span>
+
+<style>
+#card-toc .toc-number { display: none; }
+.post-content .table-wrap table { min-width: 620px; white-space: nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.globalFn?.encrypt?.mathjax?.()
+})
+</script>
+
+<h2 id="1-引言"><a href="#1-引言" class="headerlink" title="1 引言"></a>1 引言</h2><p>过去两年，深度卷积网络在许多视觉识别任务中超越了此前的最佳水平，例如 [7,3]。卷积网络本身早已存在 [8]，但其成功受限于可用训练集的规模以及所考虑网络的规模。Krizhevsky 等人 [7] 的突破来自在包含 100 万幅训练图像的 ImageNet 数据集上，对一个具有 8 层和数百万参数的大网络进行监督训练。此后，人们训练了更大、更深的网络 [12]。</p>
+<p>卷积网络的典型用途是分类任务，即对一幅图像输出单个类别标签。然而，在许多视觉任务中，尤其是生物医学图像处理中，期望的输出应包含定位，也就是要为每个像素分配一个类别标签。此外，在生物医学任务中，数千幅训练图像通常难以获得。因此，Ciresan 等人 [1] 以滑动窗口方式训练网络，通过提供每个像素周围的局部区域（图像块）作为输入，来预测该像素的类别标签。首先，这种网络能够定位；其次，以图像块形式提供的训练数据远多于训练图像的数量。由此得到的网络在 ISBI 2012 的 EM 分割挑战赛中以较大优势获胜。</p>
+<p>显然，Ciresan 等人 [1] 的策略有两个缺点。第一，它相当慢，因为网络必须对每个图像块单独运行，而且重叠的图像块带来了大量冗余。第二，定位精度与上下文利用之间存在权衡：较大的图像块需要更多最大池化层，从而降低定位精度；而较小的图像块只允许网络看到很少的上下文。较新的方法 [11,4] 提出一种分类器输出，它同时考虑来自多个层的特征，从而可以兼顾良好的定位与上下文的利用。</p>
+<p><img src="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/fig1-unet-architecture.png" alt="U-Net 架构：收缩路径、扩张路径、跳跃连接与各层特征图尺寸"></p>
+<p><em>图 1. U-Net 架构（以最低分辨率为 32×32 像素为例）。每个蓝色框对应一个多通道特征图，通道数标在框的上方，x-y 尺寸标在框的左下角。白色框表示复制得到的特征图，箭头表示不同操作。</em></p>
+<p>本文基于一种更优雅的架构，即所谓的“全卷积网络”[9]。我们修改并扩展该架构，使其在训练图像极少的情况下仍能工作，并产生更精确的分割结果；见图 1。文献 [9] 的主要思想是在常规收缩网络中补充逐层结构，将池化算子替换为上采样算子。因此，这些层提高了输出的分辨率。为了实现定位，来自收缩路径的高分辨率特征与上采样后的输出相结合。随后的卷积层便可基于这些信息学习组合出更精确的输出。</p>
+<p>我们架构中的一项重要修改是，在上采样部分同样使用大量特征通道，使网络能够将上下文信息传播到更高分辨率的层。因此，扩张路径与收缩路径大致对称，形成 U 形架构。该网络没有任何全连接层，并且只使用每次卷积的有效部分，即分割图只包含那些在输入图像中可获得完整上下文的像素。这一策略允许通过重叠切块策略对任意大的图像进行无缝分割（见图 2）。为了预测图像边界区域的像素，缺失的上下文通过对输入图像进行镜像来外推。这种切块策略对于将网络应用于大图像非常重要，否则分辨率将受限于 GPU 显存。</p>
+<p><img src="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/fig2-overlap-tile.png" alt="重叠切块策略：黄色区域为待预测区域，蓝色区域为所需输入，缺失数据通过镜像外推"></p>
+<p><em>图 2. 用于无缝分割任意大图像的重叠切块策略（此处为 EM 堆栈中神经元结构的分割）。要预测黄色区域的分割结果，需要蓝色区域内的图像数据作为输入；缺失的输入数据通过镜像进行外推。</em></p>
+<p>由于我们的任务可用的训练数据很少，我们对现有训练图像施加弹性变形，以进行大量数据增强。这使网络能够学习对此类变形的不变性，而无需在标注图像集中见到这些变换。这一点在生物医学分割中尤为重要，因为变形曾是组织中最常见的变化，而真实感变形可以被高效地模拟。数据增强对学习不变性的价值已在 Dosovitskiy 等人 [2] 的无监督特征学习工作中得到展示。</p>
+<p>许多细胞分割任务中的另一个挑战是分离同类别的相互接触物体，见图 3。为此，我们提出使用加权损失，让相互接触细胞之间的分离背景标签在损失函数中获得较大的权重。</p>
+<p><img src="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/fig3-hela-cells.png" alt="HeLa 细胞 DIC 图像、真值分割、分割掩膜与逐像素损失权重图"></p>
+<p><em>图 3. 用 DIC（微分干涉相差）显微镜记录的玻璃上的 HeLa 细胞。(a) 原始图像；(b) 叠加真值分割，不同颜色表示 HeLa 细胞的不同实例；(c) 生成的分割掩膜（白色：前景，黑色：背景）；(d) 逐像素损失权重图，用于迫使网络学习边界像素。</em></p>
+<p>所得网络适用于多种生物医学分割问题。本文展示了在 EM 堆栈中神经元结构分割上的结果（该竞赛始于 ISBI 2012，目前仍在进行），我们在此优于 Ciresan 等人 [1] 的网络。此外，我们还展示了 ISBI 细胞追踪挑战赛 2015 中光学显微图像细胞分割的结果。在该赛事两个最具挑战性的二维透射光数据集上，我们以较大优势获胜。</p>
+<h2 id="2-网络架构"><a href="#2-网络架构" class="headerlink" title="2 网络架构"></a>2 网络架构</h2><p>网络架构如图 1 所示，由一条收缩路径（左侧）和一条扩张路径（右侧）组成。收缩路径遵循卷积网络的典型架构：重复应用两个 3×3 卷积（无填充卷积），每个卷积后接一个修正线性单元（ReLU），再接一个步长为 2 的 2×2 最大池化进行下采样。在每一次下采样步骤中，我们将特征通道数加倍。扩张路径中的每一步包括：对特征图进行上采样，随后进行一个 2×2 卷积（“上卷积”），使特征通道数减半；与来自收缩路径的相应裁剪特征图进行拼接；再进行两个 3×3 卷积，每个卷积后接一个 ReLU。由于每次卷积都会损失边界像素，因此需要裁剪。在最后一层，使用 1×1 卷积将每个 64 维特征向量映射到所需类别数。整个网络共有 23 个卷积层。</p>
+<p>为了实现输出分割图的无缝拼接（见图 2），必须选择这样的输入块尺寸：使所有 2×2 最大池化操作都作用于 x、y 尺寸为偶数的层。</p>
+<h2 id="3-训练"><a href="#3-训练" class="headerlink" title="3 训练"></a>3 训练</h2><p>输入图像及其对应的分割图用于训练网络，采用 Caffe [6] 的随机梯度下降实现。由于使用无填充卷积，输出图像比输入图像小一个固定的边界宽度。为最小化开销并最大限度利用 GPU 显存，我们倾向于使用较大的输入块而不是较大的批大小，因此将批大小减为单幅图像。相应地，我们采用较高的动量（0.99），使大量先前见过的训练样本决定当前优化步骤中的更新。</p>
+<p>能量函数由最终特征图上的逐像素 soft-max 与交叉熵损失函数组合计算。soft-max 定义为 \(p_k(\mathbf{x})=\exp(a_k(\mathbf{x}))\big/\left(\sum_{k'=1}^{K}\exp(a_{k'}(\mathbf{x}))\right)\)，其中 \(a_k(\mathbf{x})\) 表示像素位置 \(\mathbf{x}\in\Omega\) 处特征通道 \(k\) 的激活值，且 \(\Omega\subset\mathbb{Z}^2\)。\(K\) 为类别数，\(p_k(\mathbf{x})\) 是近似最大值函数。也就是说，对于使激活 \(a_k(\mathbf{x})\) 最大的 \(k\)，\(p_k(\mathbf{x})\approx1\)；对于其他所有 \(k\)，\(p_k(\mathbf{x})\approx0\)。交叉熵则在每个位置惩罚 \(p_{\ell(\mathbf{x})}(\mathbf{x})\) 与 1 的偏差：</p>
+
+\[
+E=\sum_{\mathbf{x}\in\Omega}w(\mathbf{x})\log\left(p_{\ell(\mathbf{x})}(\mathbf{x})\right),
+\tag{1}
+\]
+
+
+<p>其中 \(\ell:\Omega\to\{1,\ldots,K\}\) 是每个像素的真实标签，\(w:\Omega\to\mathbb{R}\) 是我们引入的权重图，用于在训练中赋予某些像素更高的重要性。</p>
+<p>我们为每幅真值分割图预先计算权重图，以补偿训练数据集中某一类别像素出现频率的差异，并迫使网络学习我们在相互接触细胞之间引入的狭窄分离边界（见图 3c 和 d）。</p>
+<p>分离边界通过形态学操作计算。随后按下式计算权重图：</p>
+
+\[
+w(\mathbf{x})=w_c(\mathbf{x})+w_0\cdot\exp\left(-\frac{(d_1(\mathbf{x})+d_2(\mathbf{x}))^2}{2\sigma^2}\right),
+\tag{2}
+\]
+
+
+<p>其中 \(w_c:\Omega\to\mathbb{R}\) 是用于平衡类别频率的权重图，\(d_1:\Omega\to\mathbb{R}\) 表示到最近细胞边界的距离，\(d_2:\Omega\to\mathbb{R}\) 表示到第二近细胞边界的距离。在我们的实验中，取 \(w_0=10\)，\(\sigma\approx5\) 像素。</p>
+<p>在具有许多卷积层和不同通路的深度网络中，权重的良好初始化极其重要。否则，网络的一部分可能产生过大的激活值，而另一部分则从不参与贡献。理想情况下，初始权重应使网络中每个特征图具有近似单位方差。对于采用我们这种架构（卷积层与 ReLU 层交替）的网络，可以从标准差为 \(\sqrt{2/N}\) 的高斯分布中抽取初始权重来实现这一点，其中 \(N\) 表示一个神经元的输入节点数 [5]。例如，对于 3×3 卷积且前一层有 64 个特征通道的情况，\(N=9\cdot64=576\)。</p>
+<h3 id="3-1-数据增强"><a href="#3-1-数据增强" class="headerlink" title="3.1 数据增强"></a>3.1 数据增强</h3><p>当只有少量训练样本时，数据增强对于教会网络所需的不变性与鲁棒性至关重要。对于显微图像，我们主要需要平移和旋转不变性，以及对变形和灰度变化的鲁棒性。特别是训练样本的随机弹性变形，似乎是用极少量标注图像训练分割网络的关键。我们使用 3×3 粗网格上的随机位移向量生成平滑变形。位移从标准差为 10 像素的高斯分布中采样，然后通过双三次插值计算逐像素位移。收缩路径末端的 Drop-out 层进一步执行隐式数据增强。</p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4 实验"></a>4 实验</h2><p>我们展示了 U-Net 在三个不同分割任务中的应用。第一个任务是电子显微记录中神经元结构的分割。数据集示例及我们得到的分割结果如图 2 所示，完整结果作为补充材料提供。该数据集由 EM 分割挑战赛 [14] 提供，该挑战赛始于 ISBI 2012，目前仍接受新的投稿。训练数据是一组 30 幅图像（512×512 像素），来自果蝇一龄幼虫腹神经索（VNC）的连续切片透射电子显微镜。每幅图像都配有对应的、完整标注的细胞（白色）与膜（黑色）真值分割图。测试集公开可用，但其分割图保密。将预测的膜概率图发送给组织者即可获得评估结果。评估方法是在 10 个不同阈值下对概率图进行阈值化，并计算“形变误差（warping error）”“Rand 误差”和“像素误差”[14]。</p>
+<p>U-Net（对输入数据的 7 个旋转版本取平均）在没有任何进一步预处理或后处理的情况下，取得了 0.0003529 的形变误差（新的最佳成绩，见表 1）和 0.0382 的 Rand 误差。</p>
+<p>这显著优于 Ciresan 等人 [1] 的滑动窗口卷积网络结果，其最佳提交的形变误差为 0.000420，Rand 误差为 0.0504。就 Rand 误差而言，该数据集上唯一表现更好的算法，是对 Ciresan 等人 [1] 的概率图采用高度针对该数据集的后处理方法<sup>1</sup>。</p>
+<p><em>表 1. EM 分割挑战赛 [14] 的排名（2015 年 3 月 6 日），按形变误差排序。</em></p>
+<table>
+<thead>
+<tr>
+  <th>排名</th>
+  <th>团队名称</th>
+  <th>形变误差</th>
+  <th>Rand 误差</th>
+  <th>像素误差</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td></td>
+  <td>** 人类取值 **</td>
+  <td>0.000005</td>
+  <td>0.0021</td>
+  <td>0.0010</td>
+</tr>
+<tr>
+  <td>1.</td>
+  <td>u-net</td>
+  <td><strong>0.000353</strong></td>
+  <td>0.0382</td>
+  <td>0.0611</td>
+</tr>
+<tr>
+  <td>2.</td>
+  <td>DIVE-SCI</td>
+  <td>0.000355</td>
+  <td>0.0305</td>
+  <td>0.0584</td>
+</tr>
+<tr>
+  <td>3.</td>
+  <td>IDSIA [1]</td>
+  <td>0.000420</td>
+  <td>0.0504</td>
+  <td>0.0613</td>
+</tr>
+<tr>
+  <td>4.</td>
+  <td>DIVE</td>
+  <td>0.000430</td>
+  <td>0.0545</td>
+  <td><strong>0.0582</strong></td>
+</tr>
+<tr>
+  <td>⋮</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+</tr>
+<tr>
+  <td>10.</td>
+  <td>IDSIA-SCI</td>
+  <td>0.000653</td>
+  <td><strong>0.0189</strong></td>
+  <td>0.1027</td>
+</tr>
+</tbody>
+</table>
+
+<p>我们还把 U-Net 应用于光学显微图像中的细胞分割任务。该分割任务是 ISBI 细胞追踪挑战赛 2014 和 2015 的一部分 [10,13]。第一个数据集“PhC-U373”<sup>2</sup> 包含在聚丙烯酰胺基底上、由相差显微镜记录的胶质母细胞瘤-星形细胞瘤 U373 细胞（见图 4a、b 及补充材料）。它包含 35 幅部分标注的训练图像。我们在此取得了 92% 的平均 IOU（“交并比”），显著优于第二好算法的 83%（见表 2）。第二个数据集“DIC-HeLa”<sup>3</sup> 是平坦玻璃上、由微分干涉相差（DIC）显微镜记录的 HeLa 细胞（见图 3、图 4c、d 及补充材料）。它包含 20 幅部分标注的训练图像。我们在此取得了 77.5% 的平均 IOU，显著优于第二好算法的 46%。</p>
+<p><img src="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/fig4-cell-tracking.png" alt="ISBI 细胞追踪挑战赛结果：PhC-U373 与 DIC-HeLa 的输入图像及分割结果"></p>
+<p><em>图 4. ISBI 细胞追踪挑战赛上的结果。(a) “PhC-U373”数据集的一幅输入图像的一部分；(b) 分割结果（青色掩膜）与人工真值（黄色边界）；(c) “DIC-HeLa”数据集的一幅输入图像；(d) 分割结果（随机着色掩码）与人工真值（黄色边界）。</em></p>
+<p><em>表 2. ISBI 细胞追踪挑战赛 2015 的分割结果（IOU）。</em></p>
+<table>
+<thead>
+<tr>
+  <th>名称</th>
+  <th>PhC-U373</th>
+  <th>DIC-HeLa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>IMCB-SG (2014)</td>
+  <td>0.2669</td>
+  <td>0.2935</td>
+</tr>
+<tr>
+  <td>KTH-SE (2014)</td>
+  <td>0.7953</td>
+  <td>0.4607</td>
+</tr>
+<tr>
+  <td>HOUS-US (2014)</td>
+  <td>0.5323</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>second-best 2015</td>
+  <td>0.83</td>
+  <td>0.46</td>
+</tr>
+<tr>
+  <td>u-net (2015)</td>
+  <td><strong>0.9203</strong></td>
+  <td><strong>0.7756</strong></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>U-Net 架构在非常不同的生物医学分割应用中取得了很好的性能。得益于弹性变形的数据增强，它只需要极少量标注图像，训练时间也相当合理：在 NVIDIA Titan GPU（6 GB）上仅需 10 小时。我们提供了完整的基于 Caffe [6] 的实现和训练好的网络<sup>4</sup>。我们相信，U-Net 架构可以轻松应用于更多任务。</p>
+<h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>本项研究得到德国联邦与州政府卓越计划（EXC 294）以及 BMBF（Fkz 0316185B）的支持。</p>
+<p><strong>脚注</strong></p>
+<ol>
+<li>该算法的作者提交了 78 个不同方案才取得这一结果。</li>
+<li>数据集由美国加州大学伯克利分校生物工程系 Sanjay Kumar 博士提供。</li>
+<li>数据集由荷兰鹿特丹伊拉斯姆斯医学中心 Gert van Cappellen 博士提供。</li>
+<li>U-Net 实现、训练好的网络与补充材料见 <a target="_blank" rel="noopener" href="http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net">http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net</a></li>
+</ol>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li>Ciresan, D.C., Gambardella, L.M., Giusti, A., Schmidhuber, J.: Deep neural networks segment neuronal membranes in electron microscopy images. In: NIPS. pp. 2852–2860 (2012)</li>
+<li>Dosovitskiy, A., Springenberg, J.T., Riedmiller, M., Brox, T.: Discriminative unsupervised feature learning with convolutional neural networks. In: NIPS (2014)</li>
+<li>Girshick, R., Donahue, J., Darrell, T., Malik, J.: Rich feature hierarchies for accurate object detection and semantic segmentation. In: Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR) (2014)</li>
+<li>Hariharan, B., Arbelez, P., Girshick, R., Malik, J.: Hypercolumns for object segmentation and fine-grained localization (2014), arXiv:1411.5752 [cs.CV]</li>
+<li>He, K., Zhang, X., Ren, S., Sun, J.: Delving deep into rectifiers: Surpassing human-level performance on imagenet classification (2015), arXiv:1502.01852 [cs.CV]</li>
+<li>Jia, Y., Shelhamer, E., Donahue, J., Karayev, S., Long, J., Girshick, R., Guadarrama, S., Darrell, T.: Caffe: Convolutional architecture for fast feature embedding (2014), arXiv:1408.5093 [cs.CV]</li>
+<li>Krizhevsky, A., Sutskever, I., Hinton, G.E.: Imagenet classification with deep convolutional neural networks. In: NIPS. pp. 1106–1114 (2012)</li>
+<li>LeCun, Y., Boser, B., Denker, J.S., Henderson, D., Howard, R.E., Hubbard, W., Jackel, L.D.: Backpropagation applied to handwritten zip code recognition. Neural Computation 1(4), 541–551 (1989)</li>
+<li>Long, J., Shelhamer, E., Darrell, T.: Fully convolutional networks for semantic segmentation (2014), arXiv:1411.4038 [cs.CV]</li>
+<li>Maska, M., (…), de Solorzano, C.O.: A benchmark for comparison of cell tracking algorithms. Bioinformatics 30, 1609–1617 (2014)</li>
+<li>Seyedhosseini, M., Sajjadi, M., Tasdizen, T.: Image segmentation with cascaded hierarchical models and logistic disjunctive normal networks. In: Computer Vision (ICCV), 2013 IEEE International Conference on. pp. 2168–2175 (2013)</li>
+<li>Simonyan, K., Zisserman, A.: Very deep convolutional networks for large-scale image recognition (2014), arXiv:1409.1556 [cs.CV]</li>
+<li>WWW: Web page of the cell tracking challenge, <a target="_blank" rel="noopener" href="http://www.codesolorzano.com/celltrackingchallenge/Cell_Tracking_Challenge/Welcome.html">http://www.codesolorzano.com/celltrackingchallenge/Cell_Tracking_Challenge/Welcome.html</a></li>
+<li>WWW: Web page of the em segmentation challenge, <a target="_blank" rel="noopener" href="http://brainiac2.mit.edu/isbi_challenge/">http://brainiac2.mit.edu/isbi_challenge/</a></li>
+</ol>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/">图像分割</a><a class="post-meta__tags" href="/tags/U-Net/">U-Net</a><a class="post-meta__tags" href="/tags/%E7%94%9F%E7%89%A9%E5%8C%BB%E5%AD%A6%E5%9B%BE%E5%83%8F/">生物医学图像</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">基于深度学习的条纹图案分析</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. Fringe pattern analysis using deep learning. Advanced Photonics, 1(2), 025001 (2019). DOI: 10.1117&#x2F;1.AP.1.2.025001 收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。 © 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。 以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。 ...</div></div></div></a><a class="pagination-related  no-desc" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">engineering-thermodynamics-review</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a><a class="pagination-related" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">基于深度学习的条纹图案分析</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. Fringe pattern analysis using deep learning. Advanced Photonics, 1(2), 025001 (2019). DOI: 10.1117&#x2F;1.AP.1.2.025001 收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。 © 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。 以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">1 引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">2 网络架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E8%AE%AD%E7%BB%83"><span class="toc-number">4.</span> <span class="toc-text">3 训练</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 数据增强</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9E%E9%AA%8C"><span class="toc-number">5.</span> <span class="toc-text">4 实验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">5 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%B4%E8%B0%A2"><span class="toc-number">7.</span> <span class="toc-text">致谢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">8.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review">engineering-thermodynamics-review</a><time datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

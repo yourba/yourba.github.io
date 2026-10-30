@@ -1,0 +1,654 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>条纹投影轮廓测量中隐含的窗口平滑效应建模 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Measurement 242 (2025) 115852 全文中文翻译：MEMS 条纹投影的窗口平滑模型、调制光强衰减因子与最优条纹数标定算法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="条纹投影轮廓测量中隐含的窗口平滑效应建模">
+<meta property="og:url" content="https://yourba.github.io/2026/10/30/window-smoothing-effect-translation/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="Measurement 242 (2025) 115852 全文中文翻译：MEMS 条纹投影的窗口平滑模型、调制光强衰减因子与最优条纹数标定算法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-30T10:40:00.000Z">
+<meta property="article:modified_time" content="2026-10-30T10:40:00.000Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="条纹投影">
+<meta property="article:tag" content="三维测量">
+<meta property="article:tag" content="MEMS">
+<meta property="article:tag" content="窗口平滑">
+<meta property="article:tag" content="调制光强">
+<meta property="article:tag" content="最优条纹数">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "条纹投影轮廓测量中隐含的窗口平滑效应建模",
+  "url": "https://yourba.github.io/2026/10/30/window-smoothing-effect-translation/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-10-30T10:40:00.000Z",
+  "dateModified": "2026-10-30T10:40:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/10/30/window-smoothing-effect-translation/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '条纹投影轮廓测量中隐含的窗口平滑效应建模',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">条纹投影轮廓测量中隐含的窗口平滑效应建模</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">条纹投影轮廓测量中隐含的窗口平滑效应建模</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T10:40:00.000Z" title="更新于 2026-10-30 18:40:00">2026-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">论文翻译</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p><strong>原文信息</strong></p>
+<p>Min Han, Hao Jiang, Fengxiao Lei, Yibo Xing, Xiaohao Wang, Xinghui Li. <em>Modeling window smoothing effect hidden in fringe projection profilometry</em>. Measurement, 242 (2025) 115852.</p>
+<p>DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.1016/j.measurement.2024.115852">10.1016&#x2F;j.measurement.2024.115852</a></p>
+<p>收稿：2024 年 5 月 20 日；修回：2024 年 9 月 16 日；录用：2024 年 9 月 29 日；在线发表：2024 年 10 月 4 日。</p>
+<p>以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。</p>
+</blockquote>
+<p><strong>关键词：</strong> 条纹投影轮廓测量；激光束扫描；调制光强；建模</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>基于微机电系统（MEMS）微振镜的三维重建被认为极具发展前景。然而，线激光器作为 MEMS 系统的唯一光源，其影响重建的机制尚不明确。为填补这一理论空白，我们首次提出可解释的激光影响模型，称为窗口平滑模型。该模型揭示了激光束扫描中的窗口平滑效应，并通过衰减因子量化其对调制光强的影响。由于不存在镜头离焦问题，窗口平滑效应成为影响条纹图案对比度的主要因素。因此，本文提出一种利用激光参数评估系统精度的新方法。在此基础上，进一步提出同样基于激光参数的最优条纹数标定方法，以使给定系统的重建精度达到最高。实验结果验证了所提方法的有效性。作为首个专门面向 MEMS 系统的模型，窗口平滑模型具有可解释性、高精度和普适性，可为实现高性能 MEMS 三维重建提供新的认识与理论基础。</p>
+<span id="more"></span>
+
+<style>
+#card-toc .toc-number { display: none; }
+.post-content .table-wrap table { min-width: 620px; white-space: nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.globalFn?.encrypt?.mathjax?.()
+})
+</script>
+
+<h2 id="1-引言"><a href="#1-引言" class="headerlink" title="1. 引言"></a>1. 引言</h2><p>在信息光学领域，条纹投影轮廓测量（FPP）是一项重要的三维测量技术，广泛应用于机器视觉[1-4]、质量检测[5-10]、生物医学[11-13]和智能制造[14-17]。</p>
+<p>传统条纹投影技术包括干涉式投影、实体光栅投影、数字光处理（DLP）和液晶显示（LCD）。作为一种新型条纹投影器件，微机电系统（MEMS）的条纹投影原理与上述传统技术不同[18]。高速转动的 MEMS 微振镜将受控线激光器发出的线状光束反射到被测物体上，生成正弦条纹。凭借自身优势，基于 MEMS 的 FPP 系统被认为是各类 FPP 系统中最具前景的方案[19]。例如，MEMS 投影具有连续投射光场，理论上可实现无限分辨率；传统像素阵列式投影技术（如 DLP）则可能存在明显的像素边缘，且分辨率有限[20]。MEMS 投影技术能够以较低成本达到每秒数万帧的投影速度，这是因为振镜的谐振频率决定了帧率[4,21-24]。MEMS 投影技术的一个特点是投影前端不需要聚焦镜头，因此具有景深大、光学设计简单等优势[18,25]。此外，MEMS 扫描镜体积小，便于系统小型化；成本低，有利于商业化。</p>
+<p>2012 年，MEMS 微振镜首次用于构建 FPP 系统。由于其在推动 FPP 发展方面具有巨大潜力，近年来受到了深入研究[26-34]。例如，针对单轴投影和无聚焦镜头的问题，研究者提出了适用于 MEMS-FPP 的标定模型[18]。MEMS 振镜的角度检测精度决定了最小可分辨角间隔及 MEMS 投影仪的像素分辨率[35]。在高频条纹投影中，较低的像素分辨率无法提供足够的正弦采样率，可能使重建结果出现波纹状误差。为解决这一问题，研究者利用延时叠加策略开发了超高像素分辨率的 MEMS 投影仪[36]。然而，与 DLP 系统相比，MEMS-FPP 主要由于起步较晚，仍不够成熟。因此，目前仅有少量文献采用了这种新型 MEMS 投影器件。缺乏广泛研究意味着，现有理论尚不足以支撑将这一创新性的 MEMS 微振镜作为投影器件的首选。</p>
+<p>条纹投影之后需要进行相位恢复，包括包裹相位提取[37-41]和相位展开[42-45]两个步骤。多频与相移相结合的方法因精度高而成为主流方案。条纹图案的光强可分为两部分：背景光强和调制光强。然而，相位信息仅包含在调制光强中，随机光强噪声会显著影响相位恢复[46]。条纹的调制光强既承载待求解的相位信息，也决定抗噪能力[47-50]。已有研究定量分析了调制光强与噪声所致相位误差之间的关系。大量研究表明，相位误差的标准差与调制光强成反比[37,42,51,52]。因此，要实现高精度相位恢复，投影条纹必须具有较大的调制光强。</p>
+<p>尽管研究者已知调制光强直接影响相位精度，但在 MEMS-FPP 系统中，影响调制光强的因素尚未得到充分关注。对于传统 DLP-FPP 技术，可通过镜头离焦在 1 位模式下投射近似正弦条纹，但镜头离焦也会降低调制光强[53-56]。这种调制光强衰减可用高斯函数描述[57-59]。MEMS 投影的前端不包含聚焦镜头，因此不存在镜头离焦问题[18,25]。由此产生的问题是：在 MEMS-FPP 中，影响调制光强的主要因素是什么？它又是如何影响调制光强的？尽管 MEMS 系统被认为最具前景，迄今仍没有研究给出明确答案。</p>
+<p>MEMS 条纹投影依赖于线激光器线宽无穷小这一假设，但该假设在现实中并不成立，实际线宽并非理想的零线宽。此外，线宽范围内的光强在空间域可能服从高斯分布。由于涉及高斯光强的积分不能简单地用初等函数表示，积分计算较为复杂。虽然线宽对调制光强的影响显著，但高斯光强积分以及激光强度在时空域中的联合变化，使建模极具挑战性。本文旨在量化激光参数（即激光线宽及其光强分布）对调制光强的影响，主要贡献有以下两点：</p>
+<p>1）首次提出可解释的激光影响模型，即窗口平滑模型。该模型揭示了激光束扫描中隐含的窗口平滑效应，并通过衰减因子量化激光线宽对调制光强的不利影响。作为面向 MEMS 系统的专用模型，它填补了相关理论空白，为高精度重建提供理论指导。</p>
+<p>2）由于 MEMS 投影不存在镜头离焦问题，窗口平滑效应成为影响调制光强的主要因素。因此，本文提出利用激光参数评估系统精度的方法，并在此理论认识的基础上，进一步提出基于激光参数的最优条纹数标定算法，使给定 MEMS 系统的精度达到最高。</p>
+<h2 id="2-基于-MEMS-的-FPP-基本原理"><a href="#2-基于-MEMS-的-FPP-基本原理" class="headerlink" title="2. 基于 MEMS 的 FPP 基本原理"></a>2. 基于 MEMS 的 FPP 基本原理</h2><p>图 1(a) 展示了基于单轴 MEMS 微振镜的条纹投影。激光器发出的点状光束通过内部鲍威尔棱镜转换为线状光束。单轴 MEMS 微振镜在谐振模式下工作，由方波驱动。在时间域中，激光器的光功率由现场可编程门阵列（FPGA）连续控制。在空间域中，线激光经转动的单轴 MEMS 微振镜反射，沿 x 轴方向扫描。条纹投影策略涉及时间域与空间域的联合控制。图 1(b) 展示了扫描周期固定为 \(T\) 时微振镜的运动特性。扫描角 \(\alpha\)（光学角）与时间 \(t\) 的关系可近似表示为正弦函数 \(\alpha=\alpha_{\max}\sin(2\pi t/T)\)。最大扫描角 \(\alpha_{\max}\) 为 30°。每当振镜扫描过角间隔 \(\delta\)，光电探测器就向 FPGA 发送一个角度脉冲（Trigger 1）。FPGA 根据检测到的角度脉冲数计算当前扫描角 \(\alpha\)。设 MEMS 投影仪到参考平面的距离为 \(d\)，则扫描位置可计算为 \(x=d\tan(\alpha)\)。图 1(c) 给出了激光功率与角度脉冲数之间的关系。根据这一关系，可投射出图 1(d) 所示的正弦条纹。设扫描范围 0° 至 \(\alpha_{\max}\) 内的投影条纹数为 \(f\)，则参考平面上的条纹宽度 \(W_F\) 为：</p>
+
+\[
+W_F=d\tan(\alpha_{\max})/f.
+\tag{1}
+\]
+
+
+<p>为在参考平面上投射正弦条纹，FPGA 向激光器提供的功率为：</p>
+
+\[
+P(x)=\frac{P_{\max}}{2}+\frac{P_{\max}}{2}\cos\left(\frac{2\pi}{W_F}x\right),
+\tag{2}
+\]
+
+
+<p>其中，\(P_{\max}\) 表示 FPGA 可提供的最大功率。相机采集的图像 \(I^c\) 为：</p>
+
+\[
+I^c=A^c+B^c\cos(\phi),
+\tag{3}
+\]
+
+
+<p>其中，\(B^c\cos(\phi)\) 表明相位信息 \(\phi\) 包含在调制光强 \(B^c\) 中。因此，调制光强 \(B^c\) 表征信噪比中的信号强度。下一节将通过建模，定量分析激光对调制光强的影响。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig1-projection-principle.png" alt="基于单轴 MEMS 微振镜的投影原理：线激光经振镜反射扫描，图中包含扫描角随时间变化、激光功率与角度脉冲的关系以及正弦条纹"></p>
+<p><em>图 1. 基于单轴 MEMS 微振镜的投影原理。</em></p>
+<h2 id="3-本文方法"><a href="#3-本文方法" class="headerlink" title="3. 本文方法"></a>3. 本文方法</h2><p>基于 MEMS 微振镜的理想条纹投影假设线激光器的线宽（也称束腰直径）无穷小，但该假设在真实物理世界中不成立。图 2(a) 展示了具有一定线宽的激光在参考平面上的扫描过程。线宽 \(\bar{W}_L\) 和激光扫描方向均沿 x 轴，而激光线长 \(\tau\) 由鲍威尔棱镜沿 y 轴方向扩展。线宽范围内的光不仅作用于当前扫描位置，还会影响线宽范围内的邻近位置。因此，实际条纹图案必然不同于线宽无穷小时的理想情况。有限线宽激光的作用，类似于移动窗口函数对正弦曲线的平滑作用，因此我们将这一现象称为窗口平滑效应。本节将建立其数学模型，并利用激光参数（如线宽和光强分布）提出新的系统评估方法及最优条纹数标定方法。</p>
+<h3 id="3-1-窗口平滑效应建模"><a href="#3-1-窗口平滑效应建模" class="headerlink" title="3.1 窗口平滑效应建模"></a>3.1 窗口平滑效应建模</h3><p>众所周知，根据激光沿 z 轴的传播特性，瑞利范围内的束腰直径变化缓慢[60]。换言之，在图 2(a) 中，受光程差、光平面与参考平面夹角 \(\alpha\) 的变化等因素影响，参考平面上的线宽 \(\bar{W}_L\) 随扫描位置 \((x,y)\) 略有变化。因此，线宽 \(\bar{W}_L(x)\) 是扫描位置 \((x,y)\) 的函数。此外，相机光轴可能不垂直于参考平面。为处理这些问题，整个建模过程均逐像素进行：在一个相机像素对应的微小区域内，可认为线宽 \(\bar{W}_L\) 近似相等。为简化符号，下文建模省略坐标索引 \((x,y)\)。</p>
+<p>通常，线宽范围内的光强服从高斯分布；但在某些情况下，也可能服从其他分布，例如平顶光或非理想高斯分布。因此，我们设计了一种分段方法，用多段均匀光来近似任意光强分布。借助这一方法，所提窗口平滑模型可普遍适用于各种光强分布。如图 2(b) 所示，将激光总线宽 \(\bar{W}_L\) 等分为 \(2k_{\max}+1\) 段，各段等宽，满足 \(W_L=\bar{W}_L/(2k_{\max}+1)\)。其中，\(k_{\max}\) 表示分段的最大索引，通常取非负整数。该分段方法具有两个特点：1）每段内部光强均匀；2）不同分段的光强之间满足一定比例关系，\(c_k\) 为第 \(k\) 段的比例系数。根据式(2)及上述特点，第 \(k\) 段的光强 \(I_k^L(x)\) 为：</p>
+
+\[
+\begin{cases}
+I_k^L(x)=A_k^L+B_k^L\cos\left(\dfrac{2\pi}{W_F}x\right)\\[6pt]
+A_k^L=B_k^L=\dfrac{P_{\max}}{2\tau W_L}\left(c_k\Big/\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\right)
+\end{cases}
+\tag{4}
+\]
+
+
+<p>其中，下标 \(k\)（若有）表示分段索引，\(W_L\) 为每段的线宽。\(A_k^L\) 和 \(B_k^L\) 分别表示第 \(k\) 段的背景光强和调制光强。具体而言，根据式(4)，第 0 段的光强为：</p>
+
+\[
+\begin{cases}
+I_0^L(x)=A_0^L+B_0^L\cos\left(\dfrac{2\pi}{W_F}x\right)\\[6pt]
+A_0^L=B_0^L=\dfrac{P_{\max}}{2\tau W_L}\left(c_0\Big/\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\right)\\[6pt]
+A_0^L:A_k^L=B_0^L:B_k^L=c_0:c_k
+\end{cases}
+\tag{5}
+\]
+
+
+<p>在激光的一次扫描过程中，可分别分析各个分段。被测区域的总光强等于各分段贡献的光强之和。下面以第 0 段为例，推导其贡献的光强。</p>
+<p>图 2(c) 展示了第 0 段扫过一个极小研究区域的过程。第 0 段的光强同样是扫描位置 \(x\) 的正弦函数。设研究区域的宽度和高度分别为 \(w\) 和 \(h\)，在投影仪坐标系中的水平坐标为 \(x_w\)。\(w\) 和 \(h\) 均足够小，满足 \(W_L\gg w\) 且 \(\tau\gg h\)。第 0 段扫过研究区域时，不同阶段的累积光能计算方法不同。为区分这些阶段，定义 \(t_1\)、\(t_2\)、\(t_3\) 和 \(t_4\)：\(t_1\) 为第 0 段的右边界与研究区域左边界重合的时刻；\(t_2\) 为其右边界与研究区域右边界重合的时刻；\(t_3\) 为其左边界与研究区域左边界重合的时刻；\(t_4\) 为其左边界与研究区域右边界重合的时刻。整个扫描过程持续 \(t_1\) 至 \(t_4\)。虽然激光扫描速度随研究区域坐标 \(x_w\) 而变化，但扫描该区域所需的时间 \(t_1\) 至 \(t_4\) 相对于激光的总扫描周期 \(T\) 极短。因此，\(t_1\) 至 \(t_4\) 内的扫描可视为匀速运动。若用 \(v\) 表示扫描速度，则有 \(dx=v\,dt\)。一次扫描后，研究区域接收的第 0 段光能由三部分组成：在 \(t_1\) 至 \(t_2\) 期间，第 0 段进入研究区域，重叠面积逐渐增大；在 \(t_2\) 至 \(t_3\) 期间，第 0 段完全覆盖研究区域；在 \(t_3\) 至 \(t_4\) 期间，第 0 段离开研究区域，重叠面积逐渐减小。研究区域在这三个阶段接收的第 0 段光能分别为：</p>
+
+\[
+E_{t_1\sim t_2}=\int_{t_1}^{t_2}\left(x-x_w+\frac{W_L+w}{2}\right)hI_0^L\,dt.
+\tag{6}
+\]
+
+
+
+\[
+E_{t_2\sim t_3}=\int_{t_2}^{t_3}whI_0^L\,dt.
+\tag{7}
+\]
+
+
+
+\[
+E_{t_3\sim t_4}=\int_{t_3}^{t_4}\left(x_w+\frac{W_L+w}{2}-x\right)hI_0^L\,dt.
+\tag{8}
+\]
+
+
+<p>研究区域接收的第 0 段总光能可表示为 \(E=E_{t_1\sim t_2}+E_{t_2\sim t_3}+E_{t_3\sim t_4}\)。经过一系列推导，可简化为：</p>
+
+\[
+E=\frac{A_0^LwW_Lh}{v}+\frac{B_0^LW_FW_Fh}{\pi^2v}\sin\left(\frac{\pi w}{W_F}\right)\sin\left(\frac{\pi W_L}{W_F}\right)\cos\left(\frac{2\pi}{W_F}x_w\right).
+\tag{9}
+\]
+
+
+<p>参考平面上的研究区域必然对应实际被测物体上的某个区域，而被测物体可能具有复杂表面。设 \(s\) 为这两个对应区域的面积比。参考平面上研究区域的面积为 \(wh\)，则物体上对应区域的面积为 \(swh\)。当研究面积 \(wh\) 趋于零时，第 0 段在被测物体上贡献的平均光强 \(I_0^M\) 为：</p>
+
+\[
+I_0^M=\lim_{wh\to0}\frac{E}{Tswh}=\frac{P_{\max}}{2vT\tau s}\frac{c_0}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}\left[1+\mathrm{sinc}\left(\frac{\pi W_L}{W_F}\right)\cos\left(\frac{2\pi}{W_F}x_w\right)\right].
+\tag{10}
+\]
+
+
+<p>同理，第 \(k\) 段贡献的光强 \(I_k^M\) 为：</p>
+
+\[
+I_k^M=\frac{P_{\max}}{2vT\tau s}\frac{c_k}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}\left[1+\mathrm{sinc}\left(\frac{\pi W_L}{W_F}\right)\cos\left(\frac{2\pi}{W_F}(x_w-kW_L)\right)\right].
+\tag{11}
+\]
+
+
+<p>一次扫描后，研究区域的光强等于所有分段贡献的光强之和。随后，研究区域上的这些光由一个相机像素采集。该像素的光强 \(I^c\) 可计算为：</p>
+
+\[
+\begin{aligned}
+I^c&=r\sum_{k=-k_{\max}}^{k_{\max}}I_k^M+\varepsilon\\
+&=\frac{P_{\max}r}{2vT\tau s}+\varepsilon+\frac{P_{\max}r}{2vT\tau s}\Big/\sum_{k=-k_{\max}}^{k_{\max}}c_k\times\mathrm{sinc}\left(\frac{\pi W_L}{W_F}\right)\times\\
+&\quad\left(\sum_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)\sin(\varphi)+\sum_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)\cos(\varphi)\right),
+\end{aligned}
+\tag{12}
+\]
+
+
+<p>其中，\(r\) 是表面反射率与相机灵敏度的综合系数，\(\varepsilon\) 为进入相机的环境光，\(\varphi\) 为包含物体深度信息的相位。当 \(\sum c_k\cos(2k\pi W_L/W_F)>0\) 时，式(12)可进一步简化为：</p>
+
+\[
+\begin{aligned}
+I^c&=\frac{P_{\max}r}{2vT\tau s}+\varepsilon+\frac{P_{\max}r}{2vT\tau s}\times\mathrm{sinc}\left(\frac{\pi W_L}{W_F}\right)\\
+&\quad\times\frac{\sqrt{\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)\right)^2+\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)\right)^2}}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}\\
+&\quad\times\cos\left(\varphi-\tan^{-1}\frac{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)}\right).
+\end{aligned}
+\tag{13}
+\]
+
+
+<p>由式(13)不难证明以下推论：</p>
+
+\[
+\begin{cases}
+\mathrm{sinc}\left(\dfrac{\pi W_L}{W_F}\right)\le1\\[8pt]
+\dfrac{\sqrt{\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)\right)^2+\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)\right)^2}}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}\le1
+\end{cases}
+\tag{14}
+\]
+
+
+<p>当存在非零线宽 \(W_L\neq0\) 时，式(14)中的两项将导致调制光强衰减。引入衰减因子 \(\lambda\) 来量化衰减程度，则线激光的窗口平滑模型可表示为：</p>
+
+\[
+\begin{cases}
+A^c=\dfrac{P_{\max}r}{2vT\tau s}+\varepsilon,\qquad B^c=(A^c-\varepsilon)\times\lambda\\[8pt]
+\lambda=\dfrac{\sqrt{\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\frac{2k\pi W_L}{W_F}\right)^2+\left(\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\sin\frac{2k\pi W_L}{W_F}\right)^2}}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}\mathrm{sinc}\frac{\pi W_L}{W_F}\\[12pt]
+\delta_e=\tan^{-1}\left(\dfrac{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)}\right)
+\end{cases}
+\tag{15}
+\]
+
+
+<p>式(15)表明，线宽的窗口平滑效应不仅会减小调制光强 \(B^c\)，还会产生相位误差 \(\delta_e\)；但背景光强 \(A^c\) 不受线宽影响。衰减因子 \(\lambda\) 与线宽 \(W_L\) 和条纹宽度 \(W_F\) 之比有关。为方便起见，将 \(W_L/W_F\) 称为窗口宽度。由于分段方法能够近似描述几乎所有类型的光强分布，窗口平滑模型不仅适用于高斯光强分布，也适用于平顶光等其他分布。此外，物体边缘到激光器的距离大于其中心到激光器的距离。投影距离的变化只会改变模型参数的数值，不会给算法引入误差。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig2-window-smoothing-model.png" alt="窗口平滑问题的建模：有限线宽激光的扫描过程、用分段均匀光近似线宽内高斯光强分布，以及第 0 段扫过研究区域的三个阶段"></p>
+<p><em>图 2. 激光束扫描中窗口平滑问题的建模。(a) 有限线宽激光在参考平面上的扫描过程；(b) 用分段方法近似描述线宽范围内的高斯光强分布；(c) 第 0 段扫过研究区域的过程。</em></p>
+<h3 id="3-2-分析与模型标定"><a href="#3-2-分析与模型标定" class="headerlink" title="3.2 分析与模型标定"></a>3.2 分析与模型标定</h3><p>窗口平滑模型揭示了线宽对条纹投影的两方面影响：1）降低调制光强；2）产生相移误差。本节基于所建立的模型展开深入分析。MEMS 投影前端不使用聚焦镜头，因此不存在镜头离焦问题，激光束扫描的窗口平滑效应便成为影响调制光强的主要因素。因此，对于给定的 MEMS 系统，本文将利用激光参数（例如线宽 \(W_L\) 和光强比例 \(c_k\)）建立一种新的系统精度评估方法。直接测量线宽及其光强分布并不现实，因为线宽会随扫描位置 \(x\) 变化。因此，下面给出一种逐像素的模型标定方法。</p>
+<p>线激光器在线宽范围内通常具有对称的类高斯光强分布。由光强分布的对称性 \(c_k=c_{-k}\)，可得：</p>
+
+\[
+\sum_{k=-k_{\max}}^{k_{\max}}c_k\sin\left(\frac{2k\pi W_L}{W_F}\right)=0.
+\tag{16}
+\]
+
+
+<p>随后，式(15)中的衰减因子 \(\lambda\) 和相移误差 \(\delta_e\) 可进一步简化为：</p>
+
+\[
+\lambda\approx\mathrm{sinc}\left(\frac{\pi W_L}{W_F}\right)\frac{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{W_F}\right)}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k},\qquad\delta_e\approx0.
+\tag{17}
+\]
+
+
+<p>线宽范围内的光强分布越对称，相移误差越小。此外，当窗口宽度 \(W_L/W_F=i/2\)，\(i\in\mathbb{N}\) 时，相移误差 \(\delta_e\) 也等于零。特别地，\(W_L/W_F=0\) 时有 \(\delta_e=0\)。因此，减小相移误差有三种策略：1）减少条纹数；2）选用线宽较窄的激光器；3）使线宽范围内的光强分布更加对称。由于半导体激光器通常产生对称性良好的光束，相位误差 \(\delta_e\) 可忽略。因此，本文主要关注线宽对调制光强的影响。</p>
+<p>在理想情况下，线宽趋于零且条纹宽度很大，于是 \(W_L/W_F\to0\)、\(\lambda\to1\)。此时调制光强不发生衰减，达到满幅值 \(B^c=A^c-\varepsilon\)。在实际情况下，\(W_L/W_F\neq0\) 使 \(\lambda<1\)，调制光强衰减为 \(B^c=(A^c-\varepsilon)\times\lambda\)。图 3 直观展示了窗口宽度 \(W_L/W_F\) 与衰减因子 \(\lambda\) 的关系：在一定范围内，窗口越宽，衰减越严重。此外，衰减因子不受被测物体参数（如表面反射率）的影响。相较于调制光强，与被测物体无关是衰减因子的一项优势。由于衰减因子主要与激光参数有关，可将其视为系统参数。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig3-window-width-decay.png" alt="衰减因子随窗口宽度增大而振荡衰减，图中标注了衰减因子的绝对值与振荡幅度"></p>
+<p><em>图 3. 窗口宽度与衰减因子的关系。为便于展示，将分段数设为 1，并绘出衰减因子的绝对值。</em></p>
+<p>由于条纹数与条纹宽度有关，衰减因子也是条纹数的函数。将式(1)代入式(17)，衰减因子 \(\lambda\) 与条纹数 \(f\) 的关系可表示为：</p>
+
+\[
+\lambda(f)=\mathrm{sinc}\left(\frac{\pi W_L}{d\tan(\alpha_{\max})}f\right)\frac{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k\cos\left(\frac{2k\pi W_L}{d\tan(\alpha_{\max})}f\right)}{\sum\limits_{k=-k_{\max}}^{k_{\max}}c_k}.
+\tag{18}
+\]
+
+
+<p>在线宽分段方法中，分段数越多，窗口平滑模型越精确，但模型复杂度也会显著增加。综合考虑复杂度与精度，本文将分段数设为 5，即 \(k_{\max}=2\)。此时，式(18)可转化为：</p>
+
+\[
+\begin{cases}
+\lambda(f)=\mathrm{sinc}(a_1f)\times\left(a_2+a_3\cos(2a_1f)+a_4\cos(4a_1f)\right)\\[6pt]
+a_1=\dfrac{\pi W_L}{d\tan(\alpha_{\max})},\quad a_2=c_0\Big/\sum\limits_{k=-2}^{2}c_k,\quad a_3=(c_1+c_{-1})\Big/\sum\limits_{k=-2}^{2}c_k,\quad a_4=(c_2+c_{-2})\Big/\sum\limits_{k=-2}^{2}c_k
+\end{cases}
+\tag{19}
+\]
+
+
+<p>模型参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\) 包含激光参数（即线宽 \(W_L\) 和光强比例 \(c_k\)），可按以下方式逐像素标定：在额定投影距离处放置白色平面，并向其投射不同条纹数的相移图案。对于 \(N\) 步相移法，背景光强与调制光强可计算为：</p>
+
+\[
+\begin{cases}
+A^c=\dfrac{1}{N}\sum\limits_{n=0}^{N-1}I_n\\[8pt]
+B^c=\dfrac{2}{N}\sqrt{\left[\sum\limits_{n=0}^{N-1}I_n\sin(2n\pi/N)\right]^2+\left[\sum\limits_{n=0}^{N-1}I_n\cos(2n\pi/N)\right]^2}
+\end{cases}
+\tag{20}
+\]
+
+
+<p>标定在暗环境中进行，因此 \(\varepsilon=0\)。在这种情况下，根据式(15)，衰减因子可由 \(\lambda=A^c/B^c\) 计算。由此可获得多组测量数据 \(\{\lambda,f\}\)。利用这些数据和最小二乘法，可标定式(19)中的参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\)。各参数的初值可依据线宽范围内的光强分布设定。</p>
+<p>对于 DLP 投影仪，镜头离焦会使调制光强衰减。镜头离焦模型中的衰减为[57-59]：</p>
+
+\[
+\lambda_G(f)=b_1e^{-b_2f^2},
+\tag{21}
+\]
+
+
+<p>其中，\(b_1\) 为比例系数，\(b_2\) 与 DLP 投影仪的镜头离焦程度有关。MEMS 投影仪前端不需要聚焦镜头，因此不存在镜头离焦问题，DLP 的镜头离焦模型不适合描述 MEMS 投影仪的调制光强衰减。式(19)表明，窗口平滑模型基于激光参数建立，因此具有可解释性，且专门适用于 MEMS 系统。</p>
+<p>调制光强衰减意味着对比度降低，进而导致相位恢复不准确。过去为简化分析，常将随机噪声视为零均值、具有给定标准差的加性高斯噪声。然而，部分噪声可能并非高斯噪声，例如散粒噪声和相对强度噪声（RIN）。近期，Lv 和 Qian 提出了非高斯噪声模型，可量化各种噪声对相位误差标准差的影响[46]：</p>
+
+\[
+\sigma_\phi=\sqrt{\frac{2}{N}}\frac{C_n+KA^c}{B^cf},
+\tag{22}
+\]
+
+
+<p>其中，\(N\) 为相移步数，\(K\) 为总增益，\(C_n\) 为光子转移曲线（PTC）中的常数。条纹数 \(f\) 越大，窗口宽度 \(W_L/W_F\) 越大，从而使调制光强降低。将 \(B^c=(A^c-\varepsilon)\lambda\) 和式(19)代入式(22)，以衰减因子 \(\lambda\) 替换调制光强 \(B^c\)，即可得到一种利用激光参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\) 评估给定 MEMS 系统精度的新方法：</p>
+
+\[
+\sigma_\phi=\sqrt{\frac{2}{N}}\frac{C_n+KA^c}{(A^c-\varepsilon)\,\mathrm{sinc}(a_1f)\times\left(a_2+a_3\cos(2a_1f)+a_4\cos(4a_1f)\right)f}.
+\tag{23}
+\]
+
+
+<p>总体而言，窗口平滑模型为实现高性能 MEMS 三维重建提供了两点关键认识：</p>
+<p>1）线宽的窗口平滑效应本质上通过减小衰减因子 \(\lambda\) 来降低相位精度。虽然增大输入激光功率能够提高调制光强，但受相机动态范围限制，这样做可能导致过曝。此外，背景光强 \(A^c\) 也会随输入功率增大，进而使式(23)的分子增大。相比之下，制造超窄线宽激光器并优化线宽内的光强分布，可以从根本上提高相位精度，因为它们只会增大式(23)的分母。</p>
+<p>2）条纹数增加时，窗口平滑效应增强。一方面，在保证相位展开正确的前提下，多频展开理论表明，较大的条纹数有利于减小相位误差；另一方面，较大的条纹数会使调制光强衰减，反而增大相位误差。窗口平滑模型揭示了调制光强与条纹数之间的矛盾，因此有必要设计最优条纹数标定算法。</p>
+<h3 id="3-3-最优条纹数标定算法"><a href="#3-3-最优条纹数标定算法" class="headerlink" title="3.3 最优条纹数标定算法"></a>3.3 最优条纹数标定算法</h3><p>三维坐标由最高条纹频率下的相位映射得到。最高条纹频率下的相位误差标准差决定了坐标误差的标准差。可利用已知的激光模型参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\)，按以下方式标定最高条纹频率所对应的最优条纹数。</p>
+<p>式(23)中基于激光参数的精度评估方法表明，应最大化 \(\lambda(f)\times f\)，以减小给定 MEMS 系统的相位误差。因此，设计目标函数 \(Q(f)\) 为：</p>
+
+\[
+Q(f)=\mathrm{sinc}(a_1f)\times\left(a_2+a_3\cos(2a_1f)+a_4\cos(4a_1f)\right)f.
+\tag{24}
+\]
+
+
+<p>此外，为减小线宽内光强分布不对称所产生的相移误差 \(\delta_e\)，最优条纹数应尽可能满足 \(W_L/W_F=i/2\)，\(i\in\mathbb{N}\)（即 \(2a_1f/\pi\in\mathbb{N}\)）。窗口平滑模型逐像素建立，且模型参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\) 随工作距离 \(d\) 变化。因此，需要在各工作距离处逐像素进行模型标定，再通过最大化目标函数 \(Q(f)\)，标定各工作距离下各像素的最优条纹数，最后以它们的平均值作为最终最优条纹数。</p>
+<p>图 4 展示了最优条纹数标定流程。需要指出，三维重建系统的测量空间通常与相机镜头的合焦空间重合。此时，调制光强主要受投影仪的窗口平滑效应影响，而不是相机镜头离焦。算法主要步骤如下：</p>
+<p>步骤 1：用白板获取测量数据 \(\{\lambda,f\}\)，拟合式(19)，标定每个像素的参数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\)。</p>
+<p>步骤 2：通过最大化目标函数，搜索每个像素的最优条纹数。</p>
+<p>步骤 3：计算所有像素最优条纹数的平均值。</p>
+<p>步骤 4：在测量空间内沿投影仪 z 轴移动白板，重复上述步骤，直至遍历整个测量空间。</p>
+<p>步骤 5：计算所有位置最优条纹数的平均值，作为最终的最优条纹数。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig4-calibration-flowchart.png" alt="最优条纹数标定流程：拟合模型参数、逐像素求最优条纹数、沿 z 轴移动白板并在整个测量空间取平均"></p>
+<p><em>图 4. 最优条纹数标定方法的流程图。</em></p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>本节通过一系列实验，验证窗口平滑效应的存在、窗口平滑模型的精度，以及最优条纹数标定算法的有效性。采用两种激光线宽开展对照实验。所有实验中，当工作距离在 200 mm 至 300 mm 之间时，窄线宽约为 0.3 mm，宽线宽约为 0.6 mm。除非另有说明，实验默认使用窄线宽，并将总分段数设为 5。</p>
+<p>实验在自主研制的 MEMS-FPP 系统上开展。如图 5 所示，系统由投影模块、相机采集模块和 FPGA 控制模块组成。相机（大恒 MER-160）的分辨率为 1440 × 1080。基于单轴 MEMS 微振镜的自研投影仪分辨率为 4800 × 1，确保投射高频正弦条纹时具有较高的正弦采样率。振镜谐振频率为 1150 Hz，对应 8 位投影图案的投影速度为 2300 帧&#x2F;秒。线激光器的最大功率为 100 mW，波长为 450 nm。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig5-mems-fpp-system.png" alt="自主研制的 MEMS-FPP 系统：投影模块、相机采集模块与 FPGA 控制模块的原理图和实物照片"></p>
+<p><em>图 5. 自主研制的 MEMS-FPP 系统。(a) 原理示意图；(b) 实物系统。</em></p>
+<h3 id="4-1-窗口平滑效应验证"><a href="#4-1-窗口平滑效应验证" class="headerlink" title="4.1 窗口平滑效应验证"></a>4.1 窗口平滑效应验证</h3><p>窗口平滑效应的强弱与窗口宽度密切相关，窗口宽度是线宽与条纹宽度之比。因此，设计两类对照实验：一类改变激光线宽；另一类通过改变投影图案中的条纹频率来改变条纹宽度。两种线宽分别为 0.3 mm 和 0.6 mm。低、中、高频对应的条纹数分别为 20、50 和 80。实验对象为白色平面靶标。</p>
+<p>图 6(a) 展示了不同激光线宽和条纹宽度下采集的条纹图案。一方面，条纹频率越高，条纹宽度越小，窗口宽度越大，因此窗口平滑效应随条纹频率升高而增强。另一方面，激光线宽越宽，窗口宽度越大，窗口平滑效应也越强。总体而言，在总曝光时间和输入激光功率固定时，窄线宽与低条纹频率有利于产生调制光强较高的条纹。此外，正弦波的波谷比波峰更平滑，这是因为相机噪声水平与图像光强成正比[46]。</p>
+<p>分别投射不同激光线宽和条纹宽度下的 6 步相移图案。相移法可逐像素求解，因此能够分别计算每个像素的背景光强与调制光强。图 6(b) 展示了计算得到的各像素光强及全体像素的平均值。三种条纹宽度与两种激光线宽组合，共得到六组实验结果。结果表明，激光线宽与条纹宽度仅影响调制光强，不影响背景光强。条纹宽度越小或激光线宽越大，窗口平滑效应越明显，调制光强越低。图 6(a) 与图 6(b) 的实验结果一致，验证了激光线宽引起的窗口平滑效应。</p>
+<p>采用 6 步相移与多频相结合的方法，求解截面上的绝对相位，结果如图 6(c) 所示。为放大绝对相位差异，图 6(d) 展示了 u &#x3D; 800 至 u &#x3D; 810 像素处的归一化绝对相位。将相位归一化到 [0, 2π]，可更清楚地比较不同条纹频率的影响。被测对象为平面，因此真实相位应为平滑直线。图 6(d) 表明，窄线宽具有较高的调制光强，其相位直线性优于宽线宽。这验证了较窄线宽可通过减弱窗口平滑效应来提高相位精度。理想情况下，不同条纹频率的归一化绝对相位应重合。但实际线宽内的光强分布不可能完全对称。根据窗口平滑模型，这种不对称会使不同条纹频率产生不同的相移误差。图 6(d) 的实验结果证明了这种相位偏移现象的存在。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig6-control-experiment.png" alt="窗口平滑效应对照实验：不同线宽和条纹频率下的条纹图案、截面灰度、背景与调制光强、绝对相位及归一化相位"></p>
+<p><em>图 6. 窗口平滑效应的对照实验：分别改变激光线宽和条纹频率。(a) 采集的条纹图案及截面灰度；(b) 截面的背景光强与调制光强；(c) 截面的绝对相位。图例中 L、M、H、T、W 分别表示低频、中频、高频、窄线宽和宽线宽；(d) u &#x3D; 800 至 810 像素处的归一化绝对相位。</em></p>
+<h3 id="4-2-窗口平滑模型验证"><a href="#4-2-窗口平滑模型验证" class="headerlink" title="4.2 窗口平滑模型验证"></a>4.2 窗口平滑模型验证</h3><p>通过模型标定实验验证窗口平滑模型的精度。模型参数主要指衰减因子中的 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\)。为便于计算衰减因子，标定过程须在暗环境中进行。以白板为投影目标，采用最小二乘法拟合模型。条纹数依次为 1、5、20、40、60、80、100、120、140、160、180 和 200。相位恢复采用 6 步相移与多频相结合的方法。</p>
+<p>图 7(a) 展示了四个系数 \(a_1\)、\(a_2\)、\(a_3\)、\(a_4\) 的拟合结果。由于采用逐像素标定，整幅图像中的像素并不共享同一组参数。标定结果用四个二维矩阵表示，每个矩阵与图像尺寸相同。根据图 7(a) 的标定结果，绘出图 7(b) 所示的四个参数的频数分布直方图。直方图表明，由于模型逐像素建立，不同相机像素具有不同的模型参数。图 7(c) 为标定结果的箱线图。\(a_2>a_3>a_4\) 表明线宽中心的光强大于边缘光强，与高斯激光束的特征一致。为进一步说明模型的高精度，图 7(d) 用拟合残差绝对值的均值量化模型拟合误差。所有像素的平均拟合误差为 0.019，最大拟合误差小于 0.048。相对于衰减因子的取值范围，模型拟合误差很小，证明窗口平滑模型具有较高精度。图 7(e) 使用像素 (300, 300) 处的同一组测量数据，对比传统镜头离焦模型与窗口平滑模型的拟合结果。镜头离焦模型采用高斯函数曲线拟合数据。显然，测量数据在关键点前后的变化趋势与高斯曲线不一致。因此，将传统镜头离焦模型用于投影前端不存在镜头离焦的 MEMS 系统时，不仅缺乏物理可解释性，拟合精度也较低。而具有物理可解释性的窗口平滑模型与测量数据一致。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig7-calibration-results.png" alt="窗口平滑模型标定结果：四个系数的二维分布、频数直方图、箱线图、拟合残差图，以及与镜头离焦模型的对比"></p>
+<p><em>图 7. 窗口平滑模型标定结果。(a) 衰减因子中四个系数的标定结果，二维图像中每个像素均有一组系数；(b) 四个系数的频数分布直方图；(c) 全体像素标定结果的箱线图；(d) 拟合残差图；(e) 使用像素 (300, 300) 处的测量数据，对比镜头离焦模型与本文模型的拟合结果。</em></p>
+<p>为进一步验证模型对 MEMS-FPP 系统的适用性，在三种投影距离（\(d=200\)、250、300 mm）和两种线宽（窄、宽）组合下，对两种模型的拟合精度进行比较。如表 1 所示，窗口平滑模型的精度显著优于传统镜头离焦模型，且在不同配置下均保持较高精度。这表明所提模型确实适用于 MEMS 系统。</p>
+<p><em>表 1. 模型拟合误差比较。</em></p>
+<table>
+<thead>
+<tr>
+  <th rowspan="2">方法</th>
+  <th colspan="2">d = 200 mm</th>
+  <th colspan="2">d = 250 mm</th>
+  <th colspan="2">d = 300 mm</th>
+  <th rowspan="2">均值 ± 标准差</th>
+</tr>
+<tr>
+  <th>窄线宽</th>
+  <th>宽线宽</th>
+  <th>窄线宽</th>
+  <th>宽线宽</th>
+  <th>窄线宽</th>
+  <th>宽线宽</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>镜头离焦模型</td>
+  <td>0.053</td>
+  <td>0.042</td>
+  <td>0.045</td>
+  <td>0.039</td>
+  <td>0.046</td>
+  <td>0.037</td>
+  <td>0.044 ± 0.006</td>
+</tr>
+<tr>
+  <td>本文模型</td>
+  <td>0.020</td>
+  <td>0.019</td>
+  <td>0.019</td>
+  <td>0.018</td>
+  <td>0.019</td>
+  <td>0.017</td>
+  <td>0.019 ± 0.001</td>
+</tr>
+</tbody>
+</table>
+
+<p>通过实验研究窗口平滑模型的精度与线宽分段数的关系。实验中 \(k_{\max}\) 分别取 0、1、2、3、4、5，对应分段数为 1、3、5、7、9、11。图 8(a) 展示了不同分段数下的模型拟合结果。“Our model-1”表示分段数为 1 的模型，根据窗口平滑理论，其表达式为 \(\lambda(f)=a_2\times\mathrm{sinc}(a_1f)\)。该模型的拟合曲线与传统镜头离焦模型的钟形拟合曲线相似。从这一角度看，DLP 镜头离焦模型可视为窗口平滑模型的一种特例，从而验证所提模型的普适性。显然，简单的钟形曲线不足以匹配测量数据的复杂变化趋势。相比之下，分段数较多的窗口平滑模型具有更好的拟合效果。图 8(b) 展示了不同分段数对应的模型拟合误差。随着分段数增加，拟合误差减小；但分段数过多会导致模型复杂、参数数量过多，进而增大拟合误差。为降低模型复杂度，建议将分段数设为 5。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig8-segmentation-comparison.png" alt="不同分段数下窗口平滑模型与镜头离焦模型的拟合结果及平均拟合误差比较"></p>
+<p><em>图 8. 模型拟合精度与分段数的关系。“Our Model-i”表示分段数为 i 的窗口平滑模型，并以 DLP 镜头离焦模型作为参照。(a) 像素 (300, 300) 处不同分段数的窗口平滑模型拟合结果；(b) 全体像素平均模型拟合误差的比较。</em></p>
+<h3 id="4-3-最优条纹数标定算法验证"><a href="#4-3-最优条纹数标定算法验证" class="headerlink" title="4.3 最优条纹数标定算法验证"></a>4.3 最优条纹数标定算法验证</h3><p>完成窗口平滑模型标定后，对给定系统进行最优条纹数标定实验。根据逐像素标定得到的模型参数，可绘制每个像素的目标函数，再据此搜索各像素的最优条纹数。图 9(a) 以像素 (300, 300) 为例，展示其目标函数及最优条纹数。图 9(b) 给出全部像素最优条纹数的频数分布直方图。在整个测量空间（\(d=220\) 至 280 mm）内，最优条纹数的平均值为 88，因此将 88 作为该系统最高条纹频率所对应的最终最优条纹数。根据线激光束的传播特性[60]，线宽同时与投影距离 \(d\) 和像素位置有关。此外，条纹宽度与投影距离 \(d\) 成正比。因此，窗口平滑模型的逐像素参数会随投影距离 \(d\) 和像素位置略有变化，最优条纹数也相应随工作距离和像素位置变化。图 9(c) 所示实验结果与理论推测一致。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig9-optimal-fringe-distance.png" alt="三种工作距离下逐像素最优条纹数的确定、频数分布直方图与二维分布"></p>
+<p><em>图 9. 三种工作距离（d &#x3D; 220、250、280 mm）下的最优条纹数。(a) 像素 (300, 300) 处最优条纹数的确定；(b) 全体像素最优条纹数的频数分布直方图；(c) 二维图像中每个像素的最优条纹数。</em></p>
+<p>为验证最优条纹数标定算法的有效性，对具有复杂表面的物体开展相位测量实验。图 10(a) 展示被测物体照片，图 10(b) 展示条纹数 \(f=88\) 时的投影结果，图 10(c) 为从背景中提取被测物体的掩膜。\(f=88\) 时的包裹相位和绝对相位分别见图 10(d)、(e)。绝对相位归一化到 [0, 2π]，相位误差用两次测量的重复性误差量化。实验依次采用最高条纹数 \(f=4\)、20、40、60、88、110、130、150 和 170（对应各自的最高条纹频率）进行测试，其中 88 为本文方法选出的条纹数。实验全过程保证多频相位展开正确。图 10(f) 比较不同最高条纹数下的相位误差，图 10(g) 汇总全体像素的平均相位误差。可见，当 \(f=88\) 时，相位误差最小。这验证了最优条纹数标定算法的有效性。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig10-phase-verification.png" alt="复杂表面物体的相位恢复实验：物体照片、条纹图案、掩膜、包裹相位、绝对相位及不同最高条纹数下的相位误差"></p>
+<p><em>图 10. 通过相位恢复实验验证最优条纹数。(a) 物体照片；(b) 采集的条纹图案；(c) 掩膜图像；(d) 包裹相位；(e) 绝对相位；(f) 最高条纹数 f &#x3D; 4、20、40、60、88、110、130、150、170 时的相位误差图；(g) 全体像素的平均相位误差。</em></p>
+<p>通过三维重建实验验证最优条纹数标定算法对重建精度的改善。图 11(a) 展示三种不同反射率的投影目标。图 11(b) 给出条纹数 \(f=88\) 时的重建结果，此时相位误差标准差最小，并提高了重建系统的空间分辨率。因此，被测物体的细节能够得到良好重建。通过计算两次测量之间的重复性误差，量化重建误差。图 11(c) 展示不同最高条纹数下的重建误差。三维坐标由最高频率的绝对相位映射得到。由于前述实验已验证 \(f=88\) 能获得最高相位精度，理论上该条纹数也应具有最高重建精度。结果表明，对于反射率不同的各类被测物体，\(f=88\) 始终对应最低重建误差，说明最优条纹数不受反射率影响。本文方法在三维重建中的有效性得到验证。</p>
+<p><img src="/2026/10/30/window-smoothing-effect-translation/fig11-reconstruction-verification.png" alt="三维重建实验：三种不同反射率目标、f = 88 的重建结果及不同最高条纹数下的重建误差"></p>
+<p><em>图 11. 通过三维重建实验验证最优条纹数。(a) 物体照片；(b) 三维重建结果；(c) 不同最高条纹数下的重建误差。</em></p>
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5. 结论"></a>5. 结论</h2><p>凭借连续光场、高速度、小体积、低成本和大景深等优势，基于 MEMS 微振镜的三维重建被认为极具发展前景。线激光器作为系统的唯一光源，其对 FPP 的影响机制仍不明确。本文首次提出了激光束扫描的窗口平滑模型，揭示线激光器的线宽及非对称光强分布对 FPP 的影响。衰减因子量化了窗口平滑导致的调制光强衰减程度；它由激光参数（如线宽和光强分布）决定，与被测物体表面反射率无关。对于给定系统，本文提出利用激光参数进行系统评估的新方法，并基于窗口平滑理论提出最优条纹数标定方法，以最小化相位误差的标准差。实验结果验证了所提方法的有效性。与 DLP 投影仪不同，MEMS 投影仪前端不使用聚焦镜头，不存在镜头离焦问题，因此窗口平滑效应成为影响条纹对比度的主要因素。相比 DLP 的镜头离焦模型，窗口平滑模型是首个专门面向 MEMS 系统的可解释模型。该模型填补了 MEMS 重建系统中光源影响机制的理论空白，为实现高性能重建提供了新的理论认识。</p>
+<p>窄线宽能够通过改善衰减因子显著提高相位精度，为 MEMS 三维重建技术的发展提供了新思路。因此，我们今后的工作将聚焦于利用衍射光学元件（DOE）和孔径光阑获得超窄线宽。我们相信，通过改进上游系统硬件，这些工作将有助于突破三维重建的技术瓶颈。</p>
+<h2 id="CRediT-作者贡献声明"><a href="#CRediT-作者贡献声明" class="headerlink" title="CRediT 作者贡献声明"></a>CRediT 作者贡献声明</h2><p>Min Han：初稿撰写、可视化、验证、方法设计、概念构思。Hao Jiang：验证、方法设计。Fengxiao Lei：验证。Yibo Xing：验证。Xiaohao Wang：指导、资源提供、项目管理、经费获取。Xinghui Li：指导、项目管理、方法设计、经费获取。</p>
+<h2 id="利益冲突声明"><a href="#利益冲突声明" class="headerlink" title="利益冲突声明"></a>利益冲突声明</h2><p>作者声明，不存在任何已知的、可能影响本文所述研究工作的竞争性经济利益或个人关系。</p>
+<h2 id="数据可用性"><a href="#数据可用性" class="headerlink" title="数据可用性"></a>数据可用性</h2><p>相关数据可应请求提供。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li>X. Zhao, H. Lu, W. Yu, B. Tao, H. Ding, Vision-based Mobile Robotic Grinding for Large-scale Workpiece and Its Accuracy Analysis, IEEE&#x2F;ASME Trans. Mechatron. 28 (2023) 895–906.</li>
+<li>N. Lyu, H. Yu, J. Han, D. Zheng, Structured light-based underwater 3-D reconstruction techniques: A comparative study, Opt. Lasers Eng. 161 (2023).</li>
+<li>B. Balasubramaniam, J. Li, L. Liu, B. Li, 3D Imaging with Fringe Projection for Food and Agricultural Applications—A Tutorial, Electronics 12 (2023).</li>
+<li>J. Xue, Q. Zhang, C. Li, W. Lang, M. Wang, Y. Hu, 3D Face Profilometry Based on Galvanometer Scanner with Infrared Fringe Projection in High Speed, Appl. Sci. 9 (2019).</li>
+<li>G. Ustabas Kaya, Development of hybrid optical sensor based on deep learning to detect and classify the micro-size defects in printed circuit board, Measurement 206 (2023).</li>
+<li>H. Hong, Q. Liu, Y. Zhu, P. Xu, Y. Shen, S. Bian, An Area Modulation Binary Defocusing-Based Digital Fringe Projection 3-D Shape Measurement Method for Print Circuit Board Inspection, IEEE Trans. Instrum. Meas. 72 (2023) 1–13.</li>
+<li>T. Cheng, X. Liu, L. Qin, M. Lu, C. Xiao, S. Li, A Practical Micro Fringe Projection Profilometry for 3-D Automated Optical Inspection, IEEE Trans. Instrum. Meas. 71 (2022) 1–13.</li>
+<li>J. Tao, Y. Zhu, W. Liu, F. Jiang, H. Liu, Smooth Surface Defect Detection by Deep Learning Based on Wrapped Phase Map, IEEE Sens. J. 21 (2021) 16236–16244.</li>
+<li>J. Qian, S. Feng, M. Xu, T. Tao, Y. Shang, Q. Chen, C. Zuo, High-resolution real-time 360 degrees 3D surface defect inspection with fringe projection profilometry, Opt. Lasers Eng. 137 (2021).</li>
+<li>R. Kulkarni, E. Banoth, P. Pal, Automated surface feature detection using fringe projection: An autoregressive modeling-based approach, Opt. Lasers Eng. 121 (2019) 506–511.</li>
+<li>X. Hu, A. Nguyen, F.R.y. Baena, Occlusion-Robust Visual Markerless Bone Tracking for Computer-Assisted Orthopedic Surgery, IEEE Trans. Instrum. Meas. 71 (2022) 1–11.</li>
+<li>Y. Park, C. Depeursinge, G. Popescu, Quantitative phase imaging in biomedicine, Nat. Photonics 12 (2018) 578–589.</li>
+<li>A. Chatterjee, P. Singh, V. Bhatia, S. Prakash, Ear biometrics recognition using laser biospeckled fringe projection profilometry, Opt. Laser Technol. 112 (2019) 368–378.</li>
+<li>H. Zhang, C.K.P. Vallabh, Y. Xiong, X. Zhao, A systematic study and framework of fringe projection profilometry with improved measurement performance for in-situ LPBF process monitoring, Measurement 191 (2022).</li>
+<li>N.M. O’Dowd, A.J. Wachtor, M.D. Todd, Effects of digital fringe projection operational parameters on detecting powder bed defects in additive manufacturing, Addit. Manuf. 48 (2021).</li>
+<li>Y. Liu, L. Blunt, Z. Zhang, H.A. Rahman, F. Gao, X. Jiang, In-situ areal inspection of powder bed for electron beam fusion system based on fringe projection profilometry, Addit. Manuf. 31 (2020).</li>
+<li>L.-C. Chen, D.-H. Duong, C.-S. Chen, Optical 3-D Profilometry for Measuring Semiconductor Wafer Surfaces with Extremely Variant Reflectivities, Appl. Sci. 9 (2019).</li>
+<li>M. Han, F. Lei, W. Shi, S. Lu, X. Li, Uniaxial MEMS-based 3D reconstruction using pixel refinement, Opt. Exp. 31 (2023) 536–554.</li>
+<li>T. Yang, F. Gu, Overview of modulation techniques for spatially structured-light 3D imaging, Opt. Laser Technol. 169 (2024).</li>
+<li>P. Lehmann, W. Osten, A. Albertazzi Gonçalves, T. Yang, H. H. Li, X. Zhou, Y. Q. Li, J. Y. Guo, and X. F. Gao, “A high-performance fringe pattern generation method for fringe projection profilometry,” presented at the Optical Measurement Systems for Industrial Inspection X2017.</li>
+<li>H. Tang, P. Psota, J.J. Rosowski, C. Furlong, J.T. Cheng, Ultra-high speed holographic shape and displacement measurements in the hearing sciences, Light: Advanced Manufacturing 3 (2022).</li>
+<li>T. Sasaki, T. Kamada, K. Hane, High-Speed and Large-Amplitude Resonant Varifocal Mirror, J. Rob. Mechatronics 32 (2020) 344–350.</li>
+<li>G. Yang, C. Sun, P. Wang, Y. Xu, High-speed scanning stroboscopic fringe-pattern projection technology for three-dimensional shape precision measurement, Appl. Opt. 53 (2014) 174–183.</li>
+<li>M. Han, W. Shi, S. Lu, F. Lei, Y. Li, X. Wang, X. Li, Internal–External Layered Phase Shifting for Phase Retrieval, IEEE Trans. Instrum. Meas. 73 (2024) 1–13.</li>
+<li>Y. Miao, Y. Yang, Q. Hou, Z. Wang, X. Liu, Q. Tang, X. Peng, B.Z. Gao, High-efficiency 3D reconstruction with a uniaxial MEMS-based fringe projection profilometry, Opt. Exp. 29 (2021) 34243–34257.</li>
+<li>T. Wakayama, Compact camera for three-dimensional profilometry incorporating a single MEMS mirror, Opt. Eng. 51 (2012).</li>
+<li>D. Yang, D. Qiao, C. Xia, Q. He, Adaptive horizontal scaling method for speckle-assisted fringe projection profilometry, Opt Express 31 (2023) 328–343.</li>
+<li>H. Tang, J. Rosowski, C. Furlong, J.T. Cheng, Tympanic Membrane Shape Measurement by Miniaturized High-Speed Fringe Projection Shape Measurement Using MEMS Scanning Mirror, Springer International Publishing, Cham, 2023, pp. 25–29.</li>
+<li>J. Qu, H. Gao, R. Zhang, Y. Cao, W. Zhou, H. Xie, High-flexibility and high-accuracy phase delay calibration method for MEMS-based fringe projection systems, Opt. Exp. 31 (2023) 1049–1066.</li>
+<li>M. Han, F. Lei, Y. Tao, W. Shi, S. Lu, H. Tian, C. Liao, P. Zhu, S. Zhu, and X. Wang, “A novel calibration method for a uniaxial MEMS-based 3D reconstruction system,” in Optoelectronic Imaging and Multimedia Technology IX(SPIE2023), pp. 40-46.</li>
+<li>Y. Yang, Y. Miao, X. Liu, G. Pedrini, Q. Tang, W. Osten, X. Peng, Intrinsic parameter-free calibration of FPP using a ray phase mapping model, Opt Lett 47 (2022) 3564–3567.</li>
+<li>Y. Liu, H. Wang, Y. Long, M. Sha, “Low Restriction 3D Reconstruction Based on Uniaxial MEMS Fringe Projection Profilometry,” presented at the 2022 7th International Conference on Control and Robotics Engineering (ICCRE)2022.</li>
+<li>D. Yang, D. Qiao, C. Xia, Curved light surface model for calibration of a structured light 3D modeling system based on striped patterns, Opt. Exp. 28 (2020) 33240–33253.</li>
+<li>T. Yang, G. Zhang, H. Li, X. Zhou, Hybrid 3D Shape Measurement Using the MEMS Scanning Micromirror, Micromachines 10 (2019) 47.</li>
+<li>G. Yang, Y. Wang, High resolution laser fringe pattern projection based on MEMS micro-vibration mirror scanning for 3D measurement, Opt. Laser Technol. 142 (2021).</li>
+<li>M. Han, Y. Xing, X. Wang, X. Li, Projection superimposition for the generation of high-resolution digital grating, Opt. Lett. 49 (2024) 4473–4476.</li>
+<li>C. Zuo, S. Feng, L. Huang, T. Tao, W. Yin, Q. Chen, Phase shifting algorithms for fringe projection profilometry: A review, Opt. Lasers Eng. 109 (2018) 23–59.</li>
+<li>J. Xu, S. Zhang, Status, challenges, and future perspectives of fringe projection profilometry, Opt. Lasers Eng. 135 (2020).</li>
+<li>Z.H. Zhang, Review of single-shot 3D shape measurement by phase calculation-based fringe projection techniques, Opt. Lasers Eng. 50 (2012) 1097–1106.</li>
+<li>Q. Kemao, Windowed Fourier transform for fringe pattern analysis, Appl. Opt. 43 (2004) 2695–2702.</li>
+<li>J.-S. Hyun, S. Zhang, Superfast 3D absolute shape measurement using five binary patterns, Opt. Lasers Eng. 90 (2017) 217–224.</li>
+<li>C. Zuo, L. Huang, M. Zhang, Q. Chen, A. Asundi, Temporal phase unwrapping algorithms for fringe projection profilometry: A comparative review, Opt. Lasers Eng. 85 (2016) 84–103.</li>
+<li>S. Zhang, Absolute phase retrieval methods for digital fringe projection profilometry: A review, Opt. Lasers Eng. 107 (2018) 28–37.</li>
+<li>H. An, Y. Cao, H. Li, H. Zhang, Temporal Phase Unwrapping Based on Unequal Phase-Shifting Code, IEEE Trans. Image Process. 32 (2023) 1432–1441.</li>
+<li>Q. Zhang, X. Su, L. Xiang, X. Sun, 3-D shape measurement based on complementary Gray-code light, Opt. Lasers Eng. 50 (2012) 574–579.</li>
+<li>S. Lv, Q. Kemao, Modeling the measurement precision of Fringe Projection Profilometry, Light Sci Appl 12 (2023) 257.</li>
+<li>J. Wang, Y. Yang, P. Xu, J. Liu, Noise-induced phase error comparison in multi-frequency phase-shifting profilometry based on few fringes, Opt. Laser Technol. 159 (2023).</li>
+<li>J. Wang, Y. Yang, Phase extraction accuracy comparison based on multi-frequency phase-shifting method in fringe projection profilometry, Measurement 199 (2022).</li>
+<li>Z. Sun, M. Duan, Y. Zheng, Y. Jin, X. Fan, J. Zheng, Intensity diffusion: a concealed cause of fringe distortion in fringe projection profilometry, Photonics Res. 10 (2022) 1210–1222.</li>
+<li>S. Feng, C. Zuo, Y. Hu, Y. Li, Q. Chen, Deep-learning-based fringe-pattern analysis with uncertainty estimation, Optica 8 (2021) 1507–1510.</li>
+<li>J. Li, L.G. Hassebrook, C. Guan, Optimized two-frequency phase-measuring-profilometry light-sensor temporal-noise sensitivity, J. Opt. Soc. Am. A 20 (2003) 106–115.</li>
+<li>Y. Wang, K. Liu, D.L. Lau, Q. Hao, L.G. Hassebrook, Maximum SNR pattern strategy for phase shifting methods in structured light illumination, J. Opt. Soc. Am. A 27 (2010) 1962–1971.</li>
+<li>B. Li, S. Zhang, Microscopic structured light 3D profilometry: Binary defocusing technique vs. sinusoidal fringe projection, Opt. Lasers Eng. 96 (2017) 117–123.</li>
+<li>Y. Wang, S. Zhang, Three-dimensional shape measurement with binary dithered patterns, Appl. Opt. 51 (2012) 6631–6636.</li>
+<li>G.A. Ayubi, J.A. Ayubi, J.M. Di Martino, J.A. Ferrari, Pulse-width modulation in defocused three-dimensional fringe projection, Opt. Lett. 35 (2010) 3682–3684.</li>
+<li>S. Lei, S. Zhang, Flexible 3-D shape measurement using projector defocusing, Opt. Lett. 34 (2009) 3080–3082.</li>
+<li>J. Zhu, X. Feng, C. Zhu, P. Zhou, Optimal frequency selection for accuracy improvement in binary defocusing fringe projection profilometry, Appl. Opt. 61 (2022) 6897–6904.</li>
+<li>M. Zhang, Q. Chen, T. Tao, S. Feng, Y. Hu, H. Li, C. Zuo, Robust and efficient multi-frequency temporal phase unwrapping: optimal fringe frequency and pattern sequence selection, Opt. Exp. 25 (2017) 20381–20400.</li>
+<li>Y. Wang, S. Zhang, Optimal pulse width modulation for sinusoidal fringe generation with projector defocusing, Opt. Lett. 35 (2010) 4121–4123.</li>
+<li>Y. Tao, L. Huan Huan, Z. Xiang, L. Yu Qin, G. Jia Yu, and G. Xiao Fei, “A high-performance fringe pattern generation method for fringe projection profilometry,” in Proc. SPIE(2017), p. 103294V.</li>
+</ol>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9D%A1%E7%BA%B9%E6%8A%95%E5%BD%B1/">条纹投影</a><a class="post-meta__tags" href="/tags/%E4%B8%89%E7%BB%B4%E6%B5%8B%E9%87%8F/">三维测量</a><a class="post-meta__tags" href="/tags/MEMS/">MEMS</a><a class="post-meta__tags" href="/tags/%E7%AA%97%E5%8F%A3%E5%B9%B3%E6%BB%91/">窗口平滑</a><a class="post-meta__tags" href="/tags/%E8%B0%83%E5%88%B6%E5%85%89%E5%BC%BA/">调制光强</a><a class="post-meta__tags" href="/tags/%E6%9C%80%E4%BC%98%E6%9D%A1%E7%BA%B9%E6%95%B0/">最优条纹数</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related  no-desc" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">engineering-thermodynamics-review</div></div></div></a><a class="pagination-related" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法"><img class="cover" src="/2026/10/07/optimal-fringe-frequency-calibration/cover.svg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">最优条纹频率怎么选：从误差公式到标定与推荐算法</div></div><div class="info-2"><div class="info-item-1">增加条纹数量，相同的位置变化会产生更大的相位变化，按理说更容易测准。可条纹太密时，相机看到的明暗起伏又会变弱，甚至接近噪声。到底该选哪一个频率？ 不能只挑画面最清楚的，也不能把别人的“最优 88 个周期”直接填进自己的设备。需要先测出系统在各个频率下的调制幅值，再把它与位置灵敏度放在同一个误差模型里比较。 这篇沿着“推导目标 → 采集标定数据 → 拟合 → 搜索 → 实测验收”展开。主线是扫描式条纹投影的窗口平滑模型；有关数据筛选、全局误差优化和近优集合的做法，会明确标为工程扩展。所有曲线都是本文公式计算的教学示意，不冒充硬件实验结果。   如果还不熟悉背景亮度 A、调制幅值 B、包裹相位和相位展开，可以先看条纹测量基础：相移、展开与深度学习。这里不再重复整套基础，重点回答频率怎样选。 先说清楚：选的是条纹数量，不是相移步数   量 本文记号 含义    条纹数量 f 规定投影范围内的完整周期数   空间频率 ν 单位空间长度内的周期数   条纹周期宽度 T_f 一次“亮→暗→亮”占据的长度   相移步数 N 一组相移图像的张数   投影帧率 fps 每秒投出多少幅图案   若投...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a><a class="pagination-related" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法"><img class="cover" src="/2026/10/07/optimal-fringe-frequency-calibration/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">最优条纹频率怎么选：从误差公式到标定与推荐算法</div></div><div class="info-2"><div class="info-item-1">增加条纹数量，相同的位置变化会产生更大的相位变化，按理说更容易测准。可条纹太密时，相机看到的明暗起伏又会变弱，甚至接近噪声。到底该选哪一个频率？ 不能只挑画面最清楚的，也不能把别人的“最优 88 个周期”直接填进自己的设备。需要先测出系统在各个频率下的调制幅值，再把它与位置灵敏度放在同一个误差模型里比较。 这篇沿着“推导目标 → 采集标定数据 → 拟合 → 搜索 → 实测验收”展开。主线是扫描式条纹投影的窗口平滑模型；有关数据筛选、全局误差优化和近优集合的做法，会明确标为工程扩展。所有曲线都是本文公式计算的教学示意，不冒充硬件实验结果。   如果还不熟悉背景亮度 A、调制幅值 B、包裹相位和相位展开，可以先看条纹测量基础：相移、展开与深度学习。这里不再重复整套基础，重点回答频率怎样选。 先说清楚：选的是条纹数量，不是相移步数   量 本文记号 含义    条纹数量 f 规定投影范围内的完整周期数   空间频率 ν 单位空间长度内的周期数   条纹周期宽度 T_f 一次“亮→暗→亮”占据的长度   相移步数 N 一组相移图像的张数   投影帧率 fps 每秒投出多少幅图案   若投...</div></div></div></a><a class="pagination-related" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">条纹投影轮廓测量中的相移算法：综述</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Chao Zuo, Shijie Feng, Lei Huang, Tianyang Tao, Wei Yin, Qian Chen. Phase shifting algorithms for fringe projection profilometry: A review. Optics and Lasers in Engineering, 109 (2018) 23–59. DOI: 10.1016&#x2F;j.optlaseng.2018.04.019 收稿：2018 年 2 月 15 日；修回：2018 年 4 月 15 日；录用：2018 年 4 月 30 日；在线发表：2018 年 5 月 15 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像（SCI）实验室；d 美国布鲁克海文国家实验室 NSLS-II。 © 2018 Elsevier Ltd. 保留所有权利。 以下为论文全文的中文翻译。章节、公式 (1)–(158)、图 1–36 与参考文献 [1]–[266] 编号均与原...</div></div></div></a><a class="pagination-related" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">基于深度学习的条纹图案分析</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. Fringe pattern analysis using deep learning. Advanced Photonics, 1(2), 025001 (2019). DOI: 10.1117&#x2F;1.AP.1.2.025001 收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。 © 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。 以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">1. 引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E5%9F%BA%E4%BA%8E-MEMS-%E7%9A%84-FPP-%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">2. 基于 MEMS 的 FPP 基本原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%9C%AC%E6%96%87%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">3. 本文方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E7%AA%97%E5%8F%A3%E5%B9%B3%E6%BB%91%E6%95%88%E5%BA%94%E5%BB%BA%E6%A8%A1"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 窗口平滑效应建模</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%88%86%E6%9E%90%E4%B8%8E%E6%A8%A1%E5%9E%8B%E6%A0%87%E5%AE%9A"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 分析与模型标定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-%E6%9C%80%E4%BC%98%E6%9D%A1%E7%BA%B9%E6%95%B0%E6%A0%87%E5%AE%9A%E7%AE%97%E6%B3%95"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 最优条纹数标定算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E5%AE%9E%E9%AA%8C"><span class="toc-number">5.</span> <span class="toc-text">4. 实验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E7%AA%97%E5%8F%A3%E5%B9%B3%E6%BB%91%E6%95%88%E5%BA%94%E9%AA%8C%E8%AF%81"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 窗口平滑效应验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%AA%97%E5%8F%A3%E5%B9%B3%E6%BB%91%E6%A8%A1%E5%9E%8B%E9%AA%8C%E8%AF%81"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 窗口平滑模型验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E6%9C%80%E4%BC%98%E6%9D%A1%E7%BA%B9%E6%95%B0%E6%A0%87%E5%AE%9A%E7%AE%97%E6%B3%95%E9%AA%8C%E8%AF%81"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 最优条纹数标定算法验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">5. 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CRediT-%E4%BD%9C%E8%80%85%E8%B4%A1%E7%8C%AE%E5%A3%B0%E6%98%8E"><span class="toc-number">7.</span> <span class="toc-text">CRediT 作者贡献声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%A9%E7%9B%8A%E5%86%B2%E7%AA%81%E5%A3%B0%E6%98%8E"><span class="toc-number">8.</span> <span class="toc-text">利益冲突声明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%8F%AF%E7%94%A8%E6%80%A7"><span class="toc-number">9.</span> <span class="toc-text">数据可用性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">10.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review">engineering-thermodynamics-review</a><time datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

@@ -1,0 +1,1892 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>条纹投影轮廓测量中的相移算法：综述 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Optics and Lasers in Engineering 2018 综述全文中文翻译：从标准 N 步相移到绝对相位恢复，系统梳理二十余种相移算法、误差来源、补偿方法与选型准则。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="条纹投影轮廓测量中的相移算法：综述">
+<meta property="og:url" content="https://yourba.github.io/2026/10/30/phase-shifting-algorithms-fpp-review/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="Optics and Lasers in Engineering 2018 综述全文中文翻译：从标准 N 步相移到绝对相位恢复，系统梳理二十余种相移算法、误差来源、补偿方法与选型准则。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-30T14:30:00.000Z">
+<meta property="article:modified_time" content="2026-10-30T14:30:00.000Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="条纹投影">
+<meta property="article:tag" content="三维测量">
+<meta property="article:tag" content="相位展开">
+<meta property="article:tag" content="相移算法">
+<meta property="article:tag" content="相位误差">
+<meta property="article:tag" content="综述">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "条纹投影轮廓测量中的相移算法：综述",
+  "url": "https://yourba.github.io/2026/10/30/phase-shifting-algorithms-fpp-review/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-10-30T14:30:00.000Z",
+  "dateModified": "2026-10-30T14:30:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/10/30/phase-shifting-algorithms-fpp-review/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '条纹投影轮廓测量中的相移算法：综述',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">条纹投影轮廓测量中的相移算法：综述</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">条纹投影轮廓测量中的相移算法：综述</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T14:30:00.000Z" title="更新于 2026-10-30 22:30:00">2026-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">论文翻译</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p><strong>原文信息</strong></p>
+<p>Chao Zuo, Shijie Feng, Lei Huang, Tianyang Tao, Wei Yin, Qian Chen. <em>Phase shifting algorithms for fringe projection profilometry: A review</em>. Optics and Lasers in Engineering, 109 (2018) 23–59.</p>
+<p>DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.1016/j.optlaseng.2018.04.019">10.1016&#x2F;j.optlaseng.2018.04.019</a></p>
+<p>收稿：2018 年 2 月 15 日；修回：2018 年 4 月 15 日；录用：2018 年 4 月 30 日；在线发表：2018 年 5 月 15 日。</p>
+<p>作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像（SCI）实验室；d 美国布鲁克海文国家实验室 NSLS-II。</p>
+<p>© 2018 Elsevier Ltd. 保留所有权利。</p>
+<p>以下为论文全文的中文翻译。章节、公式 (1)–(158)、图 1–36 与参考文献 [1]–[266] 编号均与原文一致；图内英文标注与参考文献保留原文。</p>
+</blockquote>
+<span id="more"></span>
+
+<style>
+#card-toc .toc-number { display: none; }
+.post-content .table-wrap table { min-width: 620px; white-space: nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.globalFn?.encrypt?.mathjax?.()
+})
+</script>
+
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>结构光与三角测量的原理被广泛应用于三维光学计量的各个领域，如机械工程、工业监测、计算机视觉和生物医学等。在基于这一原理的众多技术中，相移轮廓测量（phase shifting profilometry，PSP）因其可达到的高测量精度、空间分辨率和数据密度而占据主导地位。过去几十年中，文献里提出了大量 PSP 算法，以追求更高的测量精度、更少的图案数量和&#x2F;或对各类误差源更好的鲁棒性。此外，许多非常规的 PSP 编码技术以少量投影图案解决了绝对相位恢复问题，从而能够高效测量包含孤立区域或表面间断的物体。本文对这些用于实现三维表面轮廓测量的先进相移算法进行了综述。文中讨论了相移系统相位测量中的典型误差源，并回顾了相应的解决方案；同时总结了不同 PSP 算法的优缺点，为针对具体应用选择最合适的相移技术提供参考。</p>
+<p><strong>关键词：</strong> 相移轮廓测量；条纹投影；三维形貌测量；相位展开</p>
+<h2 id="1-引言"><a href="#1-引言" class="headerlink" title="1. 引言"></a>1. 引言</h2><p>我们生活的物理世界是三维（3D）的。三维获取与信息处理技术体现了人类认知和把握客观世界的能力，因而在某种程度上是人类智慧的重要标志。传统相机和成像探测器只能获取场景的二维（2D）光强信息，无法记录三维形状与深度信息。虽然人类可以依据双眼形成的双目立体视觉感知深度，却无法精确量化物体的三维几何形貌。为解决这一问题，人们发展出三维形貌测量技术，以定量获取三维几何信息，从而为更清晰地认识和理解真实世界物体的状态与功能提供数据基础。</p>
+<p>现代信息技术的快速发展推动了三维形貌测量技术逐渐成熟，该技术已以不同的形态和特点渗透到我们周围的几乎所有领域。在工业设计中，基于三维形貌测量的逆向工程可以快速建立现有产品精确的数字化三维 CAD 模型，显著缩短开发周期并便利后续工程流程 [1]。在智能制造领域，三维传感技术使机器能够感知三维世界，为制造自动化、智能化和再创造提供了新的起点 [2]。在虚拟现实领域，大量数字化的三维场景和模型已被广泛用于国防、模拟训练、科学实验和三维动画 [3]。在文化遗产保护领域，三维形貌测量技术已成为对文化遗产进行非接触、无损记录及其长期保存的必备工具 [4]。在医疗整形外科中，三维形貌测量技术被广泛用于面部软组织修复、手术检查和义齿定制 [5]。此外，该技术还存在于制造检测、生物医学、建筑、安防和人机交互等多种领域 [6]。</p>
+<p>三维形貌测量技术可分为接触式和非接触式两大类 [7]。接触式方法通过物理接触探测三维表面来测量和重建三维几何形貌。这类技术的一个例子是三坐标测量机（coordinate measuring machine，CMM），它可以通过精密的滑架系统或关节式测头臂测量三维几何形貌 [8]。虽然这类测量可以达到很高的精度，但通常测量效率较低，因为系统使用物理测头，需要逐点接触物体表面。此外，由于需要物理接触，它不适用于柔软或易变形物体的测量。为解决接触式技术带来的问题，人们发展了多种非接触式三维形貌测量方法，如今这些方法正日益应用于不同领域。随着高性能光源和成像器件的发展，光学方法在这一类方法中处于领先地位。人们已发展出多种用于三维形貌测量的光学计量方法，例如光学干涉测量 [9–11]、飞行时间（time-of-flight，TOF）技术 [12,13]、立体视觉 [14,15]、聚焦形貌恢复 [16–18] 以及结构光（structured light，SL）[19–22]。这些方法基于不同的光学测量原理，具有各自的测量灵敏度、空间&#x2F;时间分辨率和测量范围。对这些光学三维形貌测量方法的基本原理、特点和应用范围感兴趣的读者，可参阅 Chen 等人 [23] 或 Blais 等人 [24] 的综述文章。</p>
+<p>本文后续内容将聚焦于 SL 技术。SL 是一种非常流行的非接触式三维形貌测量技术，具有硬件配置简单、测量精度高、点密度高、速度快和成本低等优点，已在工业和科学研究中得到广泛应用。从本质上看，SL 方法可以视为立体视觉的一种变形：其中一个相机被替换为向场景投影光图案的光源。由于物体表面被投影光图案所产生的人工特征覆盖，被动立体视觉中针对无纹理物体的对应点匹配问题便可轻易解决。典型的基于 SL 的三维形貌测量系统由一个投影单元和一个或多个相机构成。测量过程中，具有已知结构的光图案被依次投影到被测物体上，同时由相机采集物体在光图案投影下的图像。借助相机与投影仪（或两个相机之间）的三角测量方法以及对光图案的先验知识，可依据预先标定的 SL 系统几何参数，从采集到的图像中重建物体的三维形貌。建议该领域的新研究者首先阅读 Geng 等人 [22] 的教程。</p>
+<p>过去几十年中，基于 SL 的三维形貌测量技术在计算机视觉和光学计量两个领域都得到了迅速发展，已有许多技术综述文章从不同视角对先前发表的研究进行了梳理和总结 [22,25–31]。在计算机视觉领域，SL 技术也被称为三维扫描，其 SL 图案编码策略主要基于离散的强度编码方法，可进一步分为空间编码方法和时间编码方法。在空间编码方法中，例如 De Bruijn 图案 [19,20,32]、非正式编码 [33,34] 和 M 阵列 [35]，某一位置的码字由周围点提取得到，其核心思想是保证局部码字在图案全局范围内的唯一性。时间编码方法则基于对物体表面连续投影图案所生成的码字，因此与某一图像像素相关联的码字要在所有图案投影完毕后才能完整形成。这类时间编码方法的例子包括时间二值编码 [36]、时间 n 值编码 [37] 和格雷码 [38]。此外，人们还提出了使用红、绿、蓝通道的彩色图案或彩色复用 SL 方法，以提高编码效率并减少投影图案数量 [30,37,39,40]。关于这些 SL 编码方案原理与实际性能的更多细节，读者可参阅 J. Salvi 等人 [26,27] 的综述文章。</p>
+<p>在光学计量领域，用于三维形貌测量最常用的 SL 图案是条纹图案，尤其是具有正弦光强分布的条纹图案。此外，所采用的编码方案主要集中于基于连续相位的方法。这类正弦 SL 技术通常被称为条纹投影轮廓测量（fringe projection profilometry，FPP）。通过将正弦条纹图案投影到物体上，并采集由物体表面调制后的相应变形条纹图案，深度信息被编码到条纹图像的相位之中。随后，用条纹分析算法处理记录到的调制条纹图像以提取相位分布，再依据三角测量光路布置的几何关系，用该相位分布在三维空间中重建感兴趣的表面。关于 FPP 的一般性概述，读者可参阅 Gorthi 和 Rastogi 的综述文章 [25]。传统上，FPP 的典型做法是利用激光干涉、物理光栅或幻灯片投影仪产生条纹图像。然而，随着数字显示领域的新进展，数字视频投影仪越来越多地被用作 FPP 系统的投影单元。与传统的条纹图像产生方法相比，数字视频投影仪能够通过软件高速、精确地控制投影条纹图案的各种属性，这最终促进了 FPP 技术的有效应用。还应提到，产生正弦条纹图案的另一类经典方法基于莫尔（moiré）效应。将莫尔条纹用于表面形貌测量（即所谓的莫尔形貌测量）最早于 20 世纪 60 年代后期得到研究 [41,42]，它有两种实现形式：阴影莫尔 [43,44] 与投影莫尔 [43–45]。在阴影莫尔方法中，使用单一光栅将阴影投射到待测表面上，再从偏置角度透过同一光栅成像，从而产生相位与深度成正比的莫尔条纹 [46,47]。在投影莫尔方法中，光栅线条被直接投影到物体表面，并通过光学或数字方式施加另一参考光栅来解调莫尔条纹 [43–45,48]，因此投影莫尔形貌测量可视为 FPP 的前身。</p>
+<p>得益于正弦图案的连续性和周期性，FPP 通常能提供兼具高空间分辨率和高深度精度的三维数据。就相位解调方式而言，最流行的 FPP 方法包括傅里叶变换轮廓测量（Fourier transform profilometry，FTP）和相移轮廓测量（PSP）。FTP 仅使用单幅高频条纹图案，通过在频域中施加适当设计的带通滤波器来提取相位。关于 FTP 方法的更多技术细节，可参见 Su 和 Chen 的综述文章 [49]。FTP 的单帧特性使其非常适合动态表面的三维形貌测量。Su 和 Zhang 的综述文章概述了基于 FTP 的动态形貌测量及其典型应用 [28]。此外，并不局限于 FTP，窗口傅里叶变换（windowed Fourier transform，WFT）[10,50] 和小波变换（wavelet transform，WT）[51] 也可用于单幅高频条纹图案的相位解调。研究发现，即使在存在强度非线性误差和深度间断的情况下，WFT 仍能提供更高的测量精度。相关内容读者可参阅 Huang 等人 [52] 和 Zhang 等人 [53] 的对比论文。</p>
+<p>与 FTP 不同，PSP 通常需要一幅以上（一般至少三幅）相移条纹图案来重建物体的三维形貌。PSP 最初源自经典的激光干涉测量技术。1984 年，Srinivasan 等人 [54] 首次将相移算法引入 FPP 领域，用于高精度三维形貌测量。此后不久，PSP 技术被成功应用于一般三维漫反射物体的完整 360° 重建 [55]。由于变形条纹图像光强分布的数学表达与常规光学干涉测量中所遇到的相似，相移干涉测量（phase shifting interferometry，PSI）[56,57] 中以高精度著称的方法可以直接用于 FPP 中的条纹分析与相位解调。与 FTP 相比，多次拍摄的 PSP 技术通常更为鲁棒，能够以更高的分辨率和精度实现逐像素相位测量。此外，PSP 测量对环境光和变化的表面反射率相当鲁棒。然而，PSP 技术需要更多时间来采集多幅条纹图案，并且在多幅条纹图案投影期间物体应保持静止。近年来，随着高帧率图像传感器、高速数字投影技术和高性能处理器的快速进步，PSP 技术越来越多地被应用于动态场景的高速、实时三维形貌测量。关于实时 FPP 更深入的内容，可参阅 Zhang [29] 以及 Jeught 和 Dirckx [31] 的综述文章。</p>
+<p>对于 PSP 和 FTP 而言，与物体高度对应的恢复相位分布都会在数学上被包裹到反正切函数位于 \(-\pi\) 与 \(\pi\) 之间的主值范围内，因此每当未知的真实相位变化 \(2\pi\) 时，相位就会在这些界限处出现不连续。这就是所谓的相位模糊问题，它源于正弦信号的周期性。为在相机与投影仪之间（或两个相机之间）建立唯一的像素对应关系，必须进行相位展开。人们已提出数十种二维相位展开算法，它们可分为两大类：空间相位展开和时间相位展开。空间相位展开通常只需要一幅包裹相位图，通过假设相位连续性，依据给定像素局部邻域内的相位值导出该像素的展开相位。考虑方式不同，人们研究了多种空间相位展开方法，例如 Goldstein 方法 [58]、质量引导方法 [59]、Flynn 方法 [60] 和最小 \(L_p\) 范数方法 [61]。关于相位展开这一一般性主题已有许多综述 [62,63]，也有针对特定应用对不同展开算法进行比较的工作 [64–66]。然而，受相位连续性这一前提的限制，空间相位展开无法处理大的表面间断（相邻像素间相位差 \(\geq\pi\)）和孤立物体。时间相位展开方法通过使用一幅以上的包裹相位图或附加的黑白编码图案来提供关于条纹级次的额外信息，从而克服了这一问题 [67–77]。相位模糊问题得到根本解决，每个空间像素都独立于其邻域进行展开。典型的时间相位展开算法包括格雷码方法 [38,67]、多频（分层）方法 [68,69,78]、多波长（外差）方法 [70,71,79] 以及数论方法 [72,73,80,81]。关于这些方法的基本原理与实际性能的更多细节，读者可参阅 Zuo 等人 [82] 的对比综述。</p>
+<p>本文旨在综述条纹投影技术中所使用的各种相移算法。尽管已有许多优秀的著作和综述讨论了光学干涉测量领域中的各类相移技术 [11,57,83,84]，但它们主要关注由双光束干涉产生条纹图案的常规正弦相移技术。然而，在数字 FPP 中，条纹图案理论上可以借助计算机软件生成任意光强分布，并通过现成的数字投影仪（如液晶器件（liquid crystal device，LCD）、数字微镜器件（digital mirror device，DMD）和硅基液晶（liquid crystal on silicon，LCOS）投影仪）投影到物体表面。过去几十年中，文献里提出了若干基于相移技术的 FPP 方法 [54,85–104]，通过使用或设计不同类型的光强图案，为高精度、高效且鲁棒的相位恢复提供了灵活得多的解决方案。此外，许多新颖的相移编码技术已内置绝对相位恢复和&#x2F;或时间相位展开能力，可对复杂物体或表面进行高效测量 [105–116]。然而，此前还没有工作对这些方法进行统一总结和比较，因此对这些 PSP 方法进行特性提取与属性分析仍然缺失。本综述弥补了这一不足，将聚焦于这些 PSP 算法，分析并评估它们各自的优缺点。由于每种算法都有其自身特点，没有哪一种算法能在任何实际场合通用，针对具体应用选择合适的相移算法需要仔细的权衡考虑，这也将在本文中讨论。</p>
+<p>本文其余部分组织如下。第 2 节介绍 FPP 的图像形成模型。第 3 节回顾 FPP 中用于包裹相位恢复的若干相移算法。第 4 节讨论典型相移系统中的若干误差源及其相应解决方案。第 5 节介绍另一类能够恢复绝对相位分布的相移算法。第 6 节总结并比较所综述相移算法的特点，以帮助为特定应用选择合适的方法。第 7 节讨论有关提高 PSP 技术测量精度和效率的若干重要问题。最后，第 8 节给出结论。</p>
+<h2 id="2-FPP-中的图像形成"><a href="#2-FPP-中的图像形成" class="headerlink" title="2. FPP 中的图像形成"></a>2. FPP 中的图像形成</h2><p>在回顾不同的 PSP 相位恢复算法之前，我们必须明确在实际 FPP 系统中采集到的条纹图像是如何形成的。这将为理解不同 PSP 算法图案编码策略背后的基本原理提供基础。一般而言，FPP 中的图像采集过程可分为以下 3 个步骤 [109,117,118]：</p>
+<p>（1）条纹投影。由计算机生成某些预先定义的条纹图案，并通过投影仪投影到被测物体的表面。投影仪空间中设计的典型正弦条纹图案可表示为</p>
+
+\[
+I^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p), \tag{1}
+\]
+
+
+<p>其中 \(a^p\) 是均值，\(b^p\) 是幅值（或投影仪调制度），\((x^p,y^p)\) 是投影仪的像素坐标，\(f_0^p\) 是正弦条纹的频率（周期&#x2F;像素）。不失一般性，我们假设条纹方向垂直于 \(x^p\) 轴；在与相机进行三角测量时将会用到这一假设，该相机水平放置在投影仪旁。当条纹图案被送入投影仪时，输出的光就是投影的条纹图像 \(I^p(x^p,y^p)\)。</p>
+<p>（2）条纹反射。当条纹图案被投影到物体表面时，它将逐点地被物体表面畸变并反射。反射光来自两个来源：投影仪光以及环境光。投影条纹图案 \(I^p\) 与环境光 \(\beta_1\) 相结合，被物体调制并反射。</p>
+<p>（3）条纹采集。相机逐点采集畸变的条纹图像。采集到的光包括物体反射的光以及直接进入相机的部分附加环境光 \(\beta_2\)。因此，相机最终采集到的条纹图像为：</p>
+
+\[
+I(x,y)=\alpha(x,y)\left\{a^p+b^p\cos[\phi(x,y)]+\beta_1(x,y)\right\}+\beta_2(x,y), \tag{2}
+\]
+
+
+<p>其中 \((x,y)\) 是相机空间中的像素坐标，\(\alpha(x,y)\) 是被测物体的表面反射率（严格来说，\(\alpha(x,y)\) 是对应于表面反射中朗伯分量的反射率，依据朗伯余弦定律，它取决于表面法线），\(\phi(x,y)\) 是包含物体表面深度信息的畸变条纹相位。条纹投影、反射和采集步骤以及 FPP 中整个图像形成过程在图 1 中有清晰的图示。</p>
+<p>式 (2) 给出的 \(I(x,y)\) 的形式非常复杂，而通常感兴趣的量是条纹图像的相位分量。为简便起见，在 FPP 的大多数文献中，\(I(x,y)\) 被表示为</p>
+
+\[
+I(x,y)=A(x,y)+B(x,y)\cos[\phi(x,y)], \tag{3}
+\]
+
+
+<p>其中 \(A(x,y)\) 是条纹图像的平均光强，\(B(x,y)\) 是所谓的强度调制。它们通过以下关系与表面反射率和环境光的实际物理参数密切相关</p>
+
+\[
+A(x,y)=\alpha(x,y)\left[a^p+\beta_1(x,y)\right]+\beta_2(x,y) \tag{4}
+\]
+
+
+<p>以及</p>
+
+\[
+B(x,y)=\alpha(x,y)b^p. \tag{5}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig01-projection-acquisition.png" alt="条纹投影、反射与采集过程示意"></p>
+<p><em>图 1. 条纹投影、反射与采集过程示意图。</em></p>
+<p>图 2 展示了一个包含上述参数的示例场景，例如由标准相移算法恢复的平均光强、强度调制和相位分布。可以清楚地看到，平均光强 \(A(x,y)\) 相当于在投影仪均匀照明 \(a^p\) 下采集到的场景普通“无条纹”图像 [图 2(b)]，因此它通常被用于纹理映射。强度调制 \(B(x,y)\) 与表面反射率 \(\alpha(x,y)\) 成正比，是每个物点信号强度的定量指标 [图 2(d)]。在许多实际应用中，物体形状和环境照明条件变化很大，可能使某些区域饱和或过暗而无法正确分析。对于这些区域，信噪比（signal-to-noise ratio，SNR）很低，计算出的相位信息可能不正确 [见图 2(c)]。对于背景、暗区或饱和区域，\(I(x,y)\) 受投影正弦图案调制的程度较小，\(B(x,y)\) 将接近于零。因此，\(B(x,y)\) 常被用作阴影噪声检测器&#x2F;滤波器，使 \(B(x,y)\) 值小于预设阈值的阴影噪声区域在后续处理和深度重建中被排除 [见图 2(e) 和 (f)]。</p>
+<h2 id="3-FPP-中的相移算法"><a href="#3-FPP-中的相移算法" class="headerlink" title="3. FPP 中的相移算法"></a>3. FPP 中的相移算法</h2><p>在已提出的众多 SL 方法中，PSP 是应用最广泛、最精确的策略之一。过去几十年中，人们提出了许多 PSP 算法，或从 PSI 领域将其扩展而来，例如标准 N 步相移算法 [54]、双三步算法 [90]、Hariharan 5 步算法 [85]、改进的 2+1 算法 [100]、梯形相移 [94]、三角形相移 [99]、\(\pi\) 相移 FTP [86] 等。本节将概述这些 PSP 策略并讨论它们各自的特点。</p>
+<h3 id="3-1-标准-N-步相移"><a href="#3-1-标准-N-步相移" class="headerlink" title="3.1. 标准 N 步相移"></a>3.1. 标准 N 步相移</h3><p>标准的 PSP 技术采用一组相移正弦波图案，使得在投影仪空间的点 \((x^p,y^p)\) 处，光强值被赋为：</p>
+
+\[
+I_n^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p-2\pi n/N), \tag{6}
+\]
+
+
+<p>其中 \(n\) 表示相移序号 \(n=0,1,2,\ldots,N-1\)。均值 \(a^p\) 和幅值 \(b^p\) 通常均取 0.5，以覆盖投影仪的整个动态范围（不失一般性，这里假设投影仪的动态范围为 [0, 1]）。图 3 给出了一组 \(N=3\)、\(f_0^p=5\)（&#x2F;1000 像素）、\(a^p=b^p=0.5\) 的正弦波图案。将这些图案依次投影到物体表面后，相机采集到的畸变条纹分布（记为 \(I_n(x,y)\)）为：</p>
+
+\[
+I_n(x,y)=A(x,y)+B(x,y)\cos[\phi(x,y)-2\pi n/N]. \tag{7}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig02-phase-shifting-measurement.png" alt="含石膏像的典型场景的相移测量"></p>
+<p><em>图 2. 对含石膏像的典型场景进行相移测量。(a) 一幅采集到的条纹图像；(b) 平均光强；(c) 相位分布；(d) 强度调制；(e) 作为阴影噪声掩模的二值化强度调制（以光强 5 作为阈值）；(f) 去除阴影噪声区域后的掩模相位分布。</em></p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig03-three-step.png" alt="三步相移条纹图案及其截面"></p>
+<p><em>图 3. 三步相移条纹图案及其对应截面（\(a^p=b^p=0.5\)）。</em></p>
+<p>其中 \(\phi\) 是相应的包裹相位，可由下式提取 [54,56,57]：</p>
+
+\[
+\phi(x,y)=\tan^{-1}\frac{\sum_{n=0}^{N-1}I_n(x,y)\sin(2\pi n/N)}{\sum_{n=0}^{N-1}I_n(x,y)\cos(2\pi n/N)}. \tag{8}
+\]
+
+
+<p>这是所有标准 N 步相移技术的基本公式。应当注意，式 (8) 只是最小二乘算法在相移量于 \(2\pi\) 周期内等间隔分布时的一个特例。在一般的 N 步最小二乘算法中，条纹图案的相移量不必等间隔，并且可以分布在大于 \(2\pi\) 的范围内。这类方法由 Greivenkamp [119] 作了详细阐述。另一个重要问题是式 (8) 中反正切函数导致的相位范围受限。注意，简单地应用反正切函数只能返回 \(-\pi/2\) 到 \(\pi/2\) 范围内的 \(\phi\) 值，即总范围为 \(\pi\)。而分子和分母的符号可进一步用于为每次 \(\phi\) 的计算唯一确定象限。借助四象限反正切，每个点的相位值可在模 \(2\pi\) 意义下确定。应当提到，本节讨论的相移算法只关注包裹相位恢复。读者应牢记，包裹相位图 \(\phi(x,y)\) 含有模 \(2\pi\) 的不连续，因此还需要相位展开才能获得连续或绝对相位图（用于绝对相位恢复的 PSP 算法将在第 5 节讨论）。</p>
+<p>除包裹相位外，平均光强和强度调制也可分别依据式 (9) 和式 (10) 从相移条纹图像中解调出来。</p>
+
+\[
+A(x,y)=\frac{1}{N}\sum_{n=0}^{N-1}I_n(x,y) \tag{9}
+\]
+
+
+
+\[
+B(x,y)=\frac{2}{N}\sqrt{\left[\sum_{n=0}^{N-1}I_n(x,y)\sin(2\pi n/N)\right]^2+\left[\sum_{n=0}^{N-1}I_n(x,y)\cos(2\pi n/N)\right]^2}. \tag{10}
+\]
+
+
+<p>由于相移算法的相位重建是逐像素运算，为简化记号，此后我们的公式中将省略坐标索引 \((x,y)\)。</p>
+<p>由于式 (7) 中总共有三个未知量 \(\phi(x,y)\)、\(A(x,y)\) 和 \(B(x,y)\)，相移的最少步数应为 3，以提供三个方程并能够计算 \(\phi(x,y)\)、\(A(x,y)\) 和 \(B(x,y)\)。由于使用最少数量的条纹图像有利于缩短测量时间，三步相移算法被广泛用于实时或高速三维形貌测量 [29,120,121]。如图 3 所示，在三步相移算法中，三幅条纹图像分别采用 0、\(2\pi/3\) 和 \(4\pi/3\) 的相移量。每个像素 \((x,y)\) 处三幅相移图像的光强为：</p>
+
+\[
+I_0=A+B\cos(\phi) \tag{11}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi-2\pi/3) \tag{12}
+\]
+
+
+
+\[
+I_2=A+B\cos(\phi-4\pi/3) \tag{13}
+\]
+
+
+<p>而 \(\phi\)、\(A\) 和 \(B\) 的解由下式给出：</p>
+
+\[
+\phi=\tan^{-1}\frac{\sqrt{3}(I_1-I_2)}{2I_0-I_1-I_2} \tag{14}
+\]
+
+
+
+\[
+A=\frac{I_0+I_1+I_2}{3} \tag{15}
+\]
+
+
+
+\[
+B=\frac{1}{3}\sqrt{3(I_1-I_2)^2+(2I_0-I_1-I_2)^2}. \tag{16}
+\]
+
+
+<p>三步算法所需的数据量最少，使用也最简单。然而，正如第 4 节将要讨论的，该算法对不同类型的相位误差也很敏感。为获得更高的测量精度和更好的抗误差能力，常采用四步相移算法。四步相移算法使用四幅相移量分别为 0、\(\pi/2\)、\(\pi\) 和 \(3\pi/2\) 的条纹图像，如图 4 所示（\(a^p=b^p=0.5\)）。采集到的四幅图像可写为</p>
+
+\[
+I_0=A+B\cos(\phi) \tag{17}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi-\pi/2) \tag{18}
+\]
+
+
+
+\[
+I_2=A+B\cos(\phi-\pi) \tag{19}
+\]
+
+
+
+\[
+I_3=A+B\cos(\phi-3\pi/2) \tag{20}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig04-four-step.png" alt="四步相移条纹图案及其截面"></p>
+<p><em>图 4. 四步相移条纹图案及其对应截面。</em></p>
+<p>利用这些三角函数关系，\(\phi\)、\(A\) 和 \(B\) 可计算为</p>
+
+\[
+\phi=\tan^{-1}\frac{I_1-I_3}{I_0-I_2} \tag{21}
+\]
+
+
+
+\[
+A=\frac{I_0+I_1+I_2+I_3}{4} \tag{22}
+\]
+
+
+
+\[
+B=\frac{1}{2}\sqrt{(I_1-I_3)^2+(I_0-I_2)^2}. \tag{23}
+\]
+
+
+<p>四步相移算法相邻帧之间具有 90° 的相移量，在某些场合更易于实现，使其成为 PSI 同步相移系统中最有用的算法 [11,83]。在 FPP 中，四步相移算法也因其相对较高的测量精度、较少的图案数量和良好的容错能力而得到广泛应用。由于需要额外的条纹图案，步数多于 5 步的标准相移算法远不如 3 步和 4 步算法常用，但它们通常对某些类型的相位误差具有更强的抵抗能力。有关相移算法误差分析的更多细节可参见第 5 节。</p>
+<h3 id="3-2-双三步相移算法"><a href="#3-2-双三步相移算法" class="headerlink" title="3.2. 双三步相移算法"></a>3.2. 双三步相移算法</h3><p>传统三步算法容易受到 PSP 系统中各类误差的影响，例如相移误差、非线性误差和强度噪声。对三步相移算法的一种改进是 Huang 等人 [90] 提出的双三步相移算法，它可以显著降低由强度非线性引起的相位误差。已有研究证明，FPP 系统中的二阶非线性残差会使相位图产生误差 \(\Delta\phi\)（关于非线性误差的更详细讨论见 5.2 节）</p>
+
+\[
+\tan(\Delta\phi)=\tan(\phi'-\phi)=-\frac{\sin(3\phi)}{\cos(3\phi)+m}, \tag{24}
+\]
+
+
+
+\[
+\Delta\phi=\arctan\left[-\frac{\sin(3\phi)}{\cos(3\phi)+m}\right]\approx\arctan\left[-\frac{\sin(3\phi)}{m}\right], \tag{25}
+\]
+
+
+<p>其中 \(\phi\) 是系统具有理想线性时计算得到的理想相位。\(\phi'\) 是条纹强度存在二阶非线性时用传统三步算法恢复出的不准确相位，\(m\) 是取决于系统线性度的常数，通常远大于 1。</p>
+<p>式 (25) 表明，相位误差的频率是原始相位频率的三倍。如果在相移条纹图案中引入一个初始相位偏移，误差波的相位也会随之改变。当得到的两幅相位图之间的相对初始相位差为 \(\pi/3\) 时，这两个不准确相位之间的相位差约为 180°。因此，将这两个相位取平均时，误差会被抵消。这意味着我们可以用六幅条纹图案做两次相移，初始相位分别为 0、\(2\pi/3\)、\(4\pi/3\)（第一组）和 \(\pi/3\)、\(\pi\)、\(5\pi/3\)（第二组）（见图 5），对每组条纹图案各用一次三步算法计算出两幅相位图，然后对这两幅相位图取平均。每个像素处两组三步相移图像的光强为</p>
+
+\[
+I_0=A+B\cos(\phi), \tag{26}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi-2\pi/3), \tag{27}
+\]
+
+
+
+\[
+I_2=A+B\cos(\phi-4\pi/3), \tag{28}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig05-double-three-step.png" alt="双三步相移图案及其对应截面"></p>
+<p><em>图 5. 双三步相移图案及其对应截面。</em></p>
+
+\[
+I_3=A+B\cos(\phi-\pi/3), \tag{29}
+\]
+
+
+
+\[
+I_4=A+B\cos(\phi-\pi), \tag{30}
+\]
+
+
+
+\[
+I_5=A+B\cos(\phi-5\pi/3). \tag{31}
+\]
+
+
+<p>双三步算法的有效性可以从理论上验证。对于条纹图案 \(I_3\sim I_5\)，初始相位偏移为 \(\pi/3\) 的第二幅相位图的相位误差可计算为</p>
+
+\[
+\Delta\phi'\approx\arctan\left[-\frac{\sin[3(\phi+\pi/3)]}{m}\right]=\arctan\left[\frac{\sin(3\phi)}{m}\right] \tag{32}
+\]
+
+
+<p>显然，相位误差的符号发生了改变，即 \(\Delta\phi=-\Delta\phi'\)。因此，如果将得到的两幅相位图取平均以生成最终相位图，二阶非线性误差将被有效去除。尽管双三步相移算法能显著降低非线性误差，但它需要额外三幅图案来执行附加的三步算法，因此与传统的三步算法相比，采集时间增加了一倍。</p>
+<h3 id="3-3-Hariharan-五步相移"><a href="#3-3-Hariharan-五步相移" class="headerlink" title="3.3. Hariharan 五步相移"></a>3.3. Hariharan 五步相移</h3><p>相移量未知但保持恒定的五步相移算法也称为 Hariharan 算法 [57,85]，其设计目标是对相移误差不敏感。考虑帧间存在线性相移 \(\theta\)，五幅条纹图像为</p>
+
+\[
+I_0=A+B\cos(\phi-2\theta), \tag{33}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi-\theta), \tag{34}
+\]
+
+
+
+\[
+I_2=A+B\cos(\phi), \tag{35}
+\]
+
+
+
+\[
+I_3=A+B\cos(\phi+\theta), \tag{36}
+\]
+
+
+
+\[
+I_4=A+B\cos(\phi+2\theta). \tag{37}
+\]
+
+
+<p>将五个方程展开并组合，可以得到如下关系：</p>
+
+\[
+\frac{I_1-I_3}{2I_2-(I_0+I_4)}=\left(\frac{\sin\theta}{1-\cos 2\theta}\right)\tan\phi \tag{38}
+\]
+
+
+<p>当相移 \(\theta=\pi/2\) 时（见图 6），\(\tan\phi\) 前的系数（\(\frac{\sin\theta}{1-\cos 2\theta}\)）取值为 0.5，于是相位 \(\phi\)、平均光强 \(A\) 和条纹调制度 \(B\) 可计算为</p>
+
+\[
+\phi=\tan^{-1}\left[\frac{2(I_1-I_3)}{2I_2-(I_0+I_4)}\right], \tag{39}
+\]
+
+
+
+\[
+A=\frac{I_0+I_1+2I_2+I_3+I_4}{6}, \tag{40}
+\]
+
+
+
+\[
+B=\frac{\sqrt{4(I_1-I_3)^2+[2I_2-(I_0+I_4)]^2}}{4}. \tag{41}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig06-hariharan-5-step.png" alt="Hariharan 五步相移图案及其对应截面"></p>
+<p><em>图 6. Hariharan 五步相移图案及其对应截面（\(\theta=\pi/2\)）。</em></p>
+<p>研究还发现，当 \(\theta\) 相对 \(\pi/2\) 存在小偏差时，\(\frac{\sin\theta}{1-\cos 2\theta}\) 并不会偏离 0.5。如果 \(\theta\) 落在 86° 到 94° 之间，该相位系数的变化不超过 0.001，如图 7 所示。因此，当相移 \(\theta=\pi/2\) 时，Hariharan 五步相移算法能够容忍相当大的相移误差。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig07-phase-prefactor.png" alt="相位系数随 \(\theta\) 的变化"></p>
+<p><em>图 7. 当 \(\theta\) 在 85° 到 95° 之间时，相位系数随 \(\theta\) 的变化。在阴影区域内，该系数的变化不超过 0.001。</em></p>
+<h3 id="3-4-改进的-2-1-相移算法"><a href="#3-4-改进的-2-1-相移算法" class="headerlink" title="3.4. 改进的 2+1 相移算法"></a>3.4. 改进的 2+1 相移算法</h3><p>改进的 2+1 相移算法由 Zhang 和 Yau [100] 提出，目的是缓解测量运动物体或形变物体时的运动伪影问题。它需要两幅相对相移为 \(\pi/2\) 的条纹图像，再加上一幅均匀平场图像来恢复相位信息。在投影仪空间中，三幅投影图案为</p>
+
+\[
+I_0^p(x^p,y^p)=a^p, \tag{42}
+\]
+
+
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p), \tag{43}
+\]
+
+
+
+\[
+I_2^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p-\pi/2)=a^p+b^p\sin(2\pi f_0^p x^p). \tag{44}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig08-modified-2plus1.png" alt="改进的 2+1 相移图案及其对应截面"></p>
+<p><em>图 8. 改进的 2+1 相移图案及其对应截面。</em></p>
+<p>图 8 给出了 \(f_0^p=5\)、\(a^p=b^p=0.5\) 时的改进 2+1 相移图案。相机采集到的三幅图像的光强为</p>
+
+\[
+I_0=A, \tag{45}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi), \tag{46}
+\]
+
+
+
+\[
+I_2=A+B\sin(\phi). \tag{47}
+\]
+
+
+<p>可以看出，平均光强 \(A\) 直接由 \(I_0\) 给出。\(\phi\) 和 \(B\) 的解为：</p>
+
+\[
+\phi=\tan^{-1}\left[\frac{I_2-I_0}{I_1-I_0}\right], \tag{48}
+\]
+
+
+
+\[
+B=\sqrt{(I_2-I_0)^2+(I_1-I_0)^2}. \tag{49}
+\]
+
+
+<p>由于相位信息仅由两幅条纹图像编码，而平场图像对相邻帧之间的物体运动不太敏感，因此与传统三步相移算法相比，改进的 2+1 相移算法能够减小运动引入的测量误差。然而，由于所用条纹数量较少，改进的 2+1 相移算法更容易受到噪声和强度非线性引起的误差的影响。还应当指出，改进的 2+1 相移算法实际上是 PSI 领域最早提出的 2+1 相移方法的改进版本，其中的平场图像是通过对两幅相位相差 \(\pi\) 的干涉图取平均而获得的 [122,123]。</p>
+<h3 id="3-5-梯形相移"><a href="#3-5-梯形相移" class="headerlink" title="3.5. 梯形相移"></a>3.5. 梯形相移</h3><p>由 Huang 等人 [94] 提出的梯形相移与三步正弦相移方法非常相似，只是图案的截面形状从正弦形变为梯形。此外，它直接使用强度比而不是相位，因此由于不使用传统相移算法中的反正切函数，其计算开销更小。为重建物体的三维形貌，需要三幅相移量为 \(2\pi/3\)（即三分之一周期）的梯形图案，如图 9 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig09-trapezoidal.png" alt="梯形相移图案及其对应截面"></p>
+<p><em>图 9. 梯形相移图案（单周期）及其对应截面。</em></p>
+<p>对于采集图像的每个点，强度比图 \(Q\) 由下式得到：</p>
+
+\[
+Q=2\,\mathrm{Round}\left(\frac{K-1}{2}\right)+(-1)^{K+1}\frac{I_{med}-I_{min}}{I_{max}-I_{min}}, \tag{50}
+\]
+
+
+<p>其中 \(I_{max}\)、\(I_{med}\) 和 \(I_{min}\) 分别是三幅采集图像的最大、中值和最小强度，\(K=1,2,3,...,6\) 是通过比较三个强度确定的区域编号 [94]。\(Q\) 的取值范围为 0 到 6。随后可将其转换到与包裹相位图相同的 \([-\pi,\pi)\) 范围</p>
+
+\[
+\phi=\frac{\pi(Q-3)}{3}, \tag{51}
+\]
+
+
+<p>以便后续处理能够与传统的 PSP 技术兼容。此外，梯形相移图案也可以重复以生成高频周期图案，如同前面所示的正弦图案的情形。在这种情况下，图案的周期性会引入歧义问题，需要进一步通过相位展开来解决。此外，梯形图案的某些过渡区域非常陡峭，使得梯形相移方法对透镜离焦引起的强度模糊效应敏感（在 4.3 节中讨论）。</p>
+<h3 id="3-6-三角形相移"><a href="#3-6-三角形相移" class="headerlink" title="3.6. 三角形相移"></a>3.6. 三角形相移</h3><p>由 Jia 等人 [99] 提出的三角形相移算法的优点是仅需两幅（而不是三幅）图案即可重建物体的三维形貌，如图 10 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig10-triangular.png" alt="三角形相移图案及其对应截面"></p>
+<p><em>图 10. 三角形相移图案（单周期）及其对应截面。</em></p>
+<p>它同样使用强度比而非相位。从相机采集到图案后，强度比图 \(Q\) 由下式得到</p>
+
+\[
+Q=2\,\mathrm{Round}\left(\frac{K-1}{2}\right)+(-1)^{K+1}\frac{|I_0-I_1|}{I_m^p}, \tag{52}
+\]
+
+
+<p>其中 \(K=1,2,3,4\) 是通过分析每个点的小邻域确定的区域编号 [99]。\(Q\) 的取值范围为 0 到 4，可转换到与传统相移技术相同的 \([-\pi,\pi)\) 范围</p>
+
+\[
+\phi=\frac{\pi(Q-2)}{2}. \tag{53}
+\]
+
+
+\(I_m^p\) 即所谓的强度调制，它按下式计算
+
+
+\[
+I_m^p=2b^p=I_{max}^p-I_{min}^p, \tag{54}
+\]
+
+
+<p>其中 \(I_{max}^p\) 和 \(I_{min}^p\) 分别是投影图案的最大和最小强度。应当指出，\(I_m^p\) 并不是真实的强度调制，因为它是根据投影图案而不是采集图像计算得到的。因此，被测物体表面反射率的影响无法在式 (52) 中被抵消（\(|I_0-I_1|\) 包含表面反射率信息［见式 (3)–(5)］，而 \(I_m^p\) 不包含），这使三角形相移算法对被测物体的反射率敏感。为使三角形相移算法在表面反射率不均匀的情况下表现更好，至少应再投影一幅图案 [124]。</p>
+<p>需要注意的是，通常三角形图案也需要周期性地延拓以提高测量精度，并且需要通过相位展开来消除包裹强度比图中的不连续。此外，与梯形相移方法类似，陡峭的过渡点也使三角形相移方法对图像模糊敏感。</p>
+<h3 id="3-7-移相傅里叶变换轮廓测量"><a href="#3-7-移相傅里叶变换轮廓测量" class="headerlink" title="3.7.  移相傅里叶变换轮廓测量"></a>3.7. \(\pi\) 移相傅里叶变换轮廓测量</h3><p>相移技术也可以与 FTP 结合，以获得更高的精度和更大的测量范围。在传统 FTP 中，通常将高频条纹图案投影到物体表面，采集到的光强 \(I(x,y)\) 通常表示为 [49,125,126]</p>
+
+\[
+I(x,y)=A(x,y)+B(x,y)\cos[\phi(x,y)]=A(x,y)+B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)] \tag{55}
+\]
+
+
+<p>为便于说明，这里把条纹图案的相位显式表示为两个独立分量之和：物体分量 \(\phi_0(x,y)\) 和线性载波分量 \(2\pi f_0 x\)，其中 \(f_0\) 是采集条纹图像的载频。用欧拉公式展开式 (55) 中的余弦函数，并引入定义</p>
+
+\[
+C(x,y)=\frac{1}{2}B(x,y)\exp\{i\phi(x,y)\}=\frac{1}{2}B(x,y)\exp\{i\phi_0(x,y)\}\exp\{i2\pi f_0 x\} \tag{56}
+\]
+
+
+<p>可得</p>
+
+\[
+I(x,y)=A(x,y)+C(x,y)+C^{*}(x,y), \tag{57}
+\]
+
+
+<p>其中 \(*\) 表示复共轭。对 \(I(x,y)\) 作二维傅里叶变换得到</p>
+
+\[
+\hat{I}(f_x,f_y)=\hat{A}(f_x,f_y)+\hat{C}(f_x,f_y)+\hat{C}^{*}(f_x,f_y), \tag{58}
+\]
+
+
+<p>其中 \((f_x,f_y)\) 是空间频率域中对应于 \((x,y)\) 的矢量。\(\hat{A}(f_x,f_y)\) 和 \(\hat{C}(f_x,f_y)\) 分别是 \(A(x,y)\) 和 \(C(x,y)\) 的傅里叶变换。傅里叶移位定理表明，在空域乘以载波相位因子 \(\exp(\pm i2\pi f_0 x)\) 等价于在频域将信号频谱平移 \(\mp f_0\)。因此，在传统 FTP 中，假定 \(\phi\)、\(A\) 和 \(B\) 相对于载频 \(f_0\) 变化缓慢，从而零级（\(\hat{A}(f_x,f_y)\)）能够与 +1 级（\(\hat{C}(f_x,f_y)\)）和 −1 级（\(\hat{C}^{*}(f_x,f_y)\)）在频域中很好地分离。于是可以应用适当设计的带通滤波器提取 +1 级（\(\hat{C}(f_x,f_y)\)），并通过取所得逆傅里叶变换的相位角部分来恢复相位。</p>
+
+\[
+\phi(x,y)=\tan^{-1}\left[\frac{\mathrm{Re}\{C(x,y)\}}{\mathrm{Im}\{C(x,y)\}}\right]. \tag{59}
+\]
+
+
+<p>然而，当被测表面包含尖锐边缘、间断或较大的表面反射率变化时，式 (58) 中三项的支撑范围会显著扩展，以致零频可能与 +1 级和 −1 级重叠 [28,49]。频谱重叠使得难以滤出 +1 级（\(\hat{C}(f_x-f_0,f_y)\)），从而无法对复杂物体进行高精度相位重建。为解决这一问题，Li 和 Su [86] 提出了 \(\pi\) 移相 FTP，通过额外投影一幅 \(\pi\) 移相正弦条纹图像来有效抑制零级。在投影仪空间中，两幅投影图案为（见图 11）</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p), \tag{60}
+\]
+
+
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p+\pi)=a^p-b^p\cos(2\pi f_0^p x^p). \tag{61}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig11-pi-shift-ft.png" alt="π 移相傅里叶变换图案及其对应截面"></p>
+<p><em>图 11. \(\pi\) 移相傅里叶变换图案及其对应截面。</em></p>
+<p>采集到的两幅图像的光强为</p>
+
+\[
+I_0(x,y)=A(x,y)+B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)], \tag{62}
+\]
+
+
+
+\[
+I_1(x,y)=A(x,y)-B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)]. \tag{63}
+\]
+
+
+<p>对 \(I_0\) 与 \(I_1\) 取差，基频信息被加倍，而零频项被有效抵消：</p>
+
+\[
+I_d(x,y)=I_0-I_1=2B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)]. \tag{64}
+\]
+
+
+<p>然后对 \(I_d\) 作傅里叶变换以提取相位信息。这样，受物体高度分布调制的基频谱理论上可以从 0 扩展到 \(2f_0\)，而不会与零频或更高频分量重叠。因此，最大可测的高度变化斜率可以扩展到接近传统 FTP 的三倍 [86]。</p>
+<h3 id="3-8-改进型傅里叶变换轮廓测量"><a href="#3-8-改进型傅里叶变换轮廓测量" class="headerlink" title="3.8. 改进型傅里叶变换轮廓测量"></a>3.8. 改进型傅里叶变换轮廓测量</h3><p>与 \(\pi\) 移相 FTP 类似，Guo 和 Huang [127] 提出的改进型 FTP 方法通过额外投影一幅平坦图案来降低零级项的影响，该平坦图案与改进型 2+1 PSP 方法中所用的图案相似。在投影仪空间中，两幅投影图案为（见图 12）</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p), \tag{65}
+\]
+
+
+
+\[
+I_1^p(x^p,y^p)=a^p, \tag{66}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig12-modified-ft.png" alt="改进型傅里叶变换图案及其对应截面"></p>
+<p><em>图 12. 改进型傅里叶变换图案及其对应截面。</em></p>
+<p>两幅拍摄图像的强度为</p>
+
+\[
+I_0(x,y)=A(x,y)+B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)], \tag{67}
+\]
+
+
+
+\[
+I_1(x,y)=A(x,y), \tag{68}
+\]
+
+
+<p>可以看出，平均光强 \(A\) 直接由 \(I_1\) 给出。通过取 \(I_0\) 与 \(I_1\) 之差，零频项同样可以被有效去除：</p>
+
+\[
+I_d(x,y)=I_0-I_1=B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)], \tag{69}
+\]
+
+
+<p>随后即可基于二维傅里叶变换从 \(I_d\) 中提取相位。与 \(\pi\) 移相 FTP 类似，这一相减过程去除了 0 级项的影响，因而可以更容易地从所得频谱中选出基频项。这使得最大可测范围和测量精度都能显著提高。此外，改进型 FTP 中仅用一幅条纹图像来编码相位值，因此对被测物体的运动相当不敏感。然而在 \(\pi\) 移相 FTP 中，相位信息被编码在两幅条纹中，因而对物体运动要敏感得多。</p>
+<h3 id="3-9-背景归一化傅里叶变换轮廓测量"><a href="#3-9-背景归一化傅里叶变换轮廓测量" class="headerlink" title="3.9. 背景归一化傅里叶变换轮廓测量"></a>3.9. 背景归一化傅里叶变换轮廓测量</h3><p>尽管 \(\pi\) 移相 FTP 与改进型 FTP 都能在很大程度上去除零级的影响，但这两种方法都无法应对表面反射率的大幅变化，而后者同样会引入频谱泄漏，从而影响高质量的相位提取。为解决这一问题，Zuo 等人 [128] 提出了背景归一化 FTP（background-normalized FTP，BNFTP），它在改进型 FTP 中引入一个额外的归一化步骤，以减轻表面反射率变化的影响。两幅投影图案与改进型 FTP 中的相同，分别为一幅高频条纹和一幅额外的平坦图案：</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p), \tag{70}
+\]
+
+
+
+\[
+I_1^p(x^p,y^p)=a^p, \tag{71}
+\]
+
+
+<p>相应地，拍摄图像的强度为</p>
+
+\[
+I_0(x,y)=A(x,y)+B(x,y)\cos[2\pi f_0 x+\phi_0(x,y)], \tag{72}
+\]
+
+
+
+\[
+I_1(x,y)=A(x,y), \tag{73}
+\]
+
+
+<p>用于傅里叶变换的项是 \(I_0\) 与 \(I_1\) 之间的归一化差值：</p>
+
+\[
+I_d(x,y)=\frac{I_0-I_1}{I_1+\gamma}=\frac{B(x,y)}{A(x,y)}\cos[2\pi f_0 x+\phi_0(x,y)], \tag{74}
+\]
+
+
+<p>其中 \(\gamma\) 是一个用于防止除零错误的小常数。背景归一化 FTP 方法的依据在于：当环境光［式 (4) 中的 \(\beta_1\) 和 \(\beta_2\)］相对于投影仪光较弱时，平均光强可以简化为</p>
+
+\[
+A(x,y)=\alpha(x,y)[a^p+\beta_1(x,y)]+\beta_2(x,y)\approx\alpha(x,y)a^p, \tag{75}
+\]
+
+
+<p>它几乎正比于强度调制</p>
+
+\[
+B(x,y)=\alpha(x,y)b^p, \tag{76}
+\]
+
+
+<p>于是表面反射率 \(\alpha(x,y)\) 的影响可以在归一化步骤（式 (74)）中被抵消，</p>
+
+\[
+I_d(x,y)=\frac{I_0-I_1}{I_1+\gamma}=\frac{B(x,y)}{A(x,y)}\cos[2\pi f_0 x+\phi_0(x,y)]\approx\frac{b^p}{a^p}\cos[2\pi f_0 x+\phi_0(x,y)], \tag{77}
+\]
+
+
+<p>由于零级以及表面反射率变化的影响在傅里叶变换之前就已被去除，频域中的频谱混叠可以被避免或显著缓解。需要指出的是，背景归一化 FTP 的原始版本是专为使用二值图案的高速三维测量而设计的，其额外的平坦图案取值为全“1”而非“0.5”（见图 13）[128]。这是因为中间值 0.5 无法由工作在二值（1 位）模式下的 DMD 完美生成。此外，严格来说，改进型 FTP 与 BNFTP 并不属于相移技术。不过，由于它们的原理和基本思想与 \(\pi\) 移相 FTP 十分相似，我们也将其纳入了本综述。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig13-background-normalized-ftp.png" alt="背景归一化 FTP 图案及其对应截面"></p>
+<p><em>图 13. 背景归一化 FTP 图案及其对应截面。</em></p>
+<h2 id="4-相移轮廓测量的误差分析与补偿"><a href="#4-相移轮廓测量的误差分析与补偿" class="headerlink" title="4. 相移轮廓测量的误差分析与补偿"></a>4. 相移轮廓测量的误差分析与补偿</h2><p>在基于 PSP 的典型 FPP 系统中，已识别出八种主要的相位误差来源：强度噪声、非线性误差、镜头离焦、相移误差、运动引入误差、探测器饱和、光照波动，以及彩色条纹投影中的失衡误差。本节回顾并讨论这些误差源的表现形式、对重建相位的影响以及相应的解决方案。</p>
+<h3 id="4-1-强度噪声"><a href="#4-1-强度噪声" class="headerlink" title="4.1. 强度噪声"></a>4.1. 强度噪声</h3><p>在实际的 FPP 系统中，物体每一点处条纹图案的强度由数字相机采样，不可避免地会受到强度噪声的污染。强度噪声的来源包括不稳定的环境光、投影仪照明噪声、相机&#x2F;投影仪闪烁、相机噪声，以及图像采集卡和投影仪中的量化误差。如图 14 所示，当拍摄的条纹图像受到强度噪声影响时，由标准相移公式重建的相位将偏离理想值，从而产生相位重建误差。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig14-intensity-noise.png" alt="强度噪声对相位重建的影响"></p>
+<p><em>图 14. 强度噪声对相位重建的影响。(a) 无噪声的三步相移图案及其对应截面；(b) 受强度噪声污染的三步相移图案；(c) 由此得到的相位重建误差。</em></p>
+<p>已有大量研究致力于理解强度噪声对相位重建结果的影响，并建立了若干噪声模型来定量分析 PSP 中由噪声引起的相位误差。早期工作更多关注 PSI 领域中含噪干涉图对估计相位的影响 [107,129–133]。例如，Surrel [130] 基于特征多项式研究了数字相位检测中加性噪声的影响。他定义了一个损失因子，用于描述在给定相移算法中强度 SNR 将如何影响相位质量。Rathjen [129] 基于直观的矢量表示，研究了加性高斯强度噪声情形下不同相移算法的统计特性。这些思想与噪声模型后来被移植到 PSP 领域。Li 等人 [131] 提出了针对 PSP 的加性白噪声模型，并应用该模型优化了一种双频 PSP 算法。Wang 等人 [133] 将 Rathjen 的矢量表示加以扩展以研究 PSP 中的噪声效应，并优化 PSP 图案以最大化其 SNR。尽管这些模型是从不同角度、基于不同考虑推导而来的，但它们最终得到的结论相当一致：相位误差的方差主要取决于噪声方差、强度调制以及条纹密度&#x2F;频率。假设强度噪声是均值为零、标准差为 \(\sigma_n\) 的加性、白、高斯分布变量，则标准 N 步 PSP 方法的相位误差标准差定义为 [82,131,133]</p>
+
+\[
+\sigma_\phi=\sqrt{\frac{2}{N}}\frac{\sigma_n}{B}, \tag{78}
+\]
+
+
+<p>其中 \(\sigma_\phi\) 是相位误差的标准差，\(N\) 是相移步数，\(B\) 是强度调制。此外，若相位被展开，相位无歧义范围可从 \(2\pi\) 扩展到 \(2\pi F\)，其中 \(F\) 是条纹图案中的总周期数。换言之，当最终的绝对相位被缩放到相同的动态范围 \([-\pi,\pi)\) 时，相位误差还可进一步减小为原来的 \(1/F\)，即</p>
+
+\[
+\sigma_\phi=\sqrt{\frac{2}{N}}\frac{\sigma_n}{BF}. \tag{79}
+\]
+
+
+<p>根据式 (79)，通常可以考虑三个因素来抑制 PSP 相位重建中的噪声。第一个是增加相移步数（\(N\)），但这会延长图案序列，相应地增加测量时间。第二个因素是提高强度调制 \(B\) 与噪声标准差 \(\sigma_n\) 之比，而强度调制已知正比于表面反射率 \(\alpha\) 和图案幅值强度 \(b^p\)［见式 (5)］。因此，对于给定的被测物体和固定的 FPP 系统，增大图案幅值 \(b^p\) 将减小相位测量误差。除了尽可能使用投影仪的最大动态范围 \([0,1]\) 进行条纹投影（\(a^p=b^p=0.5\)）之外，还可以通过仔细优化或修改标准相移图案来进一步提高有效条纹幅值。已有研究表明，与传统的（满动态范围）3 步 PSP 图案相比，梯形图案 [94]、边缘图案 [133] 和三次谐波注入图案 [134] 由于具有更高的有效条纹幅值或对比度，可将 SNR 提高 15.5–23.6%。最后一个因素是使用具有更高条纹频率的图案，即增大 \(F\)。与增大 \(N\) 或 \(B\) 相比，增大 \(F\) 能更有效地降低 \(\sigma_\phi\)。例如，当采用 10 周期条纹图案进行相位重建时，相位误差的标准差将比使用单位频率图案时小 10 倍。然而，使用高频图案也会在重建过程中引入相位歧义，需要借助相位展开来解决，这将在第 5 节详细讨论。</p>
+<h3 id="4-2-相机-投影仪的非线性误差"><a href="#4-2-相机-投影仪的非线性误差" class="headerlink" title="4.2. 相机&#x2F;投影仪的非线性误差"></a>4.2. 相机&#x2F;投影仪的非线性误差</h3><p>PSP 中的第二个误差来源是相机和投影仪的非线性响应。大多数工业数字相机具有很好的线性，除非相机增益设置过高。然而，对于演示和家庭影院用的数字投影仪，默认的 gamma 设置通常是非线性的，因为它是按照人眼对强度的非线性敏感度来设定的。投影仪输入到拍摄图像强度的非线性映射会引起条纹轮廓的畸变，进而导致提取相位图中的误差，如图 15 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig15-intensity-nonlinearity.png" alt="强度非线性对相位重建的影响"></p>
+<p><em>图 15. 强度非线性对相位重建的影响。(a) 无噪声的三步相移图案及其对应截面；(b) 受强度非线性（gamma &#x3D; 1.4）畸变的三步相移图案及其对应截面；(c) 由此得到的相位重建误差。</em></p>
+<p>对于所考察的普通相移技术，通常假设投影仪具有线性响应，即条纹强度的数字化电平 \(I^p\) 与实际强度 \(I^{real}\) 成线性关系</p>
+
+\[
+I^p=k_0+k_1 I^{real}, \tag{80}
+\]
+
+
+<p>其中 \(k_0\) 与 \(k_1\) 为常数。然而，对于大多数商用投影仪，这一假设未必成立，投影仪的强度响应函数 \(f\) 可能是一个非线性函数</p>
+
+\[
+I^p=f(I^{real}). \tag{81}
+\]
+
+
+<p>有多种模型可用来表征投影仪的响应函数。最简单的是单参数 gamma 函数 [135–137]，它用 gamma 参数 \(\gamma\) 描述输入 \(I^{real}\) 与输出 \(I^p\) 之间的关系：</p>
+
+\[
+I^p=(I^{real})^\gamma. \tag{82}
+\]
+
+
+<p>或者，也可以用多项式函数来表示该非线性曲线 [109,120]，例如</p>
+
+\[
+I^p=k_0+k_1(I^{real})+k_2(I^{real})^2+k_3(I^{real})^3+\cdots\cdots \tag{83}
+\]
+
+
+<p>大多数前沿研究集中于标定 FPP 系统的非线性响应或补偿相关误差，这些方法可大致分为两类 [135]：主动方法（在图案投影之前校正）和被动方法（在图案投影之后校正）。主动方法标定投影仪的响应函数，并在投影之前修改条纹图案以确保其正弦性。一般而言，无论采用何种模型（如 gamma 函数 [136–138]、多项式 [109,120] 和约束三次样条 [139]），投影仪响应函数 \(f\) 都是输入灰度级的单调递增函数，这意味着 \(f\) 总存在反函数 \(f^{-1}\)。一旦在测量之前确定了 \(f\)，就可以对输入投影仪之前的灰度级施加相应的反函数 \(f^{-1}\)，即利用反函数 \(f^{-1}\) 对投影图案进行预畸变，以抵消非线性效应 [109,120,137,139,140]。整个补偿过程如图 16 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig16-nonlinearity-compensation.png" alt="非线性补偿过程"></p>
+<p><em>图 16. 利用逆响应函数对投影图案进行预畸变（校正）的非线性补偿过程。</em></p>
+<p>尽管补偿过程背后的基本思想简单直接，但要准确测量强度响应函数 \(f\)，就需要能够精确获得投影仪的输入—输出关系 \(I^p=f(I^{real})\)。通常设置一块白色平板，由投影仪依次投射一系列预先定义的均匀强度（例如对 8 位投影仪为 0 至 255），并记录平板反射的相应强度。基于拍摄的图像，拟合整个系统的强度响应函数，或估计 gamma 值 [120,140]。由于相机最终拍摄的图像为：</p>
+
+\[
+I_i(x,y)=\alpha(x,y)\left\{f\left[I_i^{real}(x,y)\right]+\beta_1(x,y)\right\}+\beta_2(x,y)\quad i=0,1,2,\ldots,255 \tag{84}
+\]
+
+
+<p>其中既包含环境光［\(\beta_1(x,y)\)、\(\beta_2(x,y)\)］的贡献，也包含表面反射率［\(\alpha(x,y)\)］的贡献。因此，应使用归一化强度 \(\bar{I}_i(x,y)\) 来建立投影仪的响应曲线 [109,120,137]</p>
+
+\[
+\bar{I}_i(x,y)=255\times\frac{I_i(x,y)-I_0(x,y)}{I_{255}(x,y)-I_0(x,y)}. \tag{85}
+\]
+
+
+<p>在式 (85) 中，相减无条件地移除了任何背景偏置，而相除则对图案进行归一化，以去除表面上的反射率变化。此外，由于对大多数商用视频投影仪而言所有像素的响应曲线都是相同的（投影仪中不存在非均匀性），归一化强度 \(\bar{I}_i(x,y)\) 可以在整幅图像上取平均，以进一步降低噪声的影响。除了基于均匀灰度图案、用普通最小二乘拟合来标定响应函数之外，还有一些“自标定”方法直接从受 gamma 畸变的条纹图像中提取非线性参数。Baker 等人 [141] 利用前馈反向传播神经网络的泛化与插值能力来建模强度响应函数，并将畸变条纹映射为非畸变条纹。Guo 等人 [136] 利用条纹图像的归一化累积直方图来估计 gamma 值。其理论基础是：正弦信号的累积分布函数在拓扑上具有与其相位和频率无关的固定形式。Liu 等人 [138] 建立了一个数学模型来预测 gamma 畸变对标准 PSP 的影响。gamma 值由使用大量相移图案的 PSP 的谐波强度调制系数估计得到。Li 等人 [142] 进一步将投影仪离焦纳入 Liu 的模型 [138]，并利用两个预设的 gamma 值确定离焦程度。Hoang 等人 [143] 通过求解理想相位与畸变相位之间的非线性函数来确定 gamma 值，其中理想相位由大量步数的相移确定。Lü 等人 [144] 提出了一种自校正方法，能够在测量物体时直接从条纹图案中估计投影仪非线性曲线。多项式系数通过拟合归一化条纹强度对平滑相位余弦值的曲线来确定。</p>
+<p><em>表 1. 传统 N 步算法的非线性相位误差。</em></p>
+<table>
+<thead>
+<tr>
+<th>非线性阶次</th>
+<th>相位误差 \(\Delta\phi(x,y)\)（3 步 PSP）</th>
+<th>4 步 PSP</th>
+<th>5 步 PSP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>线性项 \(k_0+k_1I\)</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>二阶非线性 \(k_2I^2\)</td>
+<td>\(-\frac{Bk_2}{2}\sin[3\phi(x,y)]\)</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>三阶非线性 \(k_3I^3\)</td>
+<td>\(-\frac{ABk_3}{2}\sin[3\phi(x,y)]\)</td>
+<td>\(-\frac{Bk_3}{4}\sin[4\phi(x,y)]\)</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>除了单参数 gamma 模型和多项式模型之外，实际的非正弦波形也可以近似为被高次谐波畸变的理想正弦函数。具体而言，基于傅里叶级数展开，非正弦波形可以表示为</p>
+
+\[
+I^p(x^p,y^p)=a^p+\sum_{k=1}^{\infty}b_k^p\cos\left[k\left(2\pi f_0^p x^p-2\pi n/N\right)\right], \tag{86}
+\]
+
+
+<p>其中高次谐波（\(k>1\)）使波形偏离理想正弦函数。与在投影前标定响应函数并修改条纹图案的做法不同，另一些主动方法利用镜头离焦效应作为低通滤波器，抑制波形中不需要的高次谐波，使其更接近正弦。例如，Su 等人 [145] 以及 Lei 和 Zhang [146] 通过对二值条纹图案离焦来生成准正弦条纹图案。Baker 等人 [141] 沿用这一技术，对受 gamma 畸变的条纹而不是二值波形进行离焦。这些基于离焦的方法实现简单，且无需为标定或补偿增加额外计算，但其改善是以降低条纹对比度和削弱 SNR 为代价的。另外，高次谐波也可以通过模糊拍摄的条纹图像来衰减 [147]。模糊效应与离焦类似，但物体表面的高频细节也可能被削弱。</p>
+<p>被动方法则不同，它不修改投影仪的输入条纹图案，而是在拍摄到非线性条纹图案之后，利用一些后处理算法来补偿相位误差。事实上，标准的 N 步相移算法本身对非线性误差具有一定的抵抗能力。Wingerden 等人 [148] 基于多项式模型［式 (82)］分析了非线性对各类相移算法的影响。结果发现，3 步相移算法对所有高阶（\(\ge 2\)）误差都敏感，4 步相移算法对二阶误差不敏感，5 步相移算法对二阶和三阶误差均不敏感，如表 1 所示。</p>
+<p>Stetson 和 Brohinski [149] 基于傅里叶级数展开模型［式 (86)］分析了各种算法与非线性，其结果汇总于表 2。× 表示非线性会影响相位计算，空白表示该非线性的影响在相位计算中被自动抵消。Surrel [150] 利用特征多项式分析了不同的相移算法，得到了更一般的结果：N 步相移仅对 \((p+1)N\pm 1\) 次谐波的存在敏感，其中 \(p\) 为整数。例如，六步算法不仅对 2、3、4 次谐波不敏感，而且对 6、8、9、10、12、14…… 次谐波也不敏感，它只对 \(5+6p\) 和 \(7+6p\) 次谐波敏感。Baker 等人 [151] 发现，主要非线性相位误差的周期等于所拍摄条纹图案的相移次数［例如在 3 步 PSP 中，非线性相位误差为 3 次谐波，如图 15(c) 所示］。除标准相移算法之外，还有一些专门为补偿非线性误差而设计的特殊 PSP 算法。Hibino 等人 [152] 设计了一种相移算法，在至少投影 5 幅图案时能够消除强度信号的谐波分量以及恒定相移误差的影响。Huang 等人 [90] 提出了双三步相移算法，通过对两个畸变方向相反的畸变相位取平均，可以抵消多项式模型中的二阶非线性（见 3.2 节）。</p>
+<p><em>表 2. 不同相移算法对高次谐波的敏感度。</em></p>
+<table>
+<thead>
+<tr>
+<th>步数 &#x2F; 谐波次数</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+<th>11</th>
+<th>12</th>
+<th>13</th>
+<th>14</th>
+<th>15</th>
+<th>16</th>
+<th>17</th>
+<th>18</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3</td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td>×</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>8</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+<td>×</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>×</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>尽管使用大量相移步数在理论上可以完全消除非线性的影响 [138,143,153]，但这需要长得多的图案序列、更多的存储空间和更长的处理时间，对于高速和实时测量应用并不理想。因此，人们提出了许多相位补偿算法，在不需要额外条纹图案的情况下补偿非正弦相位误差 [98,138,141,151,154–159]。例如，Zhang 和 Huang [154] 提出了一种基于查找表（look-up table，LUT）的方法，无需采用任何数学 gamma 模型即可直接补偿相位误差。该 LUT 根据由标定得到的投影仪 gamma 计算出的相位误差构建。Zhang 和 Yau [155] 提出了另一种基于 LUT 的相位补偿算法，对任何相移方法都通用。该方法无需标定投影仪的 gamma，而是直接通过分析一块平板的拍摄条纹图像来建立 LUT。受 Zhang 工作 [155] 的启发，Jia 等人 [98] 也为其两步三角相移方法提出了一种基于 LUT 的补偿算法。Guo 等人 [136] 将 gamma 畸变视为一个不确定性问题，采用统计方法来分析和校正 gamma 畸变。Pan 等人 [156] 基于“非线性相位误差的周期等于所拍摄条纹图案的相移次数”这一性质，提出了一种迭代相位补偿算法。Liu 等人 [138] 建立了一个数学模型来预测 gamma 畸变引入的相位误差，并通过求解一个非线性优化问题来校正相位误差。</p>
+<p>与前述主动方法相比，被动相位补偿方法必须在测量之后逐像素执行，需要更多的计算开销。此外，还需注意标定条件与测量条件的一致性 [135]。考虑到非线性误差属于一种系统误差，如果能够采用主动方法，通常更可取。标定流程虽然繁琐耗时，但只需在测量之前做一次。然而，在某些必须显式考虑投影仪非线性时变特性的特殊情形下 [144,160]，基于参考的标定方法无法跟随参数随时间的漂移。因此，应使用被动相位补偿方法或具备自标定能力的主动方法，因为它们无需事先标定投影仪的强度响应或相位误差，就能持续抑制非线性效应。</p>
+<h3 id="4-3-镜头离焦"><a href="#4-3-镜头离焦" class="headerlink" title="4.3. 镜头离焦"></a>4.3. 镜头离焦</h3><p>在正弦相移方法中，图像离焦理论上不会引入相位误差，因为正弦图案在图像离焦后仍然是正弦图案，尽管条纹对比度可能降低。离焦效应在数学上可以建模为理想清晰图像与成像系统点扩散函数（point spread function，PSF）的卷积，后者通常用圆形高斯函数近似：</p>
+
+\[
+h(x,y)=\frac{1}{2\pi\sigma^2}\exp\left(-\frac{x^2+y^2}{2\sigma^2}\right), \tag{87}
+\]
+
+
+<p>其中标准差 \(\sigma\) 与离焦程度成正比。在频域中，图像频谱也相应地受到成像系统光学传递函数（optical transfer function，OTF）的滤波，而 OTF 正是 PSF 的傅里叶变换。由于高斯函数的傅里叶变换仍是高斯函数，OTF 也是高斯形状，其宽度由 \(\sigma\) 控制。它会衰减图像频谱，尤其是高空间频率部分。由于正弦条纹只包含单一频率分量，镜头离焦不会改变波形的形状，只会降低其幅值，如图 17(a) 和 (b) 所示。对于非正弦图案，例如梯形或三角形相移图案，图像离焦会使波形变得平滑，从而引起不可忽略的误差 [94,99]。一般来说，如果图案的波形不是光滑函数（包含边缘、台阶或突变），镜头离焦就可能影响测量结果或引入测量误差［见图 17(c) 和 (d)］。在一些时间相位展开方法中，例如格雷码 [161–164] 和阶梯相位编码方法 [165–167]，图像离焦还可能在图案的锐变区域附近引入相位展开误差，这将在第 5 节讨论。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig17-lens-defocusing.png" alt="镜头离焦对正弦条纹图案和二值方波图案的影响"></p>
+<p><em>图 17. 镜头离焦对正弦条纹图案和二值方波图案的影响（采用 \(\sigma=15\) 的 50 × 50 高斯核模拟离焦效应）。(a) 理想正弦条纹图案；(b) 离焦后的正弦条纹图案；(c) 理想二值方波图案；(d) 离焦后的二值方波图案。</em></p>
+<p>镜头离焦不仅是一种误差源，还可以被用作光学低通滤波器来优化投影条纹图案。正如我们在 4.2 节中提到的，镜头离焦有助于缓解投影仪的非线性响应并减小相关的相位测量误差 [141,145,146]。另一方面，对于高速（kHz）三维形貌测量应用，最好只使用低位深图案进行条纹投影。由于 DMD 是二值数字器件（只能“开”或“关”），灰度图像是通过二值时间脉宽调制产生的，强度电平通过控制反射镜开&#x2F;关的时间量来再现。因此，使用的灰度级越少，DMD 重组图案信号所需的周期就越少。如果采用二值图案进行条纹投影，DMD 可以工作在 1 位模式，从而使投影速率最高可达数十 kHz [128,168,169]。由于 1 位灰度（0 和 1）不足以产生理想的正弦图案，人们进一步引入镜头离焦作为低通滤波器，滤除波形中不需要的高次谐波，使其变得更接近正弦（如图 17(c) 和 (d) 所示，二值方波在离焦后可以变成“准正弦”）。需要提及的是，类似的问题早先在使用物理光栅的条纹投影技术中也曾遇到，因为难以制造具有正弦透过率的精确光栅。为解决这一问题，人们提出了对由 Ronchi 光栅产生的方波进行离焦投影，从而为 PSP 相位求值产生高质量的正弦图案 [170]。条纹图案的正弦性也可以通过区域调制技术改善，该技术在微制造过程中仅利用两种灰度级在空间域上逼近正弦透过率函数 [171]。这些方法的主要思想后来被引入数字 FPP，并发展出许多优化离焦二值图案以产生理想正弦图案或获得更高测量精度的方法，例如二值平方图案 [146]、正弦脉宽调制（sinusoidal pulse-width-modulation，SPWM）[111,172,173]、最优脉宽调制（optimal pulse-width-modulation，OPWM）[173,174]、二值抖动技术 [175] 以及优化抖动技术 [176–179]。此外，如 5.2 节所述，相移技术对某些阶次的谐波分量具有固有的抵抗能力。这一性质也已被考虑并充分研究，用于优化二值图案、降低相位重建误差 [173,179,180]。关于这些二值离焦技术的详细介绍可参见 [160]。</p>
+<h3 id="4-4-相移误差"><a href="#4-4-相移误差" class="headerlink" title="4.4. 相移误差"></a>4.4. 相移误差</h3><p>在相移干涉测量（phase shifting interferometry，PSI）领域，相移误差是影响干涉测量系统测量精度的主要误差源。大多数相移技术都假定相移步长固定且已知。然而，执行相移的压电陶瓷变压器（piezoelectric ceramic transformer，PZT）在运动中的非线性，或者相移步长的标定偏差，都会引起相移误差。如图 18 所示，如果采用传统的相移技术，相移误差将不可避免地影响相位重建的准确性。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig18-phase-shifting-error.png" alt="相移误差对相位重建的影响"></p>
+<p><em>图 18. 相移误差对相位重建的影响。(a) 理想的三步相移图案及其对应截面；(b) 存在 \(\pi/10\) 相移误差的失准三步相移图案；(c) 由此产生的相位重建误差。</em></p>
+<p>Schwider 等人 [181,182] 已经证明，对于很小的相移误差 \(\epsilon_\gamma\)，由标准 N 步相移算法计算出的相应相位误差，其频率为相位频率的两倍［这一现象可以在图 18(c) 中清楚地观察到］</p>
+
+\[
+\Delta\phi(x,y)\approx a+b\cos[2\phi(x,y)]+c\sin[2\phi(x,y)], \tag{88}
+\]
+
+
+<p>其中系数 \(a\)、\(b\) 和 \(c\) 近似正比于 \(\epsilon_\gamma\)。Creath [183] 也通过仿真分析了相移误差，确认了相位误差的 \(2\phi\) 特性，并表明相移步数越多，相位误差的幅值越低。因此，为了减小相移误差，可以增加相移步数，或者选择对相移误差不那么敏感的相移算法，例如 Carré [184] 和 Hariharan 相移算法 [85]（在第 3.3 节中详细讨论）。应当指出，在数字 FPP 系统中，相移是由数字投影仪基于软件程序生成的，因此从理论上讲不存在相移误差。</p>
+<h3 id="4-5-运动引入误差"><a href="#4-5-运动引入误差" class="headerlink" title="4.5. 运动引入误差"></a>4.5. 运动引入误差</h3><p>尽管数字 FPP 完全不受相移误差的影响，但还存在另一种与之密切相关的误差，即所谓的运动引入误差或运动伪影。在传统 PSP 中，被测场景在采集多幅相移图像的过程中被认为是静止的，因此被测相位不会发生变化。当场景变为动态时，这一条件可能不再成立，即使使用高速 FPP 系统也是如此。</p>
+<p>如图 19 所示，当被测表面在采集过程中并非静止时，投影图案序列中的一个点可能被映射到物体表面上的不同点，因此在顺序采集的图像中，同一场景点将具有不同的相位值，而不是像静止情形那样共享同一个值。例如，在三步 PSP 中，实际采集到的强度图像可以描述为</p>
+
+\[
+I_0=A+B\cos(\phi-\Delta\phi_1), \tag{89}
+\]
+
+
+
+\[
+I_1=A+B\cos(\phi-2\pi/3), \tag{90}
+\]
+
+
+
+\[
+I_2=A+B\cos(\phi-4\pi/3+\Delta\phi_2), \tag{91}
+\]
+
+
+<p>其中 \(\Delta\phi_1\) 和 \(\Delta\phi_2\) 是相对于中间图像（\(I_1\)）的运动引入相位偏移。从图 19 可以看出，当表面朝向或远离测量系统运动（沿 \(z\) 轴）时，相移步长不再是 \(2\pi/3\)，这会引起与相移误差十分相似的相位测量误差。如第 4.4 节所讨论的，增加相移步数或使用特定算法可以减小相移误差。然而，这会延长图案序列并延长测量时间（例如 Hariharan 相移算法 [57,85] 需要 5 幅条纹图案），使得测量仍然对运动非常敏感。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig19-motion-induced-error.png" alt="传统三步 PSP 中运动引入的相移误差示意"></p>
+<p><em>图 19. 传统三步 PSP 中运动引入的相移误差示意图。被测表面正朝测量系统运动。</em></p>
+<p>由于为了缩短测量时间希望使用最少数量的条纹图像，研究人员尝试改进三步相移算法，以便显式地考虑运动引入误差。Weise 等人 [121] 为三步相移算法假设了一种线性相位偏移模型（运动是均匀的，即 \(\Delta\phi_1\approx\Delta\phi_2\)），并使用泰勒近似得到运动误差的闭式表达式，从而在像素级上施加运动补偿。基于局部平滑性假设，在每个像素的局部邻域内执行线性最小二乘拟合，以求解未知的相位偏移和真实相位。Cong 等人 [185] 提出了一种傅里叶辅助相移方法，其中三步 PSP 中与运动相关的相位偏移通过借助 FTP 对两相邻帧生成的相位测量结果作差分来估计。该方法不对真实相位施加特定限制，并且对非均匀运动的情形也能很好地工作。Li 等人 [186] 还提出了一种混合计算框架，通过将 FTP 与 PSP 相结合来减小运动引入误差。在几何约束的辅助下，由 FTP 恢复的高频相位基于 PSP 获得的低频相位进行展开，从而得到一幅不受物体快速运动所引起的相位误差影响的绝对相位图。</p>
+<p>当被测表面并非简单地朝向或远离测量系统运动时，相关的测量误差分析会变得更加复杂。例如，如果正弦图案的方向平行于运动方向，被测物体的运动将同时引入相移误差和表面错位。在这种情况下，需要使用像素匹配算法 [102,187–189] 和任意非等步相移 [190] 才能获得可靠的测量结果。否则，简单地应用传统 PSP 算法将产生较大的测量误差和离群点 [191,192]。对于刚性物体更复杂的三维运动，Lu 等人 [193] 建立了一个模型来描述受三维运动影响的条纹图案，并在背景光强和条纹调制度的约束下用最小二乘法精化未知的相位偏移。考虑到沿 \(x\)、\(y\) 和 \(z\) 方向的不同运动类型，Feng 等人 [194] 将运动引入伪影分为 3 类：运动波纹、运动引入的相位展开误差和运动离群点，并分别提出了相应的对策。相位误差（运动波纹）基于正弦条纹的统计特性进行补偿；相位展开误差通过利用相邻的可靠像素来校正；离群点则通过将原始相位图与平滑后的相位图进行比较来剔除。</p>
+<h3 id="4-6-强度饱和"><a href="#4-6-强度饱和" class="headerlink" title="4.6. 强度饱和"></a>4.6. 强度饱和</h3><p>当条纹图案被投影到反射率相对较高的物体上，或者相机曝光时间设置过长时，可能会发生强度饱和。如果在传统 PSP 中使用饱和的条纹图案，由于条纹图案的强度廓线被截断，将会产生相位误差，如图 20 所示。为了防止或补偿饱和引起的相位误差，人们已经提出了许多先进方法，它们可以分为 3 类：基于曝光的方法 [117,118,195–197]、基于投影的方法 [198–206] 以及后处理补偿算法 [103,207–210]。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig20-intensity-saturation.png" alt="强度饱和对相位重建的影响"></p>
+<p><em>图 20. 强度饱和对相位重建的影响。(a) 理想的三步相移图案及其对应截面；(b) 饱和的三步相移图案及其对应截面（增益为 1.2 倍，动态范围为 [0, 1.2] 的原始强度值被截断到 [0,1]）；(c) 由此产生的相位重建误差。</em></p>
+<p>在基于曝光的方法中，根据表面反射率适当调整相机曝光，以防止强度饱和。例如，Zhang 等人 [117] 提出了一种高动态范围扫描技术，其中用不同的曝光时间采集一组条纹图像，并使用条纹图案集中最亮但未饱和的像素来逐像素地计算相位值。Jiang 等人 [118] 没有选择最亮的像素，而是提出了一种类似的多曝光方法，该方法使用强度调制作为判据来确定最佳的条纹图案集。Ekstrand 等人 [195] 提出了一种自动曝光技术，其中曝光时间根据被测物体的反射率自动调整。Ri 等人 [196] 提出了一种使用自行研制的 DMD 相机的强度范围扩展方法。相机的每个像素恰好对应 DMD 的一个微镜，后者可以独立地调制每个相机像素的入射光亮度，以防止出现过曝光区域。Yin 等人 [197] 提出了一种基于单芯片彩色相机的高动态范围三维测量技术。从彩色相机的单次拍摄原始数据中，可以获得对应于 R、G、G 和 B 通道的 4 幅单色子图像，并将它们合成以避免过曝光。</p>
+<p>而基于投影的方法则通过调整投影条纹图案的强度和对比度来避免强度饱和。Waddington 和 Kofman [198] 建议投影具有不同最大输入灰度级的多组正弦条纹图像。该技术遵循与多曝光方法类似的思路，但图像强度由投影仪而不是相机来控制。Babaie 等人 [202] 提出了一种高动态范围测量技术，它根据相机采集到的反射图像的反馈，在像素级上递归地控制投影图案的强度。Li 和 Kofman [200] 提出了一种自适应条纹图案投影方法，使投影条纹图案中的最大输入灰度级与被测物体表面的局部反射率相匹配。Lin 等人 [203] 开发了一种类似的方法，基于非线性回归自适应地调整投影图案的逐像素强度，从而测量反射率变化范围很大的物体。除了直接控制投影强度之外，偏振光学也被引入高动态范围三维测量，因为它在有效抑制镜面高光方面具有独特优势。Chen 等人 [204] 在投影仪和相机前方各引入两个线性偏振片，并将偏振差分成像与相移方法相结合来测量高反光物体。Salahieh 等人 [205] 提出使用带有像素化偏振片阵列的偏振相机，该相机可以在单次相机曝光中采集 4 幅具有不同偏振状态的图像。通过选择不同的偏振测量结果，可以有效地避免强度饱和。应当指出，基于投影或基于偏振的方法也可以与多曝光方法相结合，以实现对表面反射率动态范围极高的物体的更精确测量，正如 Feng 等人 [206] 所展示的。</p>
+<p>最后一类方法通过后处理补偿算法来克服饱和引起的相位误差。例如，Chen 等人 [207] 尝试基于传统的 N 步（\(N>3\)）相移条纹图案修改相位恢复算法，以避开强度饱和问题。由于相移的最小步数为 3，如果同一像素处至少有 3 个未饱和的强度值，那么相位就可以准确重建，而不受饱和强度图像的任何干扰。Hu 等人 [103,208] 分别推导出了对应于五步和七步相移方法的相位恢复算法。Guo 和 Lü [211] 提出了一种基于霍夫变换的相移算法，它能够减轻强度饱和的影响，并从饱和条纹图案中产生高精度的相位重建。Jiang 等人 [210] 提出了一种实时高动态范围扫描方法，通过投影额外的反转条纹图案来补充原始三步相移条纹图像中的饱和像素。Chen 和 Zhang [209] 提出使用大步数相移算法来克服强度饱和误差。无论采集到的条纹图像是否饱和，所有图像都被用于相位计算。由于强度饱和也可以被视为一种特殊的非线性误差，因此不难理解，使用足够多的相移步数可以完全消除饱和误差。</p>
+<h3 id="4-7-光照波动"><a href="#4-7-光照波动" class="headerlink" title="4.7. 光照波动"></a>4.7. 光照波动</h3><p>在大多数相移算法中，条纹图案各点处的背景光强和调制度都假定在相移过程中保持恒定。然而在实际测量中，由于光源的功率波动和环境照明的不稳定性，这一条件并不总能满足。研究发现，投影光强的稳定性会随着投影仪灯泡的老化而显著下降 [212]。对于 DLP 投影仪，DMD 的瞬态响应也可能引入光照波动，尤其是在曝光时间较短时，因为相机在成像过程中可能会采集到 DMD 像素动态的二值开&#x2F;关积分过程 [213]。当投影光和环境光存在均匀波动时，采集到的相移条纹图案可以表示为</p>
+
+\[
+I_n(x,y)=\alpha_n A(x,y)+\beta_n B(x,y)\cos[\phi(x,y)-2\pi n/N], \tag{92}
+\]
+
+
+<p>其中 \(\alpha_n\) 和 \(\beta_n\) 分别是背景和调制的波动因子。强度的波动改变了条纹图案的平均光强和调制度，从而导致相位误差，如图 21 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig21-illumination-fluctuation.png" alt="光照波动对相位重建的影响"></p>
+<p><em>图 21. 光照波动对相位重建的影响。(a) 理想的三步相移图案及其对应截面；(b) 在波动光照下采集的三步相移图案及其对应截面；(c) 由此产生的相位重建误差。</em></p>
+<p>为了预防或补偿与光照波动相关的相位误差，人们已经提出了若干方法。其中，最直接的方法是在测量系统中使用高度稳定的光源。例如，Lu 等人 [214] 使用强度稳定性优于 0.2% 的氙灯作为 FPP 系统的光源，这在理论上保证了由光照波动引起的相位测量误差不超过 0.002 rad。可以引入额外的光探测装置来实时监测光照变化，从而为稳定或补偿机制提供反馈 [215,216]。除了这些硬件辅助技术之外，一种更便捷、更经济的解决方案是通过对采集到的条纹图案进行后处理来补偿光照波动。如果光源的波动是随机的且变化很快，那么在每个相移步对多幅条纹图像取平均就能有效地减轻光照波动的影响 [212]。在存在系统性、缓慢变化的强度波动时，则必须设计专门的算法。基于光源功率随相移线性变化的假设，Onodera 和 Ishii [217] 开发了一种六步相移算法，用于补偿 PSI 中光照的线性变化。人们还提出了若干迭代自标定 PSI 算法，它们可以同时估计标定有误的相移量以及波动因子 [218,219]。然而，由于涉及的未知量更多，这些自标定 PSI 方法通常需要采集更多额外的条纹图案，才能使方程组适定。为了补偿 FPP 中的光照波动，Zhang 等人 [21] 提出了一种基于经验模态分解算法的方法，在相位计算之前去除由背景光和投影系统光源强度引起的强度波动。Lu 等人 [220] 使用大津法对每幅相移条纹图案进行分割，然后基于线性灰度变换校正光照波动的影响。Chen 等人 [221] 研究了光源不稳定性的特征，发现对于不同的测量，随时间变化的相位误差几乎无法用确定性函数唯一地表示，这就排除了使用基于预标定的补偿流程的可能性。因此，他们提出了两种实时校正方法，通过引入额外的参考区域来获得随时间变化的相位误差并建立映射函数，从而减小随时间变化的相位误差。</p>
+<h3 id="4-8-彩色条纹投影中的耦合与失衡误差"><a href="#4-8-彩色条纹投影中的耦合与失衡误差" class="headerlink" title="4.8. 彩色条纹投影中的耦合与失衡误差"></a>4.8. 彩色条纹投影中的耦合与失衡误差</h3><p>对于传统 PSP 技术，多幅相移单色条纹图案被顺序投影到物体表面，然后由单色相机采集。然而，这种多次拍摄机制对两幅图像之间的时间间隔内发生的物体运动很敏感。单帧彩色条纹图案技术已被用于解决这一问题，因为三个颜色通道可以在单幅彩色图案中编码三幅独立的条纹图案 [30]。当用彩色相机采集彩色条纹图像时，可以从三个颜色（RGB）通道中提取出三幅单色条纹图像。彩色条纹编码和解码的整个过程如图 22 所示。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig22-color-coupling.png" alt="彩色条纹投影中颜色耦合与失衡示意"></p>
+<p><em>图 22. 彩色条纹投影中颜色耦合与失衡示意图。(a) 理想的三步相移图案及其对应截面；(b) 经 RGB 编码后的彩色图案，以及存在颜色耦合与失衡的畸变彩色图案；(c) 经 RGB 解码后的畸变三步相移图案及其对应截面。（关于图例中颜色的解释，读者可参阅本文的网络版。）</em></p>
+<p>彩色条纹投影使三步相移可以在单幅彩色条纹中完成 [222–225]［见图 25(b)］，从而能够对动态场景进行快速测量。然而，对于彩色条纹投影，颜色耦合和失衡会使编码在三个颜色通道中的条纹图案强度发生畸变，从而导致相位重建中出现较大误差［见图 25(c)］[30,159,222–230]。投影仪和相机通常被设计为各颜色通道的光谱存在一定重叠，以避免光谱中出现“色盲”区域，但遗憾的是这会造成颜色耦合。由于颜色耦合，无法从彩色条纹图案中正确地分离出三个基色通道。结果，三幅相移条纹图案将具有畸变的强度廓线，从而在相位计算中引起显著误差。人们已经提出了许多基于硬件或软件的校正方法来解决彩色 FPP 中的颜色耦合问题 [159,223–227,229,230]。</p>
+<p>颜色失衡是另一个重大挑战。由于人眼对不同颜色的敏感度不同，大多数投影仪被有意设计为对 RGB 颜色具有不同的强度响应。在 PSP 中，三个颜色通道（对应于三幅条纹图像）之间的失衡可能导致相位误差。颜色失衡问题还与投影仪的非线性效应有关（详见第 4.2 节），但需要同时对三个颜色通道（RGB）进行补偿 [222–225,227,230]。彩色物体表面的测量也是一个需要特别考虑的重要问题。由于相机采集到的条纹图像的 RGB 颜色同时取决于投影条纹和被测物体的表面颜色，因此用彩色条纹投影精确测量彩色物体非常具有挑战性。</p>
+<p>最后还应当指出，对于大多数单芯片 DLP 投影仪，彩色图像的 RGB 通道实际上是顺序显示的，并由一个同步旋转的色轮进行调制 [109,120,121,231]。因此，为了实现精确的相位测量，只有在相机帧率远低于（或恰好为整数倍于）数字视频投影仪刷新率时，才能应用彩色条纹投影技术。</p>
+<h2 id="5-用于绝对相位恢复的相移算法"><a href="#5-用于绝对相位恢复的相移算法" class="headerlink" title="5. 用于绝对相位恢复的相移算法"></a>5. 用于绝对相位恢复的相移算法</h2><p>在 PSP 中，零相移的正弦条纹图案携带绝对相位信息，该信息隐含地定义在它自身及其相移对应图案之上。尽管正弦条纹图案中的强度分布以 \(2\pi\) 为周期，存在相位模糊，但由于利用了条纹级次信息，每个像素处的绝对相位值是唯一的。一旦获得绝对相位 \(\Phi(x,y)\)，我们就可以通过线性方程对每个相机像素 \((x,y)\) 建立唯一的对应值 \(x^p\)</p>
+
+\[
+\Phi(x,y)=2\pi f^p x^p=\frac{2\pi}{\lambda}x^p, \tag{93}
+\]
+
+
+<p>其中 \(\lambda\) 是条纹波长&#x2F;周期（以像素为单位），显然有 \(f^p=1/\lambda\)。然而，当使用第 3 节所述的相移算法进行相位测量时，所获得的被测表面相位图被包裹在主值范围 \(-\pi\) 到 \(\pi\) 之内，这意味着条纹级次信息丢失了。为了恢复条纹级次并获得被测表面的绝对相位图，需要执行相位展开。如图 23 所示，基本的相位展开过程可以看作是为每个相机像素 \((x,y)\) 找到条纹级次 \(k\) 并加上相应的 \(2\pi\) 整数倍的过程：</p>
+
+\[
+\Phi(x,y)=\phi(x,y)+2\pi k(x,y), \tag{94}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig23-phase-unwrapping-example.png" alt="三步相移算法与相位展开示例"></p>
+<p><em>图 23. 三步相移算法与相位展开示例。(a) 三步相移图案；(b) \(I_0\)、\(I_1\) 和 \(I_2\) 的强度截面；(c) 由相移算法恢复的包裹相位图；(d) 包裹相位 \(\phi(x,y)\) 与绝对相位 \(\Phi(x,y)\) 之间的关系。</em></p>
+<p>正如我们在引言中提到的，相位展开算法主要有两大类：空间相位展开 [58–61] 和时间相位展开 [68–70,72,81,232]。由于空间相位展开方法基于空间相邻像素的相位信息，它无法仅利用单一相位分布唯一地确定孤立表面或深度不连续处的周期数。因此，为了展开可能包含大不连续和分离的更为一般的相位图，应当使用时间相位展开方法。</p>
+<h3 id="5-1-相移结合标准时间相位展开（3-3）方法"><a href="#5-1-相移结合标准时间相位展开（3-3）方法" class="headerlink" title="5.1. 相移结合标准时间相位展开（3+3）方法"></a>5.1. 相移结合标准时间相位展开（3+3）方法</h3><p>标准时间相位展开（temporal phase unwrapping，TPU）算法借助具有不同条纹周期的附加包裹相位图来展开包裹相位图。这类算法可进一步分为 3 个子类：多频（分层）方法 [68,69,78]、多波长（外差）方法 [70,71,79] 以及数论方法 [72,73,80,81]。文献 [82] 对这些方法进行了详细研究与比较，结果表明多频（分层）方法具有最佳的展开可靠性，并且对噪声最为鲁棒。此外，它也很容易实现。在本综述的后续部分，我们仅以双频分层 TPU 作为这类 TPU 方法的代表。但需要注意的是，下面介绍的 PSP 方案也可以与其他相关的 TPU 算法结合。</p>
+<p>双频分层 TPU 需要两幅具有不同条纹节距的包裹相位图。这两幅包裹相位图都由相移算法或其他相位检测方法获得，取值范围为 \(-\pi\) 到 \(\pi\)。第一组相移图案是常规的高频周期条纹，由此得到带有若干 \(2\pi\) 包裹的高频相位图 \(\phi_h(x,y)\)。另一幅（低频）相位图 \(\phi_l(x,y)\) 则利用一组单位频图案获得，因此无需进行相位展开。该单位频相位随后被用作参考，为每个像素确定高频相位图 \(\phi_h(x,y)\) 的整数条纹级次 \(k_h(x,y)\)</p>
+
+\[
+k_h(x,y)=\mathrm{Round}\left[\frac{(\lambda_l/\lambda_h)\phi_l(x,y)-\phi_h(x,y)}{2\pi}\right], \tag{95}
+\]
+
+
+<p>其中 Round[ ] 表示取最接近的整数值。通过这种方式，高频相位 \(\phi_h(x,y)\) 便可基于式 (94) 成功展开。由于根据相移公式［式 (7) 和式 (8)］，获得相位信息所需的最少图案数为 3，因此若基于标准 PSP 算法实现 TPU，则至少需要 6 幅图案（两组独立的 3 步相移图案）才能获得两幅包裹相位 \(\phi_h\) 和 \(\phi_l\)，如图 24 所示。在下文中，为简便起见，我们将这种特定的相移结合标准 TPU 方法称为 3+3 相移算法。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig24-3plus3-step.png" alt="3+3 步相移算法与 TPU 示例"></p>
+<p><em>图 24. 3+3 步相移算法与 TPU 示例。(a) 三步相移高频图案；(b) 三步相移单位频图案；(c) 由相移算法得到的高频包裹相位图 \(\phi_h\)；(d) 由相移算法得到的单位频包裹相位图 \(\phi_l\)；(e) 对 \(\phi_l\) 进行缩放，并作为参考来展开 \(\phi_h\)。</em></p>
+<h3 id="5-2-相移结合格雷码方法"><a href="#5-2-相移结合格雷码方法" class="headerlink" title="5.2. 相移结合格雷码方法"></a>5.2. 相移结合格雷码方法</h3><p>格雷码是一种常用的 SL 技术，其采用的投影图案只包含黑白条纹 [38]。它既可以单独用于相位测量，也可以作为相移方法的相位展开工具 [67]。格雷码方法的基本思想是构造一组具有不同条纹排列的二值条纹图案，使投影图案空间可被划分为若干区段，而每个区段都能通过其在图案序列中的二值强度被唯一识别。</p>
+<p>若使用 \(N\) 幅图案，则投影图案空间中划分出的区段数可达 \(2^N\)。由于投影图案空间中的每个分区都对应一定的绝对相位值范围，因此像素绝对相位值的可能范围可以被确定。于是，相位展开过程便可通过给像素的包裹相位值（可由相移法等相位测量技术获得）加上 \(2\pi\) 的整数倍来实现，使其与已知的该像素绝对相位值范围一致。对于条纹级次总数为 \(F\) 的相位图，所需额外格雷码图案的最少数目为 \(\lceil\log_2 F\rceil\)，其中 \(\lceil\cdot\rceil\) 为向上取整算子。由于扩展后的图案序列（尤其是 \(F\) 较大时）可能显著延长整个数据采集的持续时间，该方法在对时间要求苛刻的测量场合中效率不高 [108,109]。此外，镜头离焦引起的图案边缘模糊也是额外的误差源 [161–163,233]。在不同格雷码图像区域的局部边界处，常常可以看到像素被错误展开。因此，通过引入颜色复用或为格雷码增加额外灰度级（而非仅使用黑白图案）来提高编码效率 [164,234]，以及通过单调性检测 [161]、中值滤波 [163] 或投影一幅附加的互补编码图案 [162] 来消除&#x2F;补偿边缘误差，仍是该领域的研究热点。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig25-gray-code.png" alt="三步相移结合格雷码相位展开"></p>
+<p><em>图 25. 三步相移结合格雷码相位展开。(a) 三步相移图案；(b) 4 幅格雷码图案；(c) 格雷码序列与包裹相位图 \(\phi_h(x,y)\) 的 16 个区段之间的对应关系。</em></p>
+<p>图 25 给出了针对 16 周期条纹图案、三步相移结合格雷码相位展开的一个示例。通过按序列使用 4 幅格雷码图案，包裹相位空间可被划分为 16 个区段，每个区段具有唯一的格雷码序列［见图 25(c)］。</p>
+<h3 id="5-3-相移结合相位编码方法"><a href="#5-3-相移结合相位编码方法" class="headerlink" title="5.3. 相移结合相位编码方法"></a>5.3. 相移结合相位编码方法</h3><p>为解决格雷码方法的缺点，如编码效率低、对表面反射率敏感等，Wang 和 Zhang [165] 提出了一种相位编码方法用于绝对相位恢复，其做法是将 N 位（\(2^N\) 电平）码字嵌入 3 步相移图案的相位分量中。除常规的三步相移条纹图案（\(I_0^p\)、\(I_1^p\) 和 \(I_2^p\)）外，投影仪空间中附加的三幅相位编码图案可表示为（见图 26）：</p>
+
+\[
+I_3^p(x^p,y^p)=a^p+b^p\cos[\phi_s(x^p)], \tag{96}
+\]
+
+
+
+\[
+I_4^p(x^p,y^p)=a^p+b^p\cos[\phi_s(x^p)-2\pi/3], \tag{97}
+\]
+
+
+
+\[
+I_5^p(x^p,y^p)=a^p+b^p\cos[\phi_s(x^p)-4\pi/3], \tag{98}
+\]
+
+
+<p>其中 \(\phi_s(x^p)\) 是表示条纹周期的阶梯相位函数</p>
+
+\[
+\phi_s(x^p)=-\pi+[x^p/P]\times\frac{2\pi}{F}, \tag{99}
+\]
+
+
+<p>这里 \(k(x^p)=[x^p/P]\) 是截断整数，表示每个像素的条纹级次；\(P\) 为条纹节距，即每个周期的像素数；\(F\) 为条纹周期总数。利用标准 3 步相移算法，可从相应的采集强度图案中解码出阶梯相位，进而用于确定每个相机像素的条纹级次。随后，高频相位可通过基于式 (94) 加上相应的 \(2\pi\) 整数倍来展开。由于相位编码方法通常能表示 8（\(2^3\)）个以上的唯一码字用于相位展开 [235,236]，因此与格雷码方法相比可减少图案数量。此外，该技术利用相位而非强度来确定码字，因而对表面反射率变化更为鲁棒。但与 5.1 节讨论的 3+3 相移算法相比，相位编码方法的优势并不明显。与格雷码方法类似，所设计的码字虽然嵌入在相位中，但仍包含突变的边缘和间断，因此相邻码字边界处由离焦引起的展开误差依然存在。这进一步需要中值滤波等精细的后处理算法来补偿相关的尖峰伪影 [166,167]。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig26-phase-coding.png" alt="三步相移结合相位编码方法"></p>
+<p><em>图 26. 三步相移结合相位编码方法。(a) 三步相移图案；(b) 三幅相位编码图案；(c) 由相移算法得到的包裹相位图 \(\phi_h(x,y)\)；(d) 由相移算法解码得到的相位阶梯函数 \(\phi_s(x,y)\)；(e) 阶梯函数 \(\phi_s(x,y)\) 与包裹相位图 \(\phi_h(x,y)\) 的 16 个区段之间的对应关系。</em></p>
+<h3 id="5-4-双频图案方案"><a href="#5-4-双频图案方案" class="headerlink" title="5.4. 双频图案方案"></a>5.4. 双频图案方案</h3><p>在 3+3 相移以及相移结合相位编码方法中，我们需要 2 组独立的相移图案，至少 6 幅图像。为减少图案数量并尽量降低传感器噪声的影响，Liu 等人 [106] 提出了一种双频图案方案，将两组频率不同的相移图案叠加在一起。投影仪空间中的双频图案可表示为：</p>
+
+\[
+I_n^p(x^p,y^p)=a^p+b_h^p\cos(2\pi f_h^px^p-2\pi n/N)+b_l^p\cos(2\pi f_l^px^p-4\pi n/N), \tag{100}
+\]
+
+
+<p>其中条纹图案包含两个不同的正弦分量，它们具有不同的振幅（\(b_h^p\) 和 \(b_l^p\)）、频率（高频 \(f_h^p\) 和单位频 \(f_l^p=1\)）以及相移量（\(2\pi n/N\) 和 \(4\pi n/N\)）。高频分量产生包裹相位，对传感器噪声更具抵抗力；而单位频分量则使相位展开成为可能。为覆盖投影仪的整个动态范围 [0,1]，应取 \(a^p=0.5\)，且 \(b_h^p+b_l^p=0.5\)。图 27 给出了 \(N=5\)、\(f_h^p=16\)、\(f_l^p=1\)、\(a^p=0.5\)、\(b_h^p=0.4\)、\(b_l^p=0.1\) 时的图案组及其强度分布。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig27-dual-frequency.png" alt="双频图案方案示例"></p>
+<p><em>图 27. 双频图案方案示例（\(N=5\)，\(f_h^p=16\)，\(f_l^p=1\)，\(a^p=0.5\)，\(b_h^p=0.4\)，\(b_l^p=0.1\)）。(a–e) 五幅双频相移图案及其对应的截面；(f) 恢复的高频包裹相位图 \(\phi_h(x,y)\)；(g) 恢复的低频相位图 \(\phi_l(x,y)\)；(h) 高频包裹相位 \(\phi_h(x,y)\) 与缩放后的低频相位 \(16\phi_l(x,y)\) 之间的关系。</em></p>
+<p>相应采集图像的强度为</p>
+
+\[
+I_n=A+B_h\cos(\phi_h-2\pi n/N)+B_l\cos(\phi_l-4\pi n/N), \tag{101}
+\]
+
+
+<p>其中两个不同正弦分量的强度调制分别为 \(B_h\) 和 \(B_l\)。由于式 (101) 中有 5 个未知量，条纹图案的最少数量为 5（\(N\ge 5\)），而不是 6 [105]。式 (101) 中未知参数的解由下式给出</p>
+
+\[
+A=\frac{1}{N}\sum_{n=0}^{N-1}I_n, \tag{102}
+\]
+
+
+
+\[
+B_h=\frac{2}{N}\sqrt{\left[\sum_{n=0}^{N-1}I_n(x,y)\sin(2\pi n/N)\right]^2+\left[\sum_{n=0}^{N-1}I_n(x,y)\cos(2\pi n/N)\right]^2}, \tag{103}
+\]
+
+
+
+\[
+B_l=\frac{2}{N}\sqrt{\left[\sum_{n=0}^{N-1}I_n(x,y)\sin(4\pi n/N)\right]^2+\left[\sum_{n=0}^{N-1}I_n(x,y)\cos(4\pi n/N)\right]^2}, \tag{104}
+\]
+
+
+
+\[
+\phi_h=\tan^{-1}\frac{\sum_{n=0}^{N-1}I_n\sin(2\pi n/N)}{\sum_{n=0}^{N-1}I_n\cos(2\pi n/N)}, \tag{105}
+\]
+
+
+
+\[
+\phi_l=\tan^{-1}\frac{\sum_{n=0}^{N-1}I_n\sin(4\pi n/N)}{\sum_{n=0}^{N-1}I_n\cos(4\pi n/N)}, \tag{106}
+\]
+
+
+<p>基于上述公式，我们可用最少 5 幅条纹图案恢复两幅相位图（\(\phi_h\) 和 \(\phi_l\)），其取值范围为 \(-\pi\) 到 \(\pi\)。无包裹的单位频相位 \(\phi_l\) 随后按照双频分层 TPU 方法［式 (95)］用作参考来展开 \(\phi_h\)，如图 27(h) 所示。此外，较大的相移步数（\(N\ge 5\)）相比 3 步 PSP 算法可进一步减小测量误差。然而，应把条纹振幅合理地分配给两个相位分量（\(b_h^p\) 和 \(b_l^p\)），以便在测量精度与相位展开可靠性之间取得良好折中。</p>
+<h3 id="5-5-双频（3-2）相移算法"><a href="#5-5-双频（3-2）相移算法" class="headerlink" title="5.5. 双频（3+2）相移算法"></a>5.5. 双频（3+2）相移算法</h3><p>Zuo 等人 [111] 提出的双频相移方法同样使用 5 幅条纹图案，同时实现高频相位恢复与 TPU。它可以看作是三步 PSP 与改进的 2+1 PSP 的一种特殊组合，其中平坦图像通过对三步相移图像取平均获得，而无需实际投影。图 28(a) 和 (b) 给出了 \(f_h^p=16\)、\(a^p=0.5\)、\(b^p=0.5\) 时的图案组。前 3 幅采集到的强度图像与常规三步 PSP 中相同：</p>
+
+\[
+I_0=A+B_h\cos(\phi_h), \tag{107}
+\]
+
+
+
+\[
+I_1=A+B_h\cos(\phi_h-2\pi/3), \tag{108}
+\]
+
+
+
+\[
+I_2=A+B_h\cos(\phi_h-4\pi/3), \tag{109}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig28-bi-frequency.png" alt="双频相移算法示例"></p>
+<p><em>图 28. 双频相移算法示例（\(f_h^p=16\)，\(f_l^p=1\)）。(a–e) 三幅高频相移图案；(b) 两幅具有 \(\pi/2\) 相移的条纹图像，附加的平坦图案由图 (a) 所示的三幅高频相移图案取平均得到；(c) 恢复的高频相位图 \(\phi_h(x,y)\)；(d) 恢复的低频相位图 \(\phi_l(x,y)\)；(h) 高频包裹相位 \(\phi_h(x,y)\) 与缩放后的低频相位 \(16\phi_l(x,y)\) 之间的关系。</em></p>
+<p>其中高频相位分布和平均光强由下式恢复</p>
+
+\[
+\phi_h=\tan^{-1}\frac{\sqrt{3}(I_1-I_2)}{2I_0-I_1-I_2}, \tag{110}
+\]
+
+
+
+\[
+A=\frac{I_0+I_1+I_2}{3}, \tag{111}
+\]
+
+
+<p>为获得另一幅单位频相位图，再使用两幅具有 \(\pi/2\) 相移的条纹图像：</p>
+
+\[
+I_3=A+B_l\cos(\phi_l), \tag{112}
+\]
+
+
+
+\[
+I_4=A+B_l\sin(\phi_l), \tag{113}
+\]
+
+
+<p>由于平均光强 \(A\) 已由式 (111) 计算得到，因此无需再投影平坦图像。应用改进的 2+1 相移算法（3.4 节已详细讨论），即可恢复单位频条纹的相位：</p>
+
+\[
+\phi_l=\tan^{-1}\frac{I_4-A}{I_3-A}, \tag{114}
+\]
+
+
+<p>因此，仅用 5 幅条纹图案便可恢复两幅包裹相位（\(\phi_h\) 和 \(\phi_l\)），并且可依据双频 TPU 方法利用 \(\phi_l\) 展开 \(\phi_h\)，例如分层 TPU［式 (95)］[237]（图 28）和数论 TPU [111]。\(\phi_h\) 和 \(\phi_l\) 相应的条纹调制度也可用与式 (16) 和式 (49) 类似的公式计算。由于在双频相移方法中，用于深度计算的高频相位由三幅各自具有完整动态范围的相移条纹编码，因此与双频图案方案相比，它受物体运动的影响更小。最近，双频相移算法还被推广到相位编码方法中，即用阶梯相位函数 \(\phi_s\) 取代低频相位 \(\phi_l\) [167]。这样一来，相移结合相位编码方法所需的图案总数也可从 6 幅减少到 5 幅。</p>
+<h3 id="5-6-2-2-相移算法"><a href="#5-6-2-2-相移算法" class="headerlink" title="5.6. 2+2 相移算法"></a>5.6. 2+2 相移算法</h3><p>Zuo 等人 [109] 提出的 2+2 相移方法仅使用两幅 \(\pi\) 相移条纹图像和两幅斜率线性增大&#x2F;减小的光强图像，就能同时重建一幅高频包裹相位图以及一幅不含任何包裹的基准相位图。相机空间中所设计条纹图像的光强为：</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\cos(2\pi f_h^p x^p), \tag{115}
+\]
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\sin(2\pi f_h^p x^p), \tag{116}
+\]
+
+\[
+I_2^p(x^p,y^p)=a^p+b^p\left(2x^p/X-1\right), \tag{117}
+\]
+
+\[
+I_3^p(x^p,y^p)=a^p-b^p\left(2x^p/X-1\right), \tag{118}
+\]
+
+
+<p>其中 \(X\) 是投影图案每一行方向上的像素总数。图 29(a) 和 (b) 给出了 \(f_h^p=16\)、\(a^p=0.5\)、\(b^p=0.5\) 时的图案组。相应的采集图案为</p>
+
+\[
+I_0=A+B\cos(\phi_h), \tag{119}
+\]
+
+\[
+I_1=A+B\sin(\phi_h), \tag{120}
+\]
+
+\[
+I_2=A+B\phi_b, \tag{121}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig29-2plus2.png" alt="2+2 相移图案示例"></p>
+<p><em>图 29. 2+2 相移算法示例（\(f_h^p=16\)，\(f_l^p=1\)）。(a) 两幅具有 \(\pi/2\) 相移的高频图案；(b) 两幅斜率线性增大&#x2F;减小的图像，对这两幅斜率图案取平均可得到 (a) 中所示的额外平坦图案；(c) 恢复的高频相位图 \(\phi_h(x,y)\)；(d) 恢复的基准相位图 \(\phi_l(x,y)\)；(e) 高频包裹相位 \(\phi_h(x,y)\) 与缩放后的基准相位 \(16\pi\phi_b(x,y)\) 之间的关系。</em></p>
+
+\[
+I_3=A-B\phi_b, \tag{122}
+\]
+
+
+<p>其中，\(\phi_b\) 是所谓的基准相位，取值范围为 \([-1,1)\)；\(\phi_h\) 是待展开的高频相位。\(I_2\) 与 \(I_3\) 的平均恰好是一幅平坦图像，它可以与 \(I_0\)、\(I_1\) 组合成一组 2+1 相移图案，如图 29 所示。高频相位、平均光强与强度调制可由下式求解：</p>
+
+\[
+\phi_h=\tan^{-1}\frac{2I_1-I_2-I_3}{2I_0-I_2-I_3}, \tag{123}
+\]
+
+\[
+A=\frac{I_2+I_3}{2}, \tag{124}
+\]
+
+\[
+B=\frac{\sqrt{(2I_1-I_2-I_3)^2+(2I_0-I_2-I_3)^2}}{2}. \tag{125}
+\]
+
+
+<p>基准相位则可通过取 \(I_2\) 与 \(I_3\) 之间的归一化差值得到</p>
+
+\[
+\phi_b=\frac{I_2-I_3}{2B}. \tag{126}
+\]
+
+
+<p>在从这四幅采集图像中求出 \(\phi_b\) 与 \(\phi_h\) 两个相位之后，应将 \(\phi_b\) 缩放到与 \([-π,π)\) 相同的动态范围（\(\phi_l=\pi\phi_b\)），并以此作为参考，基于双频分层 TPU [式 (95)] 对高频相位 \(\phi_h\) 进行展开。与 2+1 相移算法类似，2+2 PSP 方法中的高频相位信息仅由两幅条纹图像编码，因此它比三步&#x2F;四步 PSP 等其他相移算法对运动引入的测量误差更不敏感。此外，基准相位利用了两幅独立斜率图案的完整动态范围，与下文将要介绍的其他 4 图案方案相比具有更好的展开鲁棒性。2+2 PSP 的前提是两个相位（\(\phi'\) 与 \(\phi_b\)）共享相同的强度调制 \(B\)，从而可以比双频图案或双频（3+2）相移方法再节省一幅图案。只有当条纹频率不太高时，这一假设才是合理的。当使用很高频率（&gt; 20 个周期）的条纹图案时，镜头离焦会衰减条纹对比度，而斜率信号的调制由于其频率极低而受影响较小。在这种情况下，强度调制的差异会使相位包裹过程变得不那么稳定。</p>
+<h3 id="5-7-编码相移算法"><a href="#5-7-编码相移算法" class="headerlink" title="5.7. 编码相移算法"></a>5.7. 编码相移算法</h3><p>Wissmann 等人 [108] 提出的编码相移（coded phase shifting，CPS）算法在传统四步 PSP 算法的基础上扩展了嵌入的周期信息，用以辅助相位展开过程。嵌入的周期信息不会改变由传统四步相移算法得到的相位，但可以在不延长图案序列长度的前提下，解决存在不连续或孤立表面时的相位模糊问题。基于这一思想，投影仪空间中设计的条纹图像的光强为：</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p)+Mp_0^p(x^p)\right], \tag{127}
+\]
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p-\pi/2)+Mp_1^p(x^p)\right], \tag{128}
+\]
+
+\[
+I_2^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p-\pi)+Mp_2^p(x^p)\right], \tag{129}
+\]
+
+\[
+I_3^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p-3\pi/2)+Mp_3^p(x^p)\right], \tag{130}
+\]
+
+
+<p>其中，\(p_n^p(x^p)\)（\(n=0,1,2,3\)）表示嵌入到原始正弦波中的周期信息，因子 \(M\) 决定了嵌入信号的幅度调制强度，例如 \(M=0.2\) 表示留出 20% 的幅度用于编码周期信息，而剩余的条纹幅度降至 80% 以容纳相位。由于嵌入了信号，投影图案不再为正弦形式。相应的采集图像为</p>
+
+\[
+I_0=A+B_h\cos(\phi)+B_pp_0, \tag{131}
+\]
+
+\[
+I_1=A+B_h\cos(\phi-\pi/2)+B_pp_1, \tag{132}
+\]
+
+\[
+I_2=A+B_h\cos(\phi-\pi)+B_pp_2, \tag{133}
+\]
+
+\[
+I_3=A+B_h\cos(\phi-3\pi/2)+B_pp_3, \tag{134}
+\]
+
+
+<p>其中 \(B_h\) 与 \(B_p\) 分别是高频正弦波与嵌入信号的强度调制函数。根据式 (5)，强度调制与表面反射率 \(\alpha(x,y)\) 以及原始信号的幅度成正比，因此有 \(B_p\approx\frac{M}{1-M}B_h\)（忽略与离焦相关的调制度差异）。为保证由传统四步相移算法 [式 (21)]</p>
+
+\[
+\phi_h=\tan^{-1}\frac{I_1-I_3}{I_0-I_2} \tag{135}
+\]
+
+
+<p>恢复的相位不受嵌入信号的影响，编码函数应满足：</p>
+
+\[
+p_0^p(x^p)=p_2^p(x^p), \tag{136}
+\]
+
+\[
+p_1^p(x^p)=p_3^p(x^p), \tag{137}
+\]
+
+
+<p>这样编码信息就能在式 (135) 的分子与分母中同时被抵消。研究还发现，若按照 \(p^p(x^p)\equiv p_0^p(x^p)=-p_1^p(x^p)=p_2^p(x^p)=-p_3^p(x^p)\) 在图案序列上交替改变周期信息的符号，则平均光强与强度调制也可以由原公式 [式 (22) 和式 (23)] 直接计算，而无需任何修改</p>
+
+\[
+A=\frac{I_0+I_1+I_2+I_3}{4}, \tag{138}
+\]
+
+\[
+B=\frac{1}{2}\sqrt{(I_1-I_3)^2+(I_0-I_2)^2}. \tag{139}
+\]
+
+
+<p>至此所有参数均已获得，嵌入信号可以解调为：</p>
+
+\[
+p=\frac{(I_0+I_2)-(I_1+I_3)}{4B_p}. \tag{140}
+\]
+
+
+<p>随后，嵌入信号被用于提供关于条纹周期的附加信息并辅助相位展开过程。在 CPS 算法中，Wissmann 等人 [108] 建议使用一维（1D）二值 De Bruijn 序列作为周期信号。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig30-coded-phase-shifting.png" alt="编码相移图案示例"></p>
+<p><em>图 30. 编码相移图案示例（\(f_h^p=16\)，\(a^p=0.5\)，\(b^p=0.5\)，\(M=0.2\)）。(a)–(d) 四步编码相移图案及其对应的光强截面；(e) 由相移算法恢复的包裹相位图 \(\phi_h(x,y)\)；(f) 解码得到的二值 De Bruijn 序列 \(p(x,y)\)（每个相位周期 3 个符号，唯一窗口长度 7 个符号）；(g) 包裹相位 \(\phi_h(x,y)\) 与解码得到的 De Bruijn 序列 \(p(x,y)\) 之间的关系。</em></p>
+<p>所设计的编码函数以及 4 幅 CPS 图案的最终波形如图 30(a)–(d) 所示（\(f_h^p=16\)，\(a^p=0.5\)，\(b^p=0.5\)，\(M=0.2\)）。在该示例中，每个相位周期使用 3 个符号，唯一窗口长度为 7 个符号（每一个连续的 7 符号子序列在整个 De Bruijn 序列中只出现一次）[图 30(f)]。条纹周期通过将包裹相位图与利用 De Bruijn 序列标准解码规则重建的无歧义码字&#x2F;符号索引进行相关运算来确定 [图 30(g)]。</p>
+<p>由于 CPS 图案包含大量突变边缘与不连续处，可以预料 CPS 方法对离焦模糊非常敏感。此外，由于码字是由相邻序列符号之间的邻域关系确定的，解码算法在不连续区域和小面积孤立区域附近往往不稳定。而且，符号提取与跟踪算法相对复杂且耗时，尤其是与传统 TPU 方法相比。还有一个值得注意之处：在 Wissmann 等人提出的原始解调公式（文献 [108] 中的式 (6)）中，强度差是相对于平均光强 \(A\) 而不是嵌入信号的强度调制 \(B_p\) 进行归一化的，因此它未能正确反映表面反射率的影响。</p>
+<h3 id="5-8-周期编码相移算法"><a href="#5-8-周期编码相移算法" class="headerlink" title="5.8. 周期编码相移算法"></a>5.8. 周期编码相移算法</h3><p>Wang 等人 [107] 提出的周期编码相移（period-coded phase shifting，PCPS）算法与 CPS 算法思路相似，同样通过将附加的周期信号嵌入标准四步相移图案来解决无歧义相位恢复问题。然而，它并不降低原始正弦波的幅度，而是巧妙地将嵌入信号设计为填充在传统四步相移波形的“自由空间”中。这样就能够在嵌入附加周期信号的同时不影响原始正弦分量的幅度。投影仪空间中 PCPS 条纹图像的光强为：</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p)+p_0^p(x^p), \tag{141}
+\]
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p-\pi/2)+p_1^p(x^p), \tag{142}
+\]
+
+\[
+I_2^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p-\pi)+p_2^p(x^p), \tag{143}
+\]
+
+\[
+I_3^p(x^p,y^p)=a^p+b^p\cos(2\pi f_0^p x^p-3\pi/2)+p_3^p(x^p), \tag{144}
+\]
+
+
+<p>其中 \(p_n^p(x^p)\)（\(n=0,1,2,3\)）表示叠加到原始正弦波上的编码函数。与式 (127)–(130) 相比，所设计的条纹图像中不再包含因子 \(M\)。同样，为保证由传统四步 PSP 算法 [式 (21)] 恢复的相位不受嵌入信号的影响，\(p_n^p(x^p)\) 应满足：</p>
+
+\[
+p_0^p(x^p)=p_2^p(x^p), \tag{145}
+\]
+
+\[
+p_1^p(x^p)=p_3^p(x^p). \tag{146}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig31-free-dynamic-range.png" alt="四步相移波形的自由动态范围"></p>
+<p><em>图 31. (a) \(f_h^p=16\) 时四步相移波形的“自由”动态范围。周期信号设计在 \([-0.25,0.25]\) 范围内。(b) \(f_h^p=16\) 时设计的编码信号，其中 \(p_0=p_2\)，\(p_1=p_3\)。</em></p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig32-pcps.png" alt="PCPS 图案示例"></p>
+<p><em>图 32. PCPS 图案示例。(a)–(d) 四步 PCPS 图案及其对应的光强截面；(e) 由相移算法恢复的包裹相位图 \(\phi_h(x,y)\)；(f) 解码得到的周期信号 \(p(x,y)\)；(g) 包裹相位 \(\phi_h(x,y)\) 与解码得到的周期信号 \(p(x,y)\) 之间的关系。</em></p>
+<p>在条纹投影与采集之后，嵌入的周期信号 \(p(x)\) 同样由归一化强度差解调得到</p>
+
+\[
+p=\frac{(I_0+I_2)-(I_1+I_3)}{2B/b^p}, \tag{147}
+\]
+
+\[
+B=\frac{1}{2}\sqrt{(I_1-I_3)^2+(I_0-I_2)^2}. \tag{148}
+\]
+
+
+<p>为了简化解码过程并充分利用四步相移波形剩余的自由动态范围，编码周期函数被设计为沿 \(x^p\) 轴取值唯一、动态范围为 \([-0.25,0.25]\) 的斜率信号 [107]。这意味着 \(p_0^p(x^p)\) 与 \(p_1^p(x^p)\) 之差应当是一个线性斜率信号，如图 31(a) 所示。此外，为了增大相位测量的信噪比（SNR），强度波形的幅度与图案熵也被最大化 [107]。所设计的编码信号 \(p_0^p(x^p)\)（用于 \(I_0^p\) 与 \(I_2^p\)）与 \(p_1^p(x^p)\)（用于 \(I_1^p\) 与 \(I_3^p\)）如图 31(b) 所示。注意，由于交替符号条件（\(p^p(x^p)\equiv p_0^p(x^p)=-p_1^p(x^p)=p_2^p(x^p)=-p_3^p(x^p)\)）不再满足，条纹图像的平均光强 \(A\) 无法恢复。</p>
+<p>图 32(a)–(d) 给出了由此得到的 16 周期 PCPS 图案及其对应截面。在基于标准四步 PSP [式 (21)] 完成相位恢复并按式 (147) 解调嵌入信号之后，所得到的周期信号 \(p\)（斜率函数）还应先缩放到 \([-\pi,\pi)\)（\(\phi_l=4\pi p\)），再用于基于双频（分层）TPU 方法展开高频相位 \(\phi_h\) [图 32(g)]。PCPS 方法的优点在于，它能有效解决相位模糊问题，而不牺牲传统四步 PSP 的相位测量精度。此外，与 CPS 中使用的 De Bruijn 序列相比，逐像素解码过程大大简化。然而，由于加入了编码信号，PCPS 图案也不再平滑，使其对镜头离焦敏感。此外，为保证稳健的 TPU，由于（含噪）周期信号的动态范围有限，正弦周期数通常被限制在很小的范围内（&lt; 10），这限制了测量精度。要展开周期数更多（如文献 [107] 中的 16）的高频相位，还需要借助额外的空域后处理算法来进一步补偿相位展开误差。还应指出，与 CPS 和 PCPS 将附加周期信号嵌入条纹背景不同，条纹图案的幅度（\(b^p\)）也可以设计为空间变化的函数，从而在不影响包裹相位的情况下编码用于识别条纹级次的附加码字，正如 Liu 与 Kofman [116] 最近所展示的那样。</p>
+<h3 id="5-9-嵌入散斑相移算法"><a href="#5-9-嵌入散斑相移算法" class="headerlink" title="5.9. 嵌入散斑相移算法"></a>5.9. 嵌入散斑相移算法</h3><p>除标准四步相移之外，三步相移图案也可以作为嵌入附加周期信号的基础，以进一步减少所需图像数量。由于平均光强在相位计算过程中会被抵消，条纹的直流（DC）偏置不必是常数，这为解决相位模糊问题时的信号编码提供了一定的灵活性。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig33-speckle-embedded-ps.png" alt="三幅嵌入散斑的相移图案"></p>
+<p><em>图 33. 嵌入散斑相移图案示例（\(f_h^p=16\)，\(a^p=0.5\)，\(b^p=0.5\)，\(M=0.4\)）。(a)–(c) 三幅嵌入散斑的相移图案；(d) 条纹与散斑的动态范围（\(M=0.4\)）；(e) 由三步相移算法恢复的包裹相位图 \(\phi_h(x,y)\)；(f) 对三幅条纹图像取平均得到的解码散斑图像；(g) 传统三步相移波形中散斑信号可用的自由空间。</em></p>
+<p>基于这一思想，Zhang 等人 [110,113] 提出在原始三步相移正弦波中嵌入固定的伪随机散斑信号 \(p^p(x^p)\)。这 3 幅嵌入散斑的条纹图案可表示为</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p)+Mp^p(x^p)\right], \tag{149}
+\]
+
+\[
+I_1^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p-2\pi/3)+Mp^p(x^p)\right], \tag{150}
+\]
+
+\[
+I_2^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_0^p x^p-4\pi/3)+Mp^p(x^p)\right], \tag{151}
+\]
+
+
+<p>其中因子 \(M\) 控制正弦波与嵌入散斑信号幅度调制的相对强度。图 33(a)–(c) 给出了这 3 幅嵌入散斑的相移图案（\(f_h^p=16\)，\(a^p=0.5\)，\(b^p=0.5\)，\(M=0.4\)）。在该示例中，原始二值散斑信号 \(p^p(x^p)\) 的取值为 -1（背景）与 1（散斑），图案动态范围的 40% 被保留用于编码该散斑信号 [图 33(d)]。</p>
+<p>由于散斑信号在这三幅图像中是固定的，它可以利用标准三步 PSP 算法在相位计算过程中被有效抵消 [图 33(e)]：</p>
+
+\[
+\phi=\tan^{-1}\frac{\sqrt{3}(I_1-I_2)}{2I_0-I_1-I_2}. \tag{152}
+\]
+
+
+<p>而在平均光强中，正弦条纹被抵消，只留下背景与嵌入的散斑信号 [图 33(f)]</p>
+
+\[
+A=\frac{I_0+I_1+I_2}{3}. \tag{153}
+\]
+
+
+<p>其相位展开过程沿用了 Kinect 中所用的基于面片的图像匹配思想。散斑图案的伪随机分布保证了局部窗口内的唯一性与高可区分性，因此平均光强可用于基于相关的图像匹配算法（使用在适当距离处对平面表面拍摄的参考图像），以确定高频展开相位的条纹级次。由于条纹级次是 \([0,F-1]\) 内的整数，对每个包裹相位至多需要检查 F 个候选值。</p>
+<p>还应指出，与前述 PCPS 方法类似，如果散斑信号的幅度可以是空间变化的、甚至可以为负，它就可以被容纳在传统三步相移波形的“自由空间”中，而不会衰减主要正弦分量的动态范围 [110]，如图 33(g) 所示。可以看到，这种方式充分利用了三幅相移条纹中强度动态范围的余量：上侧余量用于嵌入正散斑（更亮的点），下侧余量用于嵌入负散斑（更暗的点）。</p>
+<p>嵌入散斑相移算法使用了相移与绝对相位恢复所需的理论最少三幅图像，因此极大地便利了相移方法在时间苛刻条件下的应用。然而，其相位展开精度仍受空间编码策略的限制，并且对图像采集过程中各种退化（如形变、重采样、衰减、离焦以及表面反射率变化）所引起的散斑图像强度变化非常敏感。因此仍需采用基于区域的处理（如相位图分割、空间相位展开以及投票策略）来获得更可靠的展开结果 [110,113]，这显著增加了重建算法的复杂度，并可能在复杂场景中带来可靠性问题。为克服这些局限，Tao 等人 [115] 提出在数理论的指导下，将三角波嵌入原始三步相移图案的直流偏置中，以确保相位展开问题的唯一性。通过结合三角波信息与几何约束，可以基于一种更简单、计算量更小的解码算法有效消除高频包裹相位中的模糊。</p>
+<h3 id="5-10-嵌入散斑傅里叶变换算法"><a href="#5-10-嵌入散斑傅里叶变换算法" class="headerlink" title="5.10. 嵌入散斑傅里叶变换算法"></a>5.10. 嵌入散斑傅里叶变换算法</h3><p>信号嵌入的思想并不仅限于传统相移算法。正如 Feng 等人 [114] 所展示的，修正 FTP（在第 3.8 节中讨论）中使用的平坦图案也可以用散斑信号替代，从而无需投影额外图案即可解决相位模糊问题。这种被称为嵌入散斑 FTP 的方法因此仅用两幅投影图案就能有效完成高频相位恢复与相位去歧义。在投影仪空间中，这两幅投影图案为</p>
+
+\[
+I_0^p(x^p,y^p)=a^p+b^p\left[(1-M)\cos(2\pi f_h^p x^p)+Mp^p(x^p,y^p)\right], \tag{154}
+\]
+
+\[
+I_1^p(x^p,y^p)=a^p+b^pMp^p(x^p,y^p), \tag{155}
+\]
+
+
+<p>其中 \(p^p(x^p,y^p)\) 是取值为 −1（背景）与 1（散斑）的二值散斑信号，因子 \(M\) 控制正弦波与嵌入散斑信号幅度调制的相对强度。图 34(a)–(b) 给出了 \(f_h^p=16\)、\(a^p=0.5\)、\(b^p=0.5\)、\(M=0.4\) 时的两幅投影图案。可以看到，第一幅图案是嵌入散斑的条纹图案，而另一幅只是普通的散斑图案。相机空间中相应的采集光强为</p>
+
+\[
+I_0(x,y)=A(x,y)+B(x,y)\cos\left[2\pi f_hx+\phi_0(x,y)\right]+B_p(x,y)p(x,y), \tag{156}
+\]
+
+\[
+I_1(x,y)=A(x,y)+B_p(x,y)p(x,y). \tag{157}
+\]
+
+
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig34-speckle-embedded-ftp.png" alt="嵌入散斑的 FTP 图案"></p>
+<p><em>图 34. 嵌入散斑 FTP 图案示例。(a) 嵌入散斑的条纹；(b) 散斑条纹；(c) 相减后得到的无直流条纹图像；(d) 由 FTP 算法恢复的高频包裹相位图 \(\phi_h(x,y)\)，可借助散斑图像 \(I_1\) 通过基于相关的图像匹配算法进行展开。</em></p>
+<p>将这两幅图像相减，即可得到一幅无直流分量的正弦条纹，背景与散斑信号被有效抵消 [图 34(c)]</p>
+
+\[
+I_d(x,y)=I_0-I_1=B(x,y)\cos\left[2\pi f_hx+\phi_0(x,y)\right]. \tag{158}
+\]
+
+
+<p>这里 \(I_d\) 与修正 FTP 中的对应量相同 [式 (69)]，这进一步说明：在平坦图案与正弦图案中同时叠加空间变化的散斑信号不会影响相位提取。高频相位可以基于傅里叶变换技术从 \(I_d\) 中提取 [图 34(d)]，而额外的散斑图像 \(I_0\) 可用于基于相关的图像匹配算法，以确定高频相位的条纹级次。嵌入散斑傅里叶变换算法兼具修正 FTP 与基于散斑相关的相位展开的优点。由于恢复一幅无歧义深度图仅涉及两幅图像，它非常适合运动物体的动态测量。此外，由于相位信息仅编码在单幅条纹图像中，它对物体运动不敏感。然而，相位展开精度强烈依赖于散斑图像的质量，在测量复杂表面时可能不稳定，尤其是存在较大高度与反射率变化，或受到局部离散遮挡干扰时。此外，相位恢复与稳健 TPU 所涉及的基本算法，如傅里叶变换、散斑相关、候选搜索与中值滤波，计算开销都很大，因此必须借助图形处理器（graphics processing unit，GPU）加速，以获得更好的实时性能 [114]。</p>
+<h2 id="6-相移算法的选择"><a href="#6-相移算法的选择" class="headerlink" title="6. 相移算法的选择"></a>6. 相移算法的选择</h2><p>在第 3 节和第 5 节中，我们回顾了许多不同的相移算法，它们可用于抑制不同类型的相位误差，或在不投影过多附加图案的前提下实现时间相位展开（temporal phase unwrapping，TPU）。由于每种算法都有各自的特点，没有任何一种算法能够满足实际应用中的全部要求，因此针对特定的相移测量系统选择最合适的相移算法，需要仔细的分析与折中考虑。若只需恢复包裹相位（不要求 TPU），可以从第 3 节回顾的算法中挑选最合适的一种，这些算法的重要特性总结于图 35。以下几点观察值得说明：</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig35-comparative-ps.png" alt="9 种相移算法的对比评估矩阵"></p>
+<p><em>图 35. 第 3 节回顾的 9 种相移算法的对比评估。绿色 √、蓝色 - 和红色 × 分别表示在不同性能指标上表现良好、一般和较差。（关于图中图例颜色的解释，读者可参阅本文的网络版。）</em></p>
+<p>(a) 标准 N 步相移轮廓测量（phase shifting profilometry，PSP）算法因其性能均衡、且在相移步数的选择上十分灵活，是应用最广泛的 PSP 算法。它具有较高的测量精度、对多种误差源的良好抵抗能力，以及相对较低的计算复杂度。增加相移步数可以获得更低的测量不确定度、对强度非线性（饱和）误差更好的容忍度，但需要更长的条纹图案序列（采集时间）。因此，对于静态物体的三维形貌测量，采用大步数 PSP 算法是获得高精度、鲁棒测量的一种简单而非常有效的选择。</p>
+<p>(b) 双三步 PSP 对强度非线性相对不敏感，但需要额外三幅图案来执行附加的三步 PSP，因而难以用于动态或实时测量。当物体表面沿 z 方向运动时，Hariharan 五步 PSP 对相移误差和运动引入的相位误差相对不敏感。然而它同样需要 5 幅条纹图案（相比三步 PSP 需要多两幅），因此对于动态表面的测量仍不理想。</p>
+<p>(c) 通过仅将相位信息编码在两幅条纹图像中，改进的 2+1 PSP 相比传统三步 PSP 对运动引入的测量误差更不敏感。这一特性使它适于测量运动或变形的表面。不过，与传统三步 PSP 相比，它抵抗噪声和强度非线性所致相位误差的能力也有所下降。</p>
+<p>(d) 梯形 PSP 与三角形 PSP 直接使用强度比而不是相位。由于无需像传统 PSP 那样计算反正切函数，它们具有很高的计算效率。但它们对镜头离焦和强度非线性更为敏感，原因在于其强度剖面具有陡峭边缘。三角形 PSP 仅使用两幅图案，因而对物体运动较不敏感；但它对表面反射率变化较为敏感，无法测量纹理丰富的表面。</p>
+<p>(e) π 相移 FTP、改进 FTP 以及背景归一化 FTP 实际上都属于 FTP 类方法，只是附加了相移或背景消除的特性。它们需要相对复杂的频域处理，所提供的相位测量精度和空间分辨率相对较低。这三种算法都只使用两幅条纹图案，因而适于动态三维测量。此外，由于仅用单幅条纹图像编码相位信息，改进 FTP 与背景归一化 FTP 几乎不受运动伪影影响。得益于额外的归一化步骤，背景归一化 FTP 能够部分缓解由表面反射率大幅变化引起的频谱泄漏问题。</p>
+<p>对于复杂表面（例如空间上孤立的物体或深度不连续处）的测量，应选择具备绝对相位恢复或 TPU 能力的相移算法，这些算法已在第 5 节中回顾。它们的一些重要特性总结于图 36。可以得出以下几点关键结论：</p>
+<p>(a) PSP 加 TPU（3+3 PSP）方法是一种简单而可靠的绝对相位恢复途径。它具有较高的展开可靠性，且对镜头离焦不敏感。但它至少需要 6 幅图案（两组独立的三步相移图案）才能获得两个不同频率的包裹相位，因而对物体运动相对敏感。</p>
+<p>(b) PSP 加格雷码方法需要更多的投影图案（通常多于 6 幅）才能恢复绝对相位，因而不适于高速或动态三维形貌测量。它同时对镜头离焦引起的图像模糊非常敏感。PSP 加相位编码方法将码字编码到条纹的相位分量中，用 6 幅图案即可表示比 PSP 加格雷码方法更多的条纹级次，但它在相邻码字交界处同样会出现离焦引起的展开错误。</p>
+<p>(c) 双频 PSP 与双频（3+2）PSP 方法都使用 5 幅图案来恢复两个不同频率的包裹相位以实现绝对相位恢复。在双频 PSP 中，低频与高频图案相互叠加，共同分享 5 幅相移图案的动态范围，因此理论上可以获得更好的测量精度（可与五步 PSP 相当）。而在双频（3+2）PSP 方法中，用于相位展开与深度计算的低频和高频相位信息分别由各自（3 幅与 2 幅）具有完整动态范围的相移条纹编码，因此其相位展开的可靠性更好，受物体运动的影响也更小。</p>
+<p>(d) 2+2 PSP、CPS（编码相移）与 PCPS（周期编码相移）都是基于 4 幅图案的绝对相位恢复方法。作为改进的 2+1 相移算法的扩展，2+2 PSP 方法由于高频相位信息只编码在两幅条纹图像中，对运动引入的测量误差较不敏感。其解码算法是逐像素的，计算简单，且与标准 TPU 方法兼容。不过，它对镜头离焦略有敏感（源于基频相位与高频相位的强度调制存在差异），测量不确定度相比其他基于 4 幅图案的方法也略有降低。CPS 与 PCPS 方法将附加的周期信号嵌入标准的四步相移图案中，因而能获得更好的测量精度（就 PCPS 而言，理论上可达到与传统四步 PSP 相同的相位测量精度）。此外，由于改进后的强度剖面包含突变边缘和不连续，CPS 与 PCPS 方法对离焦模糊也较为敏感。为实现鲁棒的相位展开，CPS 与 PCPS 的解码算法因涉及空域处理（De Bruijn 序列解调与空域补偿）而更为复杂、耗时。</p>
+<p>(e) 嵌入散斑 PSP 与嵌入散斑 FTP 方法分别把散斑信号嵌入传统三步 PSP 图案和改进 FTP 图案，以此解决相位模糊问题。它们所需的投影图案更少，因而非常适合动态场景的测量。此外，嵌入散斑 FTP 方法只需 2 幅图案，且仅用单幅条纹图像编码相位信息，这使它几乎不受物体运动影响。然而，基于 FTP 的算法只能提供深度精度和空间分辨率相对较低的相位测量。此外，散斑相关及相应的解码算法同样需要大量计算，因此嵌入散斑 PSP 与嵌入散斑 FTP 方法的实时实现仍颇具挑战。</p>
+<p><img src="/2026/10/30/phase-shifting-algorithms-fpp-review/fig36-comparative-absolute.png" alt="10 种绝对相位恢复相移算法的对比评估矩阵"></p>
+<p><em>图 36. 第 5 节回顾的 10 种用于绝对相位恢复的相移算法的对比评估。绿色 √、蓝色 - 和红色 × 分别表示在不同性能指标上表现良好、一般和较差。（关于图中图例颜色的解释，读者可参阅本文的网络版。）</em></p>
+<h2 id="7-进一步讨论"><a href="#7-进一步讨论" class="headerlink" title="7. 进一步讨论"></a>7. 进一步讨论</h2><p>需要指出，提高测量精度、图案效率以及对不同类型误差的鲁棒性，是 PSP 算法未来发展的永恒目标。正如第 4 节所讨论的，使用更多条纹图案是获得更高测量精度与鲁棒性的最直接途径，而减少图案数量则是实现高效测量的关键因素，这对高速、实时三维形貌测量应用尤为重要。本节进一步讨论与提升 PSP 技术测量精度和效率有关的三个重要问题：进一步减少图案数量、相位-深度灵敏度，以及计算效率。</p>
+<h3 id="7-1-进一步减少图案数量"><a href="#7-1-进一步减少图案数量" class="headerlink" title="7.1. 进一步减少图案数量"></a>7.1. 进一步减少图案数量</h3><p>如第 5 节所回顾的，研究者们始终致力于尽可能减少用于高效相位检测与展开的图案数量。但这样做时，如何保持测量对噪声和其他畸变的不敏感性，也变得颇具挑战。为缓解这一问题，这些方法的一个重要共同特征是：它们向投影图案集合中引入低频相位&#x2F;周期信号&#x2F;散斑图案，使得相位解调同时提取两个项，其中一项作为相位展开的参考，另一项高频相位则作为对噪声不敏感的项用于三维重建。对于传统的双频 PSP，需要至少 6 幅图案才能恢复两组相位。然而，根据第 2 节介绍的条纹投影轮廓测量（fringe projection profilometry，FPP）成像模型，条纹图像的平均光强与强度调制中存在一定的信息冗余，可以被有效利用来编码附加的周期信息而不影响相位计算，从而把图案数量减少到 5 幅 [106,111]、4 幅 [107–109,116]、3 幅 [113–115]，甚至基于 FTP 方法的 2 幅 [114]。此外，还可以挖掘额外的先验知识，例如物体表面的环境光变化缓慢，以在保持对环境光和场景反射率鲁棒性的同时，进一步减少 PSP 中的图案数量。</p>
+<h4 id="7-1-1-频率复用"><a href="#7-1-1-频率复用" class="headerlink" title="7.1.1. 频率复用"></a>7.1.1. 频率复用</h4><p>第 3 节和第 5 节回顾的所有 PSP 策略都基于空域复用或时间复用技术，且至少使用两幅条纹图案。然而也应注意到，频率复用技术已被提出，可有效减少图案数量，甚至实现单帧 PSP 或 TPU [80,238–240]。Guan 等人 [238] 提出了一种称为复合图案（composite pattern）的频率复用 PSP 图案，其中 4 幅单位频率相移图案沿正交方向被不同载频空间调制，并合成为单幅图案，随后在频域中施加适当的带通滤波器即可解调出这 4 幅独立图案。基于类似思路，Yue 等人 [240] 通过生成包含两幅 π 相移条纹的复合图案，提出了一种单帧 π 相移 FTP 方案。Takeda 等人 [80] 将两幅具有不同双分量载频的正弦条纹合并为一幅图案，提出了一种单帧双频 FTP 技术，可同时实现相位恢复与数论 TPU。类似地，Sansoni 与 Redaelli [239] 通过直接叠加两个不同频率的正弦光栅，提出了一种单帧双频 TPU 方法。由于引入两个相位分量即可解决相位模糊问题，这两种方法适于测量具有不连续和空间孤立表面的物体 [80,239]。尽管这些单帧频率复用方法在理论或仿真中能够获得高质量的三维重建，但在实际中，受投影仪与相机有限带宽和灰度量化的限制，它们往往产生空间分辨率低、深度精度差的测量结果。</p>
+<h4 id="7-1-2-几何约束"><a href="#7-1-2-几何约束" class="headerlink" title="7.1.2. 几何约束"></a>7.1.2. 几何约束</h4><p>尽管本综述未作讨论，基于几何约束的方法同样能够高效地解决复杂表面测量中的相位模糊问题，且无需额外的投影图案 [115,116,121,128,241–249]。基于投影仪-相机系统的几何关系，可沿极线依据相位值选取若干候选点，并对物体表面上的每个点在小范围内进行对应点搜索。若已知被测物体位于某一确定的深度测量体积内，还可以施加深度约束，剔除落在测量范围之外的部分错误候选点 [128,242,243,245]。由于相位展开过程可以被有效绕过，第 3 节回顾的任何相移算法都可以与基于几何约束的方法结合以实现绝对相位测量。因此，这也使我们能够发展出若干只需 3 幅甚至少于 3 幅图案的新测量方案，用于复杂表面的测量。然而，如果使用高频图案，候选对应点的数量会非常多，因此这些基于几何约束的方法通常设计为较低的条纹频率，以尽量减少候选点的数量 [115,116]。若要基于高频图案实现高精度测量，可以引入更多相机以施加更严格的几何约束、保证对应的唯一性 [249]。此外，第 5 节回顾的用于绝对相位恢复的相移算法也可以与基于几何约束的方法相结合，通过使用高条纹密度图案获得更高的测量精度 [247,248]，或获得更好的相位展开可靠性 [115,116,167]。</p>
+<h3 id="7-2-相位-深度灵敏度"><a href="#7-2-相位-深度灵敏度" class="headerlink" title="7.2. 相位-深度灵敏度"></a>7.2. 相位-深度灵敏度</h3><p>本综述主要关注基于 PSP 技术提高相位测量的精度、效率和鲁棒性。然而需要指出，高质量的相位测量并不必然带来精确的三维重建结果。用于将绝对相位图转换为三维点云的标定方法与模型，对精确的三维测量同样至关重要。人们已提出大量面向 FPP 的系统标定技术，通常同时涉及相机标定与投影仪标定 [250–260]。相机标定是计算机视觉中一个众所周知且研究充分的问题。将投影仪视为逆向相机，投影仪标定通常在预先标定好的相机辅助下，基于与相机相同的光学模型来完成。对于畸变较大的镜头（其畸变可能是放大率误差、场曲以及几何光学畸变的组合），若在标定中不考虑畸变参数，就无法获得准确的结果 [253,257,260]。靶标的精度、标定装置的质量，以及包含所选内参和外参的标定模型，都会影响标定结果。</p>
+<p>影响 FPP 测量精度的另一个重要因素是相位-深度灵敏度，它表征深度变化引起相位变化或条纹畸变的显著程度。显然，相位灵敏度越高越好，因为同样的相位误差在最终测量结果中导致的误差更小。相位-深度灵敏度强烈依赖于测量系统的几何结构。此外，正如第 4.1 节所讨论的，条纹频率也是决定相位-深度灵敏度的关键因素，使用小栅距条纹有助于提高相位-深度灵敏度。但对于几何结构与条纹频率固定的测量系统，条纹方向是影响相位-深度灵敏度的主导因素。Wang 与 Zhang [261] 指出，简单地投影水平或竖直条纹图案并非在 FPP 中获得最佳相位-深度灵敏度的最优选择。他们还提出了一种方法，通过向台阶高度物体投影一组水平与竖直条纹图案来确定最佳条纹角度。Zhou 等人 [262] 进一步分析了条纹角度与灵敏度之间的关系，并建议使条纹垂直于测量系统的投影仪-相机基线。最近，Zhang 等人 [263] 利用极线几何对相位灵敏度依赖条纹方向的问题给出了严格分析。他们发现，最优条纹应是以极点（epipole）为圆心的圆条纹，而单纯使用传统的直条纹只能给出次优解。</p>
+<h3 id="7-3-计算效率"><a href="#7-3-计算效率" class="headerlink" title="7.3. 计算效率"></a>7.3. 计算效率</h3><p>除减少图案数量外，PSP 算法的高效计算对于实现高速、实时三维形貌测量同样必不可少。可以看到，大多数 PSP 算法在相位计算中都涉及反正切函数，其计算耗时较大，是实时实现的主要障碍 [95,106,264]。虽然采用基于强度比的方法（如梯形 PSP 与三角形 PSP）能够有效绕过这一问题，但它们对镜头离焦和强度非线性的容忍度不如传统 PSP。为克服这一速度瓶颈，Zhang 与 Huang [95] 提出了一种快速三步 PSP 算法，用强度比计算代替反正切函数的计算，并用查找表（lookup table，LUT）对由此产生的相位误差作进一步补偿。Guo 与 Liu [264] 提出了一种用分段函数逼近反正切函数的通用方法，显著提高了相位求值的效率。Liu 等人 [106] 开发了 PSP 算法的基于 LUT 的实现，它覆盖图案集上捕获像素值的每一种可能组合，同时存储双精度结果。对于 8 位相机，基于 LUT 的处理效率很高且完全无损。高速实时测量的另一个速度瓶颈在于三维重建过程，其中涉及将相位转换为三维坐标的耗时矩阵运算。Zhang 等人 [265] 借助图形处理器（graphics processing units，GPU）处理加速了基于矩阵运算的绝对三维坐标映射。GPU 可以并行地快速计算每个点的三维坐标，而不是像 CPU 那样顺序计算 [266]。通过仔细展开包含矩阵求逆与矩阵乘法的矩阵运算，Liu 等人 [106] 还提出了用于三维坐标重建的基于 LUT 的矩阵计算实现。基于 LUT 的方法无需借助 GPU 之类的专用硬件，即可将计算速度提高近 10 倍。</p>
+<h2 id="8-结论"><a href="#8-结论" class="headerlink" title="8. 结论"></a>8. 结论</h2><p>本文对用于物体表面三维测量的相移技术进行了详尽而全面的综述。文中给出了 FPP 的成像模型，作为设计与理解各种 PSP 技术的基础。我们还回顾了大量用于实现三维表面轮廓测量的先进相移算法。按照能否恢复绝对相位而不是包裹相位，这些已有技术被分为两类。对于第 3 节回顾的 PSP 算法，只能恢复包含模 \(2\pi\) 不连续性的包裹相位图；而对于第 5 节回顾的具备绝对相位恢复能力的 PSP 算法，它们借助内置的 TPU 算法解决了相位模糊问题，因而可直接用于测量空间孤立的物体和复杂表面。需要强调的是，本文绝未涵盖所有已开发和使用的 PSP 算法，而是为读者理解一些常用 PSP 算法、了解其典型特性提供参考。</p>
+<p>文中分析并回顾了典型 PSP 系统中相位测量的若干误差源，并讨论了相应的解决方案。这使我们能够从测量精度、编码效率以及抵抗不同类型相位误差的角度，讨论各种相移策略的优势与局限。本文也为针对给定应用方便地找到最合适的 PSP 算法提供了有用的指南。</p>
+<h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>本工作得到国家重点研发计划（2017YFF0106403）、国家自然科学基金（61722506、61705105、111574152）、总装“十三五”预先研究项目（30102070102）、装备预先研究基金（61404150202）、江苏省杰出青年基金（BK20170034）、国防科学技术基金（0106173）、江苏省“六大人才高峰”项目（2015-DZXX-009）、江苏省“333 工程”科研项目（BRA2016407）、中央高校基本科研业务费（30917011204、30916011322）、中国博士后科学基金（2017M621747）以及江苏省博士后科研资助计划（1701038A）的资助。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li>Bak D. Rapid prototyping or rapid production? 3D printing processes move industry towards the latter. Assem Autom 2003;23(4):340–5.</li>
+<li>Dagli CH. Artificial neural networks for intelligent manufacturing. Springer Science &amp; Business Media; 2012.</li>
+<li>Burdea Grigore C, Coiffet P. Virtual reality technology. London: Wiley-Interscience; 1994.</li>
+<li>Stanco F, Battiato S, Gallo G. Digital imaging for cultural heritage preservation: analysis, restoration, and reconstruction of ancient artworks. CRC Press; 2011.</li>
+<li>Honrado CP, Larrabee Jr WF. Update in three-dimensional imaging in facial plastic surgery. Curr Opin Otolaryngol Head Neck Surg 2004;12(4):327–31.</li>
+<li>Sansoni G, Trebeschi M, Docchio F. State-of-the-art and applications of 3D imaging sensors in industry, cultural heritage, medicine, and criminal investigation. Sensors 2009;9(1):568–601.</li>
+<li>Curless B. From range scans to 3D models. ACM SIGGRAPH Comput Graph 1999;33(4):38–41.</li>
+<li>Hocken RJ, Pereira PH. Coordinate measuring machines and systems. CRC Press; 2016.</li>
+<li>Hariharan P. Optical interferometry. Academic press; 2003.</li>
+<li>Kemao Q. Two-dimensional windowed fourier transform for fringe pattern analysis: principles, applications and implementations. Opt Lasers Eng 2007;45(2):304–17.</li>
+<li>Malacara Z, Servin M. Interferogram analysis for optical testing, 84. CRC press; 2016.</li>
+<li>Foix S, Alenya G, Torras C. Lock-in time-of-flight (ToF) cameras: a survey. IEEE Sens J 2011;11(9):1917–26.</li>
+<li>Cui Y, Schuon S, Chan D, Thrun S, Theobalt C. 3D shape scanning with a timeof-flight camera. In: 2010 IEEE Computer Society Conference on Computer Vision and Pattern Recognition; 2010. p. 1173–80. doi: 10.1109&#x2F;CVPR.2010.5540082.</li>
+<li>Marr D, Poggio T. A computational theory of human stereo vision. Proc R Soc Lond B: Biol Sci 1979;204(1156):301–28. doi: 10.1098&#x2F;rspb.1979.0029.</li>
+<li>Cochran SD, Medioni G. 3D surface description from binocular stereo. IEEE Trans Pattern Anal Mach Intell 1992;14(10):981–94.</li>
+<li>Pentland AP. A new sense for depth of field. IEEE Trans Pattern Anal Mach Intell 1987;9(4):523–31.</li>
+<li>Nayar SK, Nakagawa Y. Shape from focus. IEEE Trans Pattern Anal Mach Intell 1994;16(8):824–31.</li>
+<li>Favaro P, Soatto S. A geometric approach to shape from defocus. IEEE Trans Pattern Anal Mach Intell 2005;27(3):406–17.</li>
+<li>Boyer KL, Kak AC. Color-encoded structured light for rapid active ranging. IEEE Trans Pattern Anal Mach Intell 1987;PAMI-9(1):14–28. 55 &#x3D;&#x3D;&#x3D; PAGE 34 &#x3D;&#x3D;&#x3D; C. Zuo et al. Optics and Lasers in Engineering 109 (2018) 23–59</li>
+<li>Zhang L, Curless B, Seitz SM. Rapid shape acquisition using color structured light and multi-pass dynamic programming. In: First international symposium on 3D data processing visualization and transmission; 2002. p. 24–36. doi: 10.1109&#x2F;TDPVT.2002.1024035.</li>
+<li>Scharstein D, Szeliski R. High-accuracy stereo depth maps using structured light. In: Proceedings of the 2003 IEEE computer society conference on computer vision and pattern recognition; 2003. p. 195–202. doi: 10.1109&#x2F;CVPR.2003.1211354.</li>
+<li>Geng J. Structured-light 3D surface imaging: a tutorial. Adv Opt Photon 2011;3(2):128–60.</li>
+<li>Chen F, Brown GM, Song M. Overview of 3D shape measurement using optical methods. Opt Eng 2000;39(1):10–23.</li>
+<li>Blais F. Review of 20 years of range sensor development. J Electron Imaging 2004;13(1):231–44.</li>
+<li>Gorthi SS, Rastogi P. Fringe projection techniques: whither we are? Opt Lasers Eng 2010;48(IMAC-REVIEW-2009-001):133–40.</li>
+<li>Salvi J, Fernandez S, Pribanic T, Llado X. A state of the art in structured light patterns for surface profilometry. Pattern Recognit 2010;43(8):2666–80.</li>
+<li>Salvi J, Pages J, Batlle J. Pattern codification strategies in structured light systems. Pattern Recognit 2004;37(4):827–49.</li>
+<li>Su X, Zhang Q. Dynamic 3D shape measurement method: a review. Opt Lasers Eng 2010;48(2):191–204.</li>
+<li>Zhang S. Recent progresses on real-time 3D shape measurement using digital fringe projection techniques. Opt Lasers Eng 2010;48(2):149–58.</li>
+<li>Zhang Z. Review of single-shot 3D shape measurement by phase calculation-based fringe projection techniques. Opt Lasers Eng 2012;50(8):1097–106.</li>
+<li>Van der Jeught S, Dirckx JJ. Real-time structured light profilometry: a review. Opt Lasers Eng 2016;87:18–31.</li>
+<li>Pages J, Salvi J, Collewet C, Forest J. Optimised De Bruijn patterns for one-shot shape acquisition. Image Vis Comput 2005;23(8):707–20.</li>
+<li>Maruyama M, Abe S. Range sensing by projecting multiple slits with random cuts. IEEE Trans Pattern Anal Mach Intell 1993;15(6):647–51.</li>
+<li>Ito M, Ishii A. A three-level checkerboard pattern (TCP) projection method for curved surface measurement. Pattern Recognit 1995;28(1):27–40.</li>
+<li>Morita H, Yajima K, Sakata S. Reconstruction of surfaces of 3D objects by M-array pattern projection method. In: Proceedings of the second international conference on computer vision; 1988. p. 468–73. doi: 10.1109&#x2F;CCV.1988.590025.</li>
+<li>Posdamer JL, Altschuler M. Surface measurement by space-encoded projected beam systems. Comput Graph Image Process 1982;18(1):1–17.</li>
+<li>Caspi D, Kiryati N, Shamir J. Range imaging with adaptive color structured light. IEEE Trans Pattern Anal Mach Intell 1998;20(5):470–80.</li>
+<li>Sansoni G, Corini S, Lazzari S, Rodella R, Docchio F. Three-dimensional imaging based on gray-code light projection: characterization of the measuring algorithm and development of a measuring system for industrial applications. Appl Opt 1997;36(19):4463–72.</li>
+<li>Je C, Lee SW, Park RH. High-contrast color-stripe pattern for rapid structured– light range imaging. In: European conference on computer vision. Springer; 2004. p. 95–107.</li>
+<li>Geng ZJ. Rainbow three-dimensional camera: new concept of high-speed three-dimensional vision systems. Opt Eng 1996;35(2):376–84.</li>
+<li>Takasaki H. Moiré topography. Appl Opt 1970;9(6):1467–72.</li>
+<li>Meadows D, Johnson W, Allen J. Generation of surface contours by moiré patterns. Appl Opt 1970;9(4):942–7.</li>
+<li>Halioua M, Krishnamurthy R, Liu H, Chiang F. Projection moiré with moving gratings for automated 3D topography. Appl Opt 1983;22(6):850–5.</li>
+<li>Harding KG, Harris JS. Projection moiré interferometer for vibration analysis. Appl Opt 1983;22(6):856–61.</li>
+<li>Pirodda L. Shadow and projection moiré techniques for absolute or relative mapping of surface shapes. Opt Eng 1982;21(4):214640.</li>
+<li>Yoshizawa T, Tomisawa T. Shadow moiré topography by means of the phase-shift method. Opt Eng 1993;32(7):1668–75.</li>
+<li>Jin L, Kodera Y, Yoshizawa T, Otani Y. Shadow moiré profilometry using the phase-shifting method. Opt Eng 2000;39(8):2119–24.</li>
+<li>Asundi A. Computer aided moiré methods. Opt Lasers Eng 1993;18(3):213–38.</li>
+<li>Su X, Chen W. Fourier transform profilometry: a review. Opt Lasers Eng 2001;35(5):263–84.</li>
+<li>Kemao Q. Windowed fourier transform for fringe pattern analysis. Appl Opt 2004;43(13):2695–702.</li>
+<li>Zhong J, Weng J. Spatial carrier-fringe pattern analysis by means of wavelet transform: wavelet transform profilometry. Appl Opt 2004;43(26):4993–8.</li>
+<li>Huang L, Kemao Q, Pan B, Asundi AK. Comparison of fourier transform, windowed fourier transform, and wavelet transform methods for phase extraction from a single fringe pattern in fringe projection profilometry. Opt Lasers Eng 2010;48(2):141–8.</li>
+<li>Zhang Z, Jing Z, Wang Z, Kuang D. Comparison of fourier transform, windowed fourier transform, and wavelet transform methods for phase calculation at discontinuities in fringe projection profilometry. Opt Lasers Eng 2012;50(8):1152–60.</li>
+<li>Srinivasan V, Liu HC, Halioua M. Automated phase-measuring profilometry of 3D diffuse objects. Appl Opt 1984;23(18):3105–8.</li>
+<li>Halioua M, Krishnamurthy RS, Liu HC, Chiang FP. Automated 360° profilometry of 3D diffuse objects. Appl Opt 1985;24(14):2193–6.</li>
+<li>Bruning JH, Herriott DR, Gallagher J, Rosenfeld D, White A, Brangaccio D. Digital wavefront measuring interferometer for testing optical surfaces and lenses. Appl Opt 1974;13(11):2693–703.</li>
+<li>Malacara D. Optical shop testing, 59. John Wiley &amp; Sons; 2007.</li>
+<li>Goldstein RM, Zebker HA, Werner CL. Satellite radar interferometry: two-dimensional phase unwrapping. Radio Sci 1988;23(4):713–20.</li>
+<li>Su X, Chen W. Reliability-guided phase unwrapping algorithm: a review. Opt Lasers Eng 2004;42(3):245–61.</li>
+<li>Flynn TJ. Two-dimensional phase unwrapping with minimum weighted discontinuity. J Opt Soc Am A 1997;14(10):2692–701.</li>
+<li>Ghiglia DC, Romero LA. Minimum Lp-norm two-dimensional phase unwrapping. J Opt Soc Am A 1996;13(10):1999–2013.</li>
+<li>Judge TR, Bryanston Cross P. A review of phase unwrapping techniques in fringe analysis. Opt Lasers Eng 1994;21(4):199–239.</li>
+<li>Ghiglia DC, Pritt MD. Two-dimensional phase unwrapping: theory, algorithms, and software, 4. Wiley New York; 1998.</li>
+<li>Zappa E, GBusca. Comparison of eight unwrapping algorithms applied to fourier– transform profilometry. Opt Lasers Eng 2008;46(2):106–16.</li>
+<li>Zebker HA, Lu Y. Phase unwrapping algorithms for radar interferometry: residue– cut, least-squares, and synthesis algorithms. J Opt Soc Am A 1998;15(3):586–98.</li>
+<li>Zhao M, Huang L, Zhang Q, Su X, Asundi A, Kemao Q. Quality-guided phase unwrapping technique: comparison of quality maps and guiding strategies. Appl Opt 2011;50(33):6214–24.</li>
+<li>Sansoni G, Carocci M, Rodella R. Three-dimensional vision based on a combination of gray-code and phase-shift light projection: analysis and compensation of the systematic errors. Appl Opt 1999;38(31):6565–73.</li>
+<li>Huntley JM, Saldner H. Temporal phase-unwrapping algorithm for automated interferogram analysis. Appl Opt 1993;32(17):3047–52.</li>
+<li>Zhao H, Chen W, Tan Y. Phase-unwrapping algorithm for the measurement of three- -dimensional object shapes. Appl Opt 1994;33(20):4497–500.</li>
+<li>Cheng YY, Wyant JC. Two-wavelength phase shifting interferometry. Appl Opt 1984;23(24):4539–43.</li>
+<li>Creath K, Cheng YY, Wyant JC. Contouring aspheric surfaces using two-wavelength phase-shifting interferometry. Opt Acta: Int J Opt 1985;32(12):1455–64.</li>
+<li>Gushov V, Solodkin YN. Automatic processing of fringe patterns in integer interferometers. Opt Lasers Eng 1991;14(4-5):311–24.</li>
+<li>Burke J, Bothe T, Osten W, Hess CF. Reverse engineering by fringe projection, 4778. International Society for Optics and Photonics; 2002. p. 312–25.</li>
+<li>Ding Y, Xi J, Yu Y, Chicharo J. Recovering the absolute phase maps of two fringe patterns with selected frequencies. Opt Lett 2011;36(13):2518–20.</li>
+<li>Falaggis K, Towers DP, Towers CE. Algebraic solution for phase unwrapping problems in multiwavelength interferometry. Appl Opt 2014;53(17):3737–47.</li>
+<li>Petkovi ć T, Pribani ć T, DJonli ć M. Temporal phase unwrapping using orthographic projection. Opt Lasers Eng 2017;90:34–47.</li>
+<li>Xing S, Guo H. Temporal phase unwrapping for fringe projection profilometry aided by recursion of chebyshev polynomials. Appl Opt 2017;56(6):1591–602.</li>
+<li>Saldner HO, Huntley JM. Temporal phase unwrapping: application to surface profiling of discontinuous objects. Appl Opt 1997;36(13):2770–5.</li>
+<li>Towers CE, Towers DP, Jones JD. Optimum frequency selection in multifrequency interferometry. Opt Lett 2003;28(11):887–9.</li>
+<li>Takeda M, Gu Q, Kinoshita M, Takai H, Takahashi Y. Frequency-multiplex fourier-transform profilometry: a single-shot three-dimensional shape measurement of objects with large height discontinuities and&#x2F;or surface isolations. Appl Opt 1997;36(22):5347–54.</li>
+<li>Zhong J, Wang M. Phase unwrapping by lookup table method: application to phase map with singular points. Opt Eng 1999;38(12):2075–81.</li>
+<li>Zuo C, Huang L, Zhang M, Chen Q, Asundi A. Temporal phase unwrapping algorithms for fringe projection profilometry: a comparative review. Opt Lasers Eng 2016;85:84–103.</li>
+<li>Schreiber H, Bruning JH. Phase shifting interferometry. In: Optical shop testing; 2006. p. 547–666.</li>
+<li>Rastogi P, Hack E. Phase estimation in optical interferometry. CRC Press; 2014.</li>
+<li>Hariharan P, Oreb B, Eiju T. Digital phase-shifting interferometry: a simple error– compensating phase calculation algorithm. Appl Opt 1987;26(13):2504–6.</li>
+<li>Li J, Su X, Guo L. Improved fourier transform profilometry for the automatic measurement of three-dimensional object shapes. Opt Eng 1990;29(12):1439–45.</li>
+<li>Su XY, Von Bally G, Vukicevic D. Phase-stepping grating profilometry: utilization of intensity modulation analysis in complex objects evaluation. Opt Comm 1993;98(1-3):141–50.</li>
+<li>Zhang H, Lalor MJ, Burton DR. Spatiotemporal phase unwrapping for the measurement of discontinuous objects in dynamic fringe-projection phase-shifting profilometry. Appl Opt 1999;38(16):3534–41.</li>
+<li>Zhang H, Wu F, Lalor MJ, Burton DR. Spatiotemporal phase unwrapping and its application in fringe projection fiber optic phase-shifting profilometry. Opt Eng 2000;39(7):1958–65.</li>
+<li>Huang PS, Hu QJ, Chiang FP. Double three-step phase-shifting algorithm. Appl Opt 2002;41(22):4503–9.</li>
+<li>Zhang C, Huang PS, Chiang FP. Microscopic phase-shifting profilometry based on digital micromirror device technology. Appl Opt 2002;41(28):5896–904.</li>
+<li>Yoneyama S, Morimoto Y, Fujigaki M, Yabe M. Phase-measuring profilometry of moving object without phase-shifting device. Opt Lasers Eng 2003;40(3):153–61.</li>
+<li>Huang PS, Zhang S, Chiang FP. Trapezoidal phase-shifting method for 3D shape measurement, 5606. International Society for Optics and Photonics; 2004. p. 142–53.</li>
+<li>Huang PS, Zhang S, Chiang FP. Trapezoidal phase-shifting method for three-dimensional shape measurement. Opt Eng 2005;44(12):123601.</li>
+<li>Huang PS, Zhang S. Fast three-step phase-shifting algorithm. Appl Opt 2006;45(21):5086–91.</li>
+<li>Meng X, Cai L, Xu X, Yang X, Shen X, Dong G, et al. Two-step phase-shifting interferometry and its application in image encryption. Opt Lett 2006;31(10):1414–16.</li>
+<li>Zhang S, Yau ST. High-resolution, real-time 3D absolute coordinate measurement based on a phase-shifting method. Opt Express 2006;14(7):2644–9. 56 &#x3D;&#x3D;&#x3D; PAGE 35 &#x3D;&#x3D;&#x3D; C. Zuo et al. Optics and Lasers in Engineering 109 (2018) 23–59</li>
+<li>Jia P, Kofman J, English C. Intensity-ratio error compensation for triangular-pattern phase-shifting profilometry. J Opt Soc Am A 2007;24(10):3150–8.</li>
+<li>Jia P, Kofman J, English CE. Two-step triangular-pattern phase-shifting method for three-dimensional object-shape measurement. Opt Eng 2007;46(8):083201.</li>
+<li>Zhang S, Yau ST. High-speed three-dimensional shape measurement system using a modified two-plus-one phase-shifting algorithm. Opt Eng 2007;46(11):113603.</li>
+<li>Hu E, He Y. Surface profile measurement of moving objects by using an improved 𝜋phase-shifting fourier transform profilometry. Opt Lasers Eng 2009;47(1):57–61.</li>
+<li>Hu E, He Y, Hua Y. Profile measurement of a moving object using an improved projection grating phase-shifting profilometry. Opt Comm 2009;282(15):3047–51.</li>
+<li>Hu E, He Y, Wu W. Further study of the phase-recovering algorithm for saturated fringe patterns with a larger saturation coefficient in the projection grating phase-shifting profilometry. Opt-Int J Light Electron Opt 2010;121(14):1290–4.</li>
+<li>Zhang S. Composite phase-shifting algorithm for absolute phase measurement. Opt Lasers Eng 2012;50(11):1538–41.</li>
+<li>Li JL, Su HJ, Su XY. Two-frequency grating used in phase-measuring profilometry. Appl Opt 1997;36(1):277–80.</li>
+<li>Liu K, Wang Y, Lau DL, Hao Q, Hassebrook LG. Dual-frequency pattern scheme for high-speed 3D shape measurement. Opt Express 2010;18(5):5229–44.</li>
+<li>Wang Y, Liu K, Hao Q, Lau DL, Hassebrook LG. Period coded phase shifting strategy for real–time 3D structured light illumination. IEEE Trans Image Process 2011;20(11):3001–13.</li>
+<li>Wissmann P, Schmitt R, Forster F. Fast and accurate 3D scanning using coded phase shifting and high speed pattern projection. In: 2011 international conference on 3d imaging, modeling, processing, visualization and transmission; 2011. p. 108–15. doi: 10.1109&#x2F;3DIMPVT.2011.21.</li>
+<li>Zuo C, Chen Q, Gu G, Feng S, Feng F. High-speed three-dimensional profilometry for multiple objects with complex shapes. Opt Express 2012;20(17):19493–510.</li>
+<li>Zhang Y, Xiong Z, Wu F. Unambiguous 3D measurement from speckle-embedded fringe. Appl Opt 2013;52(32):7797–805.</li>
+<li>Zuo C, Chen Q, Gu G, Feng S, Feng F, Li R, et al. High-speed three-dimensional shape measurement for dynamic scenes using bi-frequency tripolar pulse-width– modulation fringe projection. Opt Lasers Eng 2013;51(8):953–60.</li>
+<li>Budianto B, Lun P, Hsung TC. Marker encoded fringe projection profilometry for efficient 3D model acquisition. Appl Opt 2014;53(31):7442–53.</li>
+<li>Zhang Y, Xiong Z, Yang Z, Wu F. Real-time scalable depth sensing with hybrid structured light illumination. IEEE Trans Image Process 2014;23(1):97–109.</li>
+<li>Feng S, Chen Q, Zuo C. Graphics processing unit–assisted real-time three- -dimensional measurement using speckle-embedded fringe. Appl Opt 2015;54(22):6865–73.</li>
+<li>Tao T, Chen Q, Da J, Feng S, Hu Y, Zuo C. Real-time 3D shape measurement with composite phase-shifting fringes and multi-view system. Opt Express 2016;24(18):20253–69.</li>
+<li>Liu X, Kofman J. Background and amplitude encoded fringe patterns for 3D surface-shape measurement. Opt Lasers Eng 2017;94:63–9.</li>
+<li>Zhang S, Yau ST. High dynamic range scanning technique. Opt Eng 2009;48(3):033604.</li>
+<li>Jiang H, Zhao H, Li X. High dynamic range fringe acquisition: a novel 3D scanning technique for high-reflective surfaces. Opt Lasers Eng 2012;50(10):1484–93.</li>
+<li>Greivenkamp JE. Generalized data reduction for heterodyne interferometry. Opt Eng 1984;23(4):234350.</li>
+<li>Huang PS, Zhang C, Chiang FP. High-speed 3D shape measurement based on digital fringe projection. Opt Eng 2003;42(1):163–9.</li>
+<li>Weise T, Leibe B, Gool LV. Fast 3D scanning with automatic motion compensation. In: 2007 IEEE conference on computer vision and pattern recognition; 2007. p. 1–8. doi: 10.1109&#x2F;CVPR.2007.383291.</li>
+<li>Angel JRP, Wizinowich P. A method for phase shifting interferometry in the presence of vibration. In: European southern observatory conference and workshop proceedings; 1988. p. 561–7.</li>
+<li>Wizinowich PL. Phase shifting interferometry in the presence of vibration: a new algorithm and system. Appl Opt 1990;29(22):3271–9.</li>
+<li>Jia P, Kofman J, English C. Multiple-step triangular-pattern phase shifting and the influence of number of steps and pitch on measurement accuracy. Appl Opt 2007;46(16):3253–62.</li>
+<li>Takeda M, Ina H, Kobayashi S. Fourier-transform method of fringe-pattern analysis for computer-based topography and interferometry. J Opt Soc Am 1982;72(1):156–60.</li>
+<li>Takeda M, Mutoh K. Fourier transform profilometry for the automatic measurement of 3D object shapes. Appl Opt 1983;22(24):3977–82.</li>
+<li>Guo H, Huang PS. 3D shape measurement by use of a modified fourier transform method. ProcSPIE 2008;7066. doi: 10.1117&#x2F;12.798170.</li>
+<li>Zuo C, Tao T, Feng S, Huang L, Asundi A, Chen Q. Micro fourier transform profilometry ( 𝜇ftp): 3D shape measurement at 10,000 frames per second. Opt Lasers Eng 2018;102:70–91.</li>
+<li>Rathjen C. Statistical properties of phase-shift algorithms. J Opt Soc Am A 1995;12(9):1997–2008. doi: 10.1364&#x2F;JOSAA.12.001997.</li>
+<li>Surrel Y. Additive noise effect in digital phase detection. Appl Opt 1997;36(1):271– 6. doi: 10.1364&#x2F;AO.36.000271.</li>
+<li>Li J, Hassebrook LG, Guan C. Optimized two-frequency phase-measuringprofilometry light-sensor temporal-noise sensitivity. J Opt Soc Am A 2003;20(1):106–15. doi: 10.1364&#x2F;JOSAA.20.000106.</li>
+<li>Servin M, Estrada JC, Quiroga JA, Mosino JF, Cywiak M. Noise in phase shifting interferometry. Opt Express 2009;17(11):8789–94. doi: 10.1364&#x2F;OE.17.008789.</li>
+<li>Wang Y, Liu K, Lau DL, Hao Q, Hassebrook LG. Maximum snr pattern strategy for phase shifting methods in structured light illumination. J Opt Soc Am A 2010;27(9):1962–71. doi: 10.1364&#x2F;JOSAA.27.001962.</li>
+<li>Zuo C, Chen Q, Gu G, Ren J, Sui X, Zhang Y. Optimized three-step phase-shifting profilometry using the third harmonic injection. Opt Appl 2013;43(2).</li>
+<li>Zhang S. Comparative study on passive and active projector nonlinear gamma calibration. Appl Opt 2015;54(13):3834–41. doi: 10.1364&#x2F;AO.54.003834.</li>
+<li>Guo H, He H, Chen M. Gamma correction for digital fringe projection profilometry. Appl Opt 2004;43(14):2906–14. doi: 10.1364&#x2F;AO.43.002906.</li>
+<li>Waddington CJ, Kofman JD. Modified sinusoidal fringe-pattern projection for variable illuminance in phase-shifting three-dimensional surface-shape metrology. Opt Eng 2014;53. doi: 10.1117&#x2F;1.OE.53.8.084109.</li>
+<li>Liu K, Wang Y, Lau DL, Hao Q, Hassebrook LG. Gamma model and its analysis for phase measuring profilometry. J Opt Soc Am A 2010;27(3):553–62. doi: 10.1364&#x2F;JOSAA.27.000553.</li>
+<li>Peng JZ, Ouyang HK, Yu Q, Yu YJ, Wang KS. Phase error correction for fringe projection profilometry by using constrained cubic spline. Adv Manuf 2014;2(1):39– 47. doi: 10.1007&#x2F;s40436-014-0058-1.</li>
+<li>Kakunai S, Sakamoto T, Iwata K. Profile measurement taken with liquid-crystal gratings. Appl Opt 1999;38(13):2824–8. doi: 10.1364&#x2F;AO.38.002824.</li>
+<li>Baker MJ, Xi J, Chicharo JF. Elimination of 𝛾non-linear luminance effects for digital video projection phase measuring profilometers. In: 4th IEEE international symposium on electronic design, test and applications (delta 2008); 2008. p. 496–501. doi: 10.1109&#x2F;DELTA.2008.90.</li>
+<li>Li Z, Li Y. Gamma-distorted fringe image modeling and accurate gamma correction for fast phase measuring profilometry. Opt Lett 2011;36(2):154–6. doi: 10.1364&#x2F;OL.36.000154.</li>
+<li>Hoang T, Pan B, Nguyen D, Wang Z. Generic gamma correction for accuracy enhancement in fringe-projection profilometry. Opt Lett 2010;35(12):1992–4. doi: 10.1364&#x2F;OL.35.001992.</li>
+<li>Lü F, Xing S, Guo H. Self-correction of projector nonlinearity in phase-shifting fringe projection profilometry. Appl Opt 2017;56(25):7204–16.</li>
+<li>Su XY, Zhou WS, von Bally G, Vukicevic D. Automated phase-measuring profilometry using defocused projection of a ronchi grating. Opt Comm 1992;94(6):561–73. doi: 10.1016&#x2F;0030-4018(92)90606-R.</li>
+<li>Lei S, Zhang S. Flexible 3D shape measurement using projector defocusing. Opt Lett 2009;34(20):3080–2. doi: 10.1364&#x2F;OL.34.003080.</li>
+<li>Hu Y, Xi J, Chicharo J, Yang Z. Improved three-step phase shifting profilometry using digital fringe pattern projection. In: International Conference on Computer Graphics, Imaging and Visualisation (CGIV’06); 2006. p. 161–7. doi: 10.1109&#x2F;CGIV.2006.58.</li>
+<li>van Wingerden J, Frankena HJ, Smorenburg C. Linear approximation for measurement errors in phase shifting interferometry. Appl Opt 1991;30(19):2718–29. doi: 10.1364&#x2F;AO.30.002718.</li>
+<li>Stetson KA, Brohinsky WR. Electrooptic holography and its application to hologram interferometry. Appl Opt 1985;24(21):3631–7. doi: 10.1364&#x2F;AO.24.003631.</li>
+<li>Surrel Y. Design of algorithms for phase measurements by the use of phase stepping. Appl Opt 1996;35(1):51–60. doi: 10.1364&#x2F;AO.35.000051.</li>
+<li>Baker MJ, Xi J, Chicharo JF. Neural network digital fringe calibration technique for structured light profilometers. Appl Opt 2007;46(8):1233–43. doi: 10.1364&#x2F;AO.46.001233.</li>
+<li>Hibino K, Oreb BF, Farrant DI, Larkin K. Phase shifting for nonsinusoidal waveforms with phase-shift errors. J Opt Soc Am A 1995;12(4):761–8. doi: 10.1364&#x2F;JOSAA.12.000761.</li>
+<li>Ekstrand L, Zhang S. Three-dimensional profilometry with nearly focused binary phase-shifting algorithms. Opt Lett 2011;36(23):4518–20. doi: 10.1364&#x2F;OL.36.004518.</li>
+<li>Zhang S, Huang PS. Phase error compensation for a 3D shape measurement system based on the phase-shifting method. Opt Eng 2007;46:063601. doi: 10.1117&#x2F;1.2746814.</li>
+<li>Zhang S, Yau ST. Generic nonsinusoidal phase error correction for threedimensional shape measurement using a digital video projector. Appl Opt 2007;46(1):36–43. doi: 10.1364&#x2F;AO.46.000036.</li>
+<li>Pan B, Kemao Q, Huang L, Asundi A. Phase error analysis and compensation for nonsinusoidal waveforms in phase-shifting digital fringe projection profilometry. Opt Lett 2009;34(4):416–18. doi: 10.1364&#x2F;OL.34.000416.</li>
+<li>Xiong L, Jia S. Phase-error analysis and elimination for nonsinusoidal waveforms in hilbert transform digital-fringe projection profilometry. Opt Lett 2009;34(15):2363–5. doi: 10.1364&#x2F;OL.34.002363.</li>
+<li>Ma S, Quan C, Zhu R, Chen L, Li B, Tay C. A fast and accurate gamma correction based on fourier spectrum analysis for digital fringe projection profilometry. Opt Comm 2012;285(5):533–8. doi: 10.1016&#x2F;j.optcom.2011.11.041.</li>
+<li>Ma S, Zhu R, Quan C, Li B, Tay C, Chen L. Blind phase error suppression for colorencoded digital fringe projection profilometry. Opt Comm 2012;285(7):1662–8. doi: 10.1016&#x2F;j.optcom.2011.12.027.</li>
+<li>Li B, Wang Y, Dai J, Lohry W, Zhang S. Some recent advances on superfast 3D shape measurement with digital binary defocusing techniques. Opt Lasers Eng 2014;54:236–46.</li>
+<li>Zhang S. Flexible 3D shape measurement using projector defocusing: extended measurement range. Opt Lett 2010;35(7):934–6. doi: 10.1364&#x2F;OL.35.000934.</li>
+<li>Zhang Q, Su X, Xiang L, Sun X. 3D shape measurement based on complementary gray-code light. Opt Lasers Eng 2012;50(4):574–9. doi: 10.1016&#x2F;j.optlaseng.2011.06.024.</li>
+<li>Zheng D, Da F, Kemao Q, Seah HS. Phase-shifting profilometry combined with graycode patterns projection: unwrapping error removal by an adaptive median filter. Opt Express 2017;25(5):4700–13. doi: 10.1364&#x2F;OE.25.004700.</li>
+<li>Zheng D, Kemao Q, Da F, Seah HS. Ternary gray code-based phase unwrapping for 3D measurement using binary patterns with projector defocusing. Appl Opt 2017;56(13):3660–5. doi: 10.1364&#x2F;AO.56.003660. 57 &#x3D;&#x3D;&#x3D; PAGE 36 &#x3D;&#x3D;&#x3D; C. Zuo et al. Optics and Lasers in Engineering 109 (2018) 23–59</li>
+<li>Wang Y, Zhang S. Novel phase-coding method for absolute phase retrieval. Opt Lett 2012;37(11):2067–9. doi: 10.1364&#x2F;OL.37.002067.</li>
+<li>Li B, Fu Y, Zhang J, Wu H, Zeng Z. Period correction method of phase coding fringe. Opt Rev 2015;22(5):717–23. doi: 10.1007&#x2F;s10043-015-0137-y.</li>
+<li>Hyun JS, Zhang S. Superfast 3D absolute shape measurement using five binary patterns. Opt Lasers Eng 2017;90:217–24. doi: 10.1016&#x2F;j.optlaseng.2016.10.017.</li>
+<li>Gong Y, Zhang S. Ultrafast 3D shape measurement with an off-the-shelf DLP projector. Opt Express 2010;18(19):19743–54. doi: 10.1364&#x2F;OE.18.019743.</li>
+<li>Zhang S, Weide DVD, Oliver J. Superfast phase-shifting method for 3D shape measurement. Opt Express 2010;18(9):9684–9. doi: 10.1364&#x2F;OE.18.009684.</li>
+<li>Su XY, Zhou WS, Von Bally G, Vukicevic D. Automated phase-measuring profilometry using defocused projection of a ronchi grating. Opt Comm 1992;94(6):561–73.</li>
+<li>Xian T, Su X. Area modulation grating for sinusoidal structure illumination on phase-measuring profilometry. Appl Opt 2001;40(8):1201–6.</li>
+<li>Ayubi GA, Ayubi JA, Di Martino JM, Ferrari JA. Pulse-width modulation in defocused three-dimensional fringe projection. Opt Lett 2010;35(21):3682–4.</li>
+<li>Zuo C, Chen Q, Feng S, Feng F, Gu G, Sui X. Optimized pulse width modulation pattern strategy for three-dimensional profilometry with projector defocusing. Appl Opt 2012;51(19):4477–90.</li>
+<li>Wang Y, Zhang S. Superfast multifrequency phase-shifting technique with optimal pulse width modulation. Opt Express 2011;19(6):5149–55.</li>
+<li>Wang Y, Zhang S. Three-dimensional shape measurement with binary dithered patterns. Appl Opt 2012;51(27):6631–6.</li>
+<li>Dai J, Zhang S. Phase-optimized dithering technique for high-quality 3D shape measurement. Opt Lasers Eng 2013;51(6):790–5.</li>
+<li>Dai J, Li B, Zhang S. High-quality fringe pattern generation using binary pattern optimization through symmetry and periodicity. Opt Lasers Eng 2014;52:195–200.</li>
+<li>Dai J, Li B, Zhang S. Intensity-optimized dithering technique for three-dimensional shape measurement with projector defocusing. Opt Lasers Eng 2014;53:79–85.</li>
+<li>Sun J, Zuo C, Feng S, Yu S, Zhang Y, Chen Q. Improved intensity-optimized dithering technique for 3D shape measurement. Opt Lasers Eng 2015;66:158–64.</li>
+<li>Wang Y, Zhang S. Optimal pulse width modulation for sinusoidal fringe generation with projector defocusing. Opt Lett 2010;35(24):4121–3.</li>
+<li>Schwider J, Burow R, Elssner KE, Grzanna J, Spolaczyk R, Merkel K. Digital wave-front measuring interferometry: some systematic error sources. Appl Opt 1983;22(21):3421–32. doi: 10.1364&#x2F;AO.22.003421.</li>
+<li>Schwider J. Phase shifting interferometry: reference phase error reduction. Appl Opt 1989;28(18):3889–92. doi: 10.1364&#x2F;AO.28.003889.</li>
+<li>Creath K. Phase-measurement interferometry techniques. In: Progress in Optics, 26. Elsevier; 1988. p. 349–93. doi: 10.1016&#x2F;S0079-6638(08)70178-1.</li>
+<li>Carré P. Installation et utilisation du comparateur photoélectrique et interférentiel du bureau international des poids et mesures. Metrologia 1966;2(1):13.</li>
+<li>Cong P, Xiong Z, Zhang Y, Zhao S, Wu F. Accurate dynamic 3D sensing with fourier-assisted phase shifting. IEEE J Select Top Signal Process 2015;9(3):396– 408. doi: 10.1109&#x2F;JSTSP.2014.2378217.</li>
+<li>Li B, Liu Z, Zhang S. Motion-induced error reduction by combining fourier transform profilometry with phase-shifting profilometry. Opt Express 2016;24(20):23289–303. doi: 10.1364&#x2F;OE.24.023289.</li>
+<li>Lu L, Xi J, Yu Y, Guo Q. New approach to improve the accuracy of 3D shape measurement of moving object using phase shifting profilometry. Opt Express 2013;21(25):30610–22. doi: 10.1364&#x2F;OE.21.030610.</li>
+<li>Chen C, Cao YP, Zhong LJ, Peng K. An on-line phase measuring profilometry for objects moving with straight-line motion. Opt Comm 2015;336:301–5. doi: 10.1016&#x2F;j.optcom.2014.09.003.</li>
+<li>Lu L, Ding Y, Luan Y, Yin Y, Liu Q, Xi J. Automated approach for the surface profile measurement of moving objects based on PSP. Opt Express 2017;25(25):32120–31. doi: 10.1364&#x2F;OE.25.032120.</li>
+<li>Li Y, Cao YP, Huang ZF, Chen DL, Shi SP. A three dimensional on-line measurement method based on five unequal steps phase shifting. Opt Comm 2012;285(21):4285– 9. doi: 10.1016&#x2F;j.optcom.2012.06.062.</li>
+<li>Lau DL, Liu K, Hassebrook LG. Real-time three-dimensional shape measurement of moving objects without edge errors by time-synchronized structured illumination. Opt Lett 2010;35(14):2487–9. doi: 10.1364&#x2F;OL.35.002487.</li>
+<li>Feng S, Chen Q, Zuo C, Li R, Shen G, Feng F. Automatic identification and removal of outliers for high-speed fringe projection profilometry. Opt Eng 2013;52:013605. doi: 10.1117&#x2F;1.OE.52.1.013605.</li>
+<li>Lu L, Xi J, Yu Y, Guo Q. Improving the accuracy performance of phase-shifting profilometry for the measurement of objects in motion. Opt Lett 2014;39(23):6715– 18. doi: 10.1364&#x2F;OL.39.006715.</li>
+<li>Feng S, Zuo C, Tao T, Hu Y, Zhang M, Chen Q, et al. Robust dynamic 3D measurements with motion-compensated phase-shifting profilometry. Opt Lasers Eng 2018;103:127–38. doi: 10.1016&#x2F;j.optlaseng.2017.12.001.</li>
+<li>Ekstrand L, Zhang S. Autoexposure for three-dimensional shape measurement using a digital-light-processing projector. Opt Eng 2011;50:123603. doi: 10.1117&#x2F;1.3662387.</li>
+<li>Ri S, Fujigaki M, Morimoto Y. Intensity range extension method for threedimensional shape measurement in phase-measuring profilometry using a digital micromirror device camera. Appl Opt 2008;47(29):5400–7. doi: 10.1364&#x2F;AO.47.005400.</li>
+<li>Yin Y, Cai Z, Jiang H, Meng X, Xi J, Peng X. High dynamic range imaging for fringe projection profilometry with single-shot raw data of the color camera. Opt Lasers Eng 2017;89:138–44. doi: 10.1016&#x2F;j.optlaseng.2016.08.019.</li>
+<li>Waddington C, Kofman J. Saturation avoidance by adaptive fringe projection in phase-shifting 3D surface-shape measurement. In: 2010 international symposium on optomechatronic technologies; 2010. p. 1–4. doi: 10.1109&#x2F;ISOT.2010.5687390.</li>
+<li>Waddington C, Kofman J. Sinusoidal fringe-pattern projection for 3D surface measurement with variable illuminance. In: 2010 international symposium on optomechatronic technologies; 2010. p. 1–5. doi: 10.1109&#x2F;ISOT.2010.5687389.</li>
+<li>Li D, Kofman J. Adaptive fringe-pattern projection for image saturation avoidance in 3D surface-shape measurement. Opt Express 2014;22(8):9887–901. doi: 10.1364&#x2F;OE.22.009887.</li>
+<li>Zhang C, Xu J, Xi N, Zhao J, Shi Q. A robust surface coding method for optically challenging objects using structured light. IEEE Trans Autom Sci Eng 2014;11(3):775–88. doi: 10.1109&#x2F;TASE.2013.2293576.</li>
+<li>Babaie G, Abolbashari M, Farahi F. Dynamics range enhancement in digital fringe projection technique. Precis Eng 2015;39:243–51. doi: 10.1016&#x2F;j.precisioneng.2014.06.007.</li>
+<li>Lin H, Gao J, Mei Q, He Y, Liu J, Wang X. Adaptive digital fringe projection technique for high dynamic range three-dimensional shape measurement. Opt Express 2016;24(7):7703–18. doi: 10.1364&#x2F;OE.24.007703.</li>
+<li>Chen T, Lensch HPA, Fuchs C, Seidel HP. Polarization and phase-shifting for 3D scanning of translucent objects. In: 2007 IEEE conference on computer vision and pattern recognition; 2007. p. 1–8. doi: 10.1109&#x2F;CVPR.2007.383209.</li>
+<li>Salahieh B, Chen Z, Rodriguez JJ, Liang R. Multi-polarization fringe projection imaging for high dynamic range objects. Opt Express 2014;22(8):10064–71. doi: 10.1364&#x2F;OE.22.010064.</li>
+<li>Feng S, Zhang Y, Chen Q, Zuo C, Li R, Shen G. General solution for high dynamic range three-dimensional shape measurement using the fringe projection technique. Opt Lasers Eng 2014;59:56–71. doi: 10.1016&#x2F;j.optlaseng.2014.03.003.</li>
+<li>Chen Y, He Y, Hu E. Phase deviation analysis and phase retrieval for partial intensity saturation in phase-shifting projected fringe profilometry. Opt Comm 2008;281(11):3087–90. doi: 10.1016&#x2F;j.optcom.2008.01.070.</li>
+<li>Hu E, He Y, Chen Y. Study on a novel phase-recovering algorithm for partial intensity saturation in digital projection grating phase-shifting profilometry. Opt - Int J Light Electron Opt 2010;121(1):23–8. doi: 10.1016&#x2F;j.ijleo.2008.05.010.</li>
+<li>Chen B, Zhang S. High-quality 3D shape measurement using saturated fringe patterns. Opt Lasers Eng 2016;87:83–9. doi: 10.1016&#x2F;j.optlaseng.2016.04.012.</li>
+<li>Jiang C, Bell T, Zhang S. High dynamic range real-time 3D shape measurement. Opt Express 2016;24(7):7337–46. doi: 10.1364&#x2F;OE.24.007337.</li>
+<li>Guo H, Lü B. Phase-shifting algorithm by use of hough transform. Opt Express 2012;20(23):26037–49.</li>
+<li>Coggrave C, Huntley JM. Optimization of shape measurement system based on spatial light modulators. Opt Eng 2000;39(1):91–9.</li>
+<li>Wang Y, Bhattacharya B, Winer EH, Kosmicki P, El-Ratal WH, Zhang S. Digital micromirror transient response influence on superfast 3D shape measurement. Opt Lasers Eng 2014;58:19–26.</li>
+<li>Lu G, Wu S, Palmer N, Liu H. Application of phase-shift optical triangulation to precision gear gauging, 3520. International Society for Optics and Photonics; 1998. p. 52–64.</li>
+<li>Tatsuno K, Tsunoda Y. Diode laser direct modulation heterodyne interferometer. Appl Opt 1987;26(1):37–40.</li>
+<li>Onodera R, Ishii Y, Ohde N, Takahashi Y, Yoshino T. Effect of laser– diode power change on optical heterodyne interferometry. J Lightw Technol 1995;13(4):675–81.</li>
+<li>Onodera R, Ishii Y. Phase-extraction analysis of laser-diode phase-shifting interferometry that is insensitive to changes in laser power. J Opt Soc Am A 1996;13(1):139–46. doi: 10.1364&#x2F;JOSAA.13.000139.</li>
+<li>Okada K, Sato A, Tsujiuchi J. Simultaneous calculation of phase distribution and scanning phase shift in phase shifting interferometry. Opt Comm 1991;84(3-4):118–24.</li>
+<li>Liu Q, Wang Y, He J, Ji F. Phase shift extraction and wavefront retrieval from interferograms with background and contrast fluctuations. J Opt 2015;17(2):025704.</li>
+<li>Lu Y, Zhang R, Guo H. Correction of illumination fluctuations in phase-shifting technique by use of fringe histograms. Appl Opt 2016;55(1):184–97.</li>
+<li>Chen C, Wan Y, Cao Y. Instability of projection light source and real-time phase error correction method for phase-shifting profilometry. Opt Express 2018;26(4):4258–70.</li>
+<li>Wust C, Capson DW. Surface profile measurement using color fringe projection. Mach Vis Appl 1991;4(3):193–203. doi: 10.1007&#x2F;BF01230201.</li>
+<li>Huang PS, Hu Q, Jin F, Chiang FP. Color-encoded digital fringe projection technique for high-speed 3D surface contouring. Opt Eng 1999;38:1065–71. doi: 10.1117&#x2F;1.602151.</li>
+<li>Pan J, Huang PS, Chiang FP. Color-encoded digital fringe projection technique for high-speed 3D shape measurement: color coupling and imbalance compensation, 5265. International Society for Optics and Photonics; 2004. p. 205–13.</li>
+<li>Pan J, Huang PS, Chiang FP. Color phase-shifting technique for three-dimensional shape measurement. Opt Eng 2006;45:013602. doi: 10.1117&#x2F;1.2151160.</li>
+<li>Pan J, Huang PS, Chiang FP. Color-coded binary fringe projection technique for 3D shape measurement. Opt Eng 2005;44:023606. doi: 10.1117&#x2F;1.1840973.</li>
+<li>Zhang Z, Towers CE, Towers DP. Time efficient color fringe projection system for 3D shape and color using optimum 3-frequency selection. Opt Express 2006;14(14):6444–55. doi: 10.1364&#x2F;OE.14.006444.</li>
+<li>Su WH, Kuo CY. 3D shape reconstruction using multiple projections: a method to eliminate shadowing for projected fringe profilometry. ProcSPIE 2007;669811. doi: 10.1117&#x2F;12.738699.</li>
+<li>Zhang Z, Towers DP, Towers CE. Snapshot color fringe projection for absolute three-dimensional metrology of video sequences. Appl Opt 2010;49(31):5947–53. doi: 10.1364&#x2F;AO.49.005947.</li>
+<li>Zhang Z, Towers CE, Towers DP. Robust color and shape measurement of full color artifacts by rgb fringe projection. Opt Eng 2012;51:021109. doi: 10.1117&#x2F;1.OE.51.2.021109. 58 &#x3D;&#x3D;&#x3D; PAGE 37 &#x3D;&#x3D;&#x3D; C. Zuo et al. Optics and Lasers in Engineering 109 (2018) 23–59</li>
+<li>Zhang S, Huang PS. High-resolution, real-time three-dimensional shape measurement. Opt Eng 2006;45:123601. doi: 10.1117&#x2F;1.2402128.</li>
+<li>Creath K. Step height measurement using two-wavelength phase-shifting interferometry. Appl Opt 1987;26(14):2810–16. doi: 10.1364&#x2F;AO.26.002810.</li>
+<li>Wang Y, Zhang S, Oliver JH. 3D shape measurement technique for multiple rapidly moving objects. Opt Express 2011;19(9):8539–45. doi: 10.1364&#x2F;OE.19.008539.</li>
+<li>Pan J, Huang PS, Zhang S, Chiang F-P. Color n-ary gray code for 3D shape measurement. In: Proceedings of ICEM, Italy; 2004.</li>
+<li>Zheng D, Da F. Phase coding method for absolute phase retrieval with a large number of codewords. Opt Express 2012;20(22):24139–50. doi: 10.1364&#x2F;OE.20.024139.</li>
+<li>Zhou C, Liu T, Si S, Xu J, Liu Y, Lei Z. An improved stair phase encoding method for absolute phase retrieval. Opt Lasers Eng 2015;66:269–78. doi: 10.1016&#x2F;j.optlaseng.2014.09.011.</li>
+<li>Feng S, Chen Q, Zuo C, Sun J, Yu SL. High-speed real-time 3D coordinates measurement based on fringe projection profilometry considering camera lens distortion. Opt Comm 2014;329:44–56. doi: 10.1016&#x2F;j.optcom.2014.04.067.</li>
+<li>Guan C, Hassebrook LG, Lau DL. Composite structured light pattern for threedimensional video. Opt Express 2003;11(5):406–17. doi: 10.1364&#x2F;OE.11.000406.</li>
+<li>Sansoni G, Redaelli E. A 3D vision system based on one-shot projection and phase demodulation for fast profilometry. Meas Sci Technol 2005;16(5):1109.</li>
+<li>Yue HM, Su XY, Liu YZ. Fourier transform profilometry based on composite structured light pattern. Opt Laser Technol 2007;39(6):1170–5. doi: 10.1016&#x2F;j.optlastec.2006.08.014.</li>
+<li>Christian Bruer-Burchardt Peter Khmstedt GN. Phase unwrapping using geometric constraints for high-speed fringe projection based 3D measurements. ProcSPIE 2013;8789. doi: 10.1117&#x2F;12.2020262.</li>
+<li>Li Z, Zhong K, Li YF, Zhou X, Shi Y. Multiview phase shifting: a full-resolution and high-speed 3D measurement framework for arbitrary shape dynamic objects. Opt Lett 2013;38(9):1389–91. doi: 10.1364&#x2F;OL.38.001389.</li>
+<li>Bruer-Burchardt C, Breitbarth A, Khmstedt P, Notni G. High-speed threedimensional measurements with a fringe projection-based optical sensor. Opt Eng 2014;53:112213. doi: 10.1117&#x2F;1.OE.53.11.112213.</li>
+<li>Garcia RR, Zakhor A. Consistent stereo-assisted absolute phase unwrapping methods for structured light systems. IEEE J Select Top Signal Process 2012;6(5):411– 24. doi: 10.1109&#x2F;JSTSP.2012.2195157.</li>
+<li>An Y, Hyun JS, Zhang S. Pixel-wise absolute phase unwrapping using geometric constraints of structured light system. Opt Express 2016;24(16):18445–59. doi: 10.1364&#x2F;OE.24.018445.</li>
+<li>Jiang C, Li B, Zhang S. Pixel-by-pixel absolute phase retrieval using three phase-shifted fringe patterns without markers. Opt Lasers Eng 2017;91:232–41. doi: 10.1016&#x2F;j.optlaseng.2016.12.002.</li>
+<li>Liu X, Kofman J. High-frequency background modulation fringe patterns based on a fringe-wavelength geometry-constraint model for 3D surface-shape measurement. Opt Express 2017;25(14):16618–28. doi: 10.1364&#x2F;OE.25.016618.</li>
+<li>Tao T, Chen Q, Feng S, Hu Y, Da J, Zuo C. High-precision real-time 3D shape measurement using a bi-frequency scheme and multi-view system. Appl Opt 2017;56(13):3646–53. doi: 10.1364&#x2F;AO.56.003646.</li>
+<li>Tao T, Chen Q, Feng S, Hu Y, Zhang M, Zuo C. High-precision real-time 3D shape measurement based on a quad-camera system. J Opt 2018;20(1):014009.</li>
+<li>Guo H, He H, Yu Y, Chen M. Least-squares calibration method for fringe projection profilometry. Opt Eng 2005;44(3):033603.</li>
+<li>Zhang S, Huang PS. Novel method for structured light system calibration. Opt Eng 2006;45(8):083601.</li>
+<li>Li Z, Shi Y, Wang C, Wang Y. Accurate calibration method for a structured light system. Opt Eng 2008;47(5):053604.</li>
+<li>Huang L, Chua PS, Asundi A. Least-squares calibration method for fringe projection profilometry considering camera lens distortion. Appl Opt 2010;49(9):1539–48.</li>
+<li>Vo M, Wang Z, Hoang T, Nguyen D. Flexible calibration technique for fringe-projection-based three-dimensional imaging. Opt Lett 2010;35(19):3192–4.</li>
+<li>Huang J, Wang Z, Xue Q, Gao J. Calibration of a camera–projector measurement system and error impact analysis. Meas Sci Technol 2012;23(12):125402.</li>
+<li>Moreno D, Taubin G. Simple, accurate, and robust projector-camera calibration. In: Second international conference on 3D imaging, modeling, processing, visualization and transmission (3DIMPVT). IEEE; 2012. p. 464–71.</li>
+<li>Vo M, Wang Z, Pan B, Pan T. Hyper-accurate flexible calibration technique for fringe-projection-based three-dimensional imaging. Opt Express 2012;20(15):16926–41.</li>
+<li>Yin Y, Peng X, Li A, Liu X, Gao BZ. Calibration of fringe projection profilometry with bundle adjustment strategy. Opt Lett 2012;37(4):542–4.</li>
+<li>Zhao H, Wang Z, Jiang H, Xu Y, Dong C. Calibration for stereo vision system based on phase matching and bundle adjustment algorithm. Opt Lasers Eng 2015;68:203–13.</li>
+<li>Li K, Bu J, Zhang D. Lens distortion elimination for improving measurement accuracy of fringe projection profilometry. Opt Lasers Eng 2016;85:53–64.</li>
+<li>Wang Y, Zhang S. Optimal fringe angle selection for digital fringe projection technique. Appl Opt 2013;52(29):7094–8.</li>
+<li>Zhou P, Liu X, Zhu T. Analysis of the relationship between fringe angle and three- -dimensional profilometry system sensitivity. Appl Opt 2014;53(13):2929–35.</li>
+<li>Zhang R, Guo H, Asundi AK. Geometric analysis of influence of fringe directions on phase sensitivities in fringe projection profilometry. Appl Opt 2016;55(27):7675–87.</li>
+<li>Guo H, Liu G. Approximations for the arctangent function in efficient fringe pattern analysis. Opt Express 2007;15(6):3053–66.</li>
+<li>Zhang S, Royer D, Yau ST. Gpu-assisted high-resolution, real-time 3D shape measurement. Opt Express 2006;14(20):9120–9.</li>
+<li>Karpinsky NL, Hoke M, Chen V, Zhang S. High-resolution, real-time three- -dimensional shape measurement on graphics processing unit. Opt Eng 2014;53(2):024105. 59</li>
+</ol>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9D%A1%E7%BA%B9%E6%8A%95%E5%BD%B1/">条纹投影</a><a class="post-meta__tags" href="/tags/%E4%B8%89%E7%BB%B4%E6%B5%8B%E9%87%8F/">三维测量</a><a class="post-meta__tags" href="/tags/%E7%9B%B8%E4%BD%8D%E5%B1%95%E5%BC%80/">相位展开</a><a class="post-meta__tags" href="/tags/%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95/">相移算法</a><a class="post-meta__tags" href="/tags/%E7%9B%B8%E4%BD%8D%E8%AF%AF%E5%B7%AE/">相位误差</a><a class="post-meta__tags" href="/tags/%E7%BB%BC%E8%BF%B0/">综述</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">基于深度学习的条纹图案分析</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. Fringe pattern analysis using deep learning. Advanced Photonics, 1(2), 025001 (2019). DOI: 10.1117&#x2F;1.AP.1.2.025001 收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。 © 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。 以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。 ...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a><a class="pagination-related" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法"><img class="cover" src="/2026/10/07/optimal-fringe-frequency-calibration/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">最优条纹频率怎么选：从误差公式到标定与推荐算法</div></div><div class="info-2"><div class="info-item-1">增加条纹数量，相同的位置变化会产生更大的相位变化，按理说更容易测准。可条纹太密时，相机看到的明暗起伏又会变弱，甚至接近噪声。到底该选哪一个频率？ 不能只挑画面最清楚的，也不能把别人的“最优 88 个周期”直接填进自己的设备。需要先测出系统在各个频率下的调制幅值，再把它与位置灵敏度放在同一个误差模型里比较。 这篇沿着“推导目标 → 采集标定数据 → 拟合 → 搜索 → 实测验收”展开。主线是扫描式条纹投影的窗口平滑模型；有关数据筛选、全局误差优化和近优集合的做法，会明确标为工程扩展。所有曲线都是本文公式计算的教学示意，不冒充硬件实验结果。   如果还不熟悉背景亮度 A、调制幅值 B、包裹相位和相位展开，可以先看条纹测量基础：相移、展开与深度学习。这里不再重复整套基础，重点回答频率怎样选。 先说清楚：选的是条纹数量，不是相移步数   量 本文记号 含义    条纹数量 f 规定投影范围内的完整周期数   空间频率 ν 单位空间长度内的周期数   条纹周期宽度 T_f 一次“亮→暗→亮”占据的长度   相移步数 N 一组相移图像的张数   投影帧率 fps 每秒投出多少幅图案   若投...</div></div></div></a><a class="pagination-related" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">条纹投影轮廓测量中隐含的窗口平滑效应建模</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Min Han, Hao Jiang, Fengxiao Lei, Yibo Xing, Xiaohao Wang, Xinghui Li. Modeling window smoothing effect hidden in fringe projection profilometry. Measurement, 242 (2025) 115852. DOI: 10.1016&#x2F;j.measurement.2024.115852 收稿：2024 年 5 月 20 日；修回：2024 年 9 月 16 日；录用：2024 年 9 月 29 日；在线发表：2024 年 10 月 4 日。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  关键词： 条纹投影轮廓测量；激光束扫描；调制光强；建模 摘要基于微机电系统（MEMS）微振镜的三维重建被认为极具发展前景。然而，线激光器作为 MEMS 系统的唯一光源，其影响重建的机制尚不明确。为填补这一理论空白，我们首次提出可解释的激光影响模型，称为窗口平滑模型。该模型...</div></div></div></a><a class="pagination-related" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">基于深度学习的条纹图案分析</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. Fringe pattern analysis using deep learning. Advanced Photonics, 1(2), 025001 (2019). DOI: 10.1117&#x2F;1.AP.1.2.025001 收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。 © 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。 以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。 ...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E5%BC%95%E8%A8%80"><span class="toc-number">2.</span> <span class="toc-text">1. 引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-FPP-%E4%B8%AD%E7%9A%84%E5%9B%BE%E5%83%8F%E5%BD%A2%E6%88%90"><span class="toc-number">3.</span> <span class="toc-text">2. FPP 中的图像形成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-FPP-%E4%B8%AD%E7%9A%84%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">3. FPP 中的相移算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%A0%87%E5%87%86-N-%E6%AD%A5%E7%9B%B8%E7%A7%BB"><span class="toc-number">4.1.</span> <span class="toc-text">3.1. 标准 N 步相移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E5%8F%8C%E4%B8%89%E6%AD%A5%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">4.2.</span> <span class="toc-text">3.2. 双三步相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-Hariharan-%E4%BA%94%E6%AD%A5%E7%9B%B8%E7%A7%BB"><span class="toc-number">4.3.</span> <span class="toc-text">3.3. Hariharan 五步相移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-%E6%94%B9%E8%BF%9B%E7%9A%84-2-1-%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">4.4.</span> <span class="toc-text">3.4. 改进的 2+1 相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5-%E6%A2%AF%E5%BD%A2%E7%9B%B8%E7%A7%BB"><span class="toc-number">4.5.</span> <span class="toc-text">3.5. 梯形相移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6-%E4%B8%89%E8%A7%92%E5%BD%A2%E7%9B%B8%E7%A7%BB"><span class="toc-number">4.6.</span> <span class="toc-text">3.6. 三角形相移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-7-%E7%A7%BB%E7%9B%B8%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%E8%BD%AE%E5%BB%93%E6%B5%8B%E9%87%8F"><span class="toc-number">4.7.</span> <span class="toc-text">3.7. \(\pi\) 移相傅里叶变换轮廓测量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-8-%E6%94%B9%E8%BF%9B%E5%9E%8B%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%E8%BD%AE%E5%BB%93%E6%B5%8B%E9%87%8F"><span class="toc-number">4.8.</span> <span class="toc-text">3.8. 改进型傅里叶变换轮廓测量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-9-%E8%83%8C%E6%99%AF%E5%BD%92%E4%B8%80%E5%8C%96%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%E8%BD%AE%E5%BB%93%E6%B5%8B%E9%87%8F"><span class="toc-number">4.9.</span> <span class="toc-text">3.9. 背景归一化傅里叶变换轮廓测量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%9B%B8%E7%A7%BB%E8%BD%AE%E5%BB%93%E6%B5%8B%E9%87%8F%E7%9A%84%E8%AF%AF%E5%B7%AE%E5%88%86%E6%9E%90%E4%B8%8E%E8%A1%A5%E5%81%BF"><span class="toc-number">5.</span> <span class="toc-text">4. 相移轮廓测量的误差分析与补偿</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-%E5%BC%BA%E5%BA%A6%E5%99%AA%E5%A3%B0"><span class="toc-number">5.1.</span> <span class="toc-text">4.1. 强度噪声</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%9B%B8%E6%9C%BA-%E6%8A%95%E5%BD%B1%E4%BB%AA%E7%9A%84%E9%9D%9E%E7%BA%BF%E6%80%A7%E8%AF%AF%E5%B7%AE"><span class="toc-number">5.2.</span> <span class="toc-text">4.2. 相机&#x2F;投影仪的非线性误差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E9%95%9C%E5%A4%B4%E7%A6%BB%E7%84%A6"><span class="toc-number">5.3.</span> <span class="toc-text">4.3. 镜头离焦</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-%E7%9B%B8%E7%A7%BB%E8%AF%AF%E5%B7%AE"><span class="toc-number">5.4.</span> <span class="toc-text">4.4. 相移误差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-5-%E8%BF%90%E5%8A%A8%E5%BC%95%E5%85%A5%E8%AF%AF%E5%B7%AE"><span class="toc-number">5.5.</span> <span class="toc-text">4.5. 运动引入误差</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-6-%E5%BC%BA%E5%BA%A6%E9%A5%B1%E5%92%8C"><span class="toc-number">5.6.</span> <span class="toc-text">4.6. 强度饱和</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-7-%E5%85%89%E7%85%A7%E6%B3%A2%E5%8A%A8"><span class="toc-number">5.7.</span> <span class="toc-text">4.7. 光照波动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-8-%E5%BD%A9%E8%89%B2%E6%9D%A1%E7%BA%B9%E6%8A%95%E5%BD%B1%E4%B8%AD%E7%9A%84%E8%80%A6%E5%90%88%E4%B8%8E%E5%A4%B1%E8%A1%A1%E8%AF%AF%E5%B7%AE"><span class="toc-number">5.8.</span> <span class="toc-text">4.8. 彩色条纹投影中的耦合与失衡误差</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%94%A8%E4%BA%8E%E7%BB%9D%E5%AF%B9%E7%9B%B8%E4%BD%8D%E6%81%A2%E5%A4%8D%E7%9A%84%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">5. 用于绝对相位恢复的相移算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#5-1-%E7%9B%B8%E7%A7%BB%E7%BB%93%E5%90%88%E6%A0%87%E5%87%86%E6%97%B6%E9%97%B4%E7%9B%B8%E4%BD%8D%E5%B1%95%E5%BC%80%EF%BC%883-3%EF%BC%89%E6%96%B9%E6%B3%95"><span class="toc-number">6.1.</span> <span class="toc-text">5.1. 相移结合标准时间相位展开（3+3）方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-2-%E7%9B%B8%E7%A7%BB%E7%BB%93%E5%90%88%E6%A0%BC%E9%9B%B7%E7%A0%81%E6%96%B9%E6%B3%95"><span class="toc-number">6.2.</span> <span class="toc-text">5.2. 相移结合格雷码方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-3-%E7%9B%B8%E7%A7%BB%E7%BB%93%E5%90%88%E7%9B%B8%E4%BD%8D%E7%BC%96%E7%A0%81%E6%96%B9%E6%B3%95"><span class="toc-number">6.3.</span> <span class="toc-text">5.3. 相移结合相位编码方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-4-%E5%8F%8C%E9%A2%91%E5%9B%BE%E6%A1%88%E6%96%B9%E6%A1%88"><span class="toc-number">6.4.</span> <span class="toc-text">5.4. 双频图案方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-5-%E5%8F%8C%E9%A2%91%EF%BC%883-2%EF%BC%89%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.5.</span> <span class="toc-text">5.5. 双频（3+2）相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-6-2-2-%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.6.</span> <span class="toc-text">5.6. 2+2 相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-7-%E7%BC%96%E7%A0%81%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.7.</span> <span class="toc-text">5.7. 编码相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-8-%E5%91%A8%E6%9C%9F%E7%BC%96%E7%A0%81%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.8.</span> <span class="toc-text">5.8. 周期编码相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-9-%E5%B5%8C%E5%85%A5%E6%95%A3%E6%96%91%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95"><span class="toc-number">6.9.</span> <span class="toc-text">5.9. 嵌入散斑相移算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-10-%E5%B5%8C%E5%85%A5%E6%95%A3%E6%96%91%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="toc-number">6.10.</span> <span class="toc-text">5.10. 嵌入散斑傅里叶变换算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E7%9B%B8%E7%A7%BB%E7%AE%97%E6%B3%95%E7%9A%84%E9%80%89%E6%8B%A9"><span class="toc-number">7.</span> <span class="toc-text">6. 相移算法的选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E8%BF%9B%E4%B8%80%E6%AD%A5%E8%AE%A8%E8%AE%BA"><span class="toc-number">8.</span> <span class="toc-text">7. 进一步讨论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#7-1-%E8%BF%9B%E4%B8%80%E6%AD%A5%E5%87%8F%E5%B0%91%E5%9B%BE%E6%A1%88%E6%95%B0%E9%87%8F"><span class="toc-number">8.1.</span> <span class="toc-text">7.1. 进一步减少图案数量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-1-%E9%A2%91%E7%8E%87%E5%A4%8D%E7%94%A8"><span class="toc-number">8.1.1.</span> <span class="toc-text">7.1.1. 频率复用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-2-%E5%87%A0%E4%BD%95%E7%BA%A6%E6%9D%9F"><span class="toc-number">8.1.2.</span> <span class="toc-text">7.1.2. 几何约束</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-2-%E7%9B%B8%E4%BD%8D-%E6%B7%B1%E5%BA%A6%E7%81%B5%E6%95%8F%E5%BA%A6"><span class="toc-number">8.2.</span> <span class="toc-text">7.2. 相位-深度灵敏度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-3-%E8%AE%A1%E7%AE%97%E6%95%88%E7%8E%87"><span class="toc-number">8.3.</span> <span class="toc-text">7.3. 计算效率</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E7%BB%93%E8%AE%BA"><span class="toc-number">9.</span> <span class="toc-text">8. 结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%B4%E8%B0%A2"><span class="toc-number">10.</span> <span class="toc-text">致谢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">11.</span> <span class="toc-text">参考文献</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review">engineering-thermodynamics-review</a><time datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

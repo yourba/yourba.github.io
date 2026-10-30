@@ -1,0 +1,382 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>基于深度学习的条纹图案分析 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Advanced Photonics 2019 全文中文翻译：用两个级联卷积网络从单幅条纹图案中预测背景光强、分子与分母，再经反正切恢复高精度相位。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于深度学习的条纹图案分析">
+<meta property="og:url" content="https://yourba.github.io/2026/10/30/fringe-pattern-analysis-deep-learning/index.html">
+<meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="Advanced Photonics 2019 全文中文翻译：用两个级联卷积网络从单幅条纹图案中预测背景光强、分子与分母，再经反正切恢复高精度相位。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
+<meta property="article:published_time" content="2026-10-30T13:20:00.000Z">
+<meta property="article:modified_time" content="2026-10-30T13:20:00.000Z">
+<meta property="article:author" content="Yourba">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="条纹分析">
+<meta property="article:tag" content="相位测量">
+<meta property="article:tag" content="条纹投影">
+<meta property="article:tag" content="单帧相位恢复">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "基于深度学习的条纹图案分析",
+  "url": "https://yourba.github.io/2026/10/30/fringe-pattern-analysis-deep-learning/",
+  "image": "https://yourba.github.io/img/avatar.jpg",
+  "datePublished": "2026-10-30T13:20:00.000Z",
+  "dateModified": "2026-10-30T13:20:00.000Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Yourba",
+      "url": "https://yourba.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://yourba.github.io/2026/10/30/fringe-pattern-analysis-deep-learning/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"已切换为繁体中文","cht_to_chs":"已切换为简体中文","day_to_night":"已切换为深色模式","night_to_day":"已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: true,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '基于深度学习的条纹图案分析',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">基于深度学习的条纹图案分析</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">基于深度学习的条纹图案分析</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T13:20:00.000Z" title="更新于 2026-10-30 21:20:00">2026-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E7%BF%BB%E8%AF%91/">论文翻译</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p><strong>原文信息</strong></p>
+<p>Shijie Feng, Qian Chen, Guohua Gu, Tianyang Tao, Liang Zhang, Yan Hu, Wei Yin, Chao Zuo. <em>Fringe pattern analysis using deep learning</em>. Advanced Photonics, 1(2), 025001 (2019).</p>
+<p>DOI: <a target="_blank" rel="noopener" href="https://doi.org/10.1117/1.AP.1.2.025001">10.1117&#x2F;1.AP.1.2.025001</a></p>
+<p>收稿：2018 年 8 月 22 日；录用：2019 年 1 月 8 日；在线发表：2019 年 2 月 28 日。</p>
+<p>作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像实验室（SCILab）。</p>
+<p>© 作者。由 SPIE 与 CLP 根据 Creative Commons Attribution 4.0 Unported 许可出版。全部或部分分发、复制本作品，需完整标注原始出版物（含 DOI）。</p>
+<p>以下为论文全文的中文翻译。公式、图、表与参考文献编号均与原文一致；图内英文标注与参考文献保留原文。</p>
+</blockquote>
+<p><strong>关键词：</strong> 条纹分析；相位测量；深度学习。</p>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><p>在许多光学测量技术中，条纹图案分析是从记录到的条纹图案中恢复潜在相位分布的核心算法。尽管数十年来已有大量研究，如何以尽可能高的精度、从最少数量的条纹图案中提取所需相位信息，仍是最具挑战性的开放问题之一。受深度学习技术在计算机视觉及其他应用中近期成功的启发，我们据我们所知首次证明，深度神经网络可以被训练来执行条纹分析，从而大幅提升从单幅条纹图案中解调相位的精度。我们在条纹投影轮廓测量场景下，利用载频条纹图案对所提方法进行了实验验证。实验结果表明，与两种有代表性的单帧技术——傅里叶变换轮廓测量和窗口傅里叶变换轮廓测量——相比，该方法在精度和保边性能上均具有更优表现。</p>
+<span id="more"></span>
+
+<style>
+#card-toc .toc-number { display: none; }
+.post-content .table-wrap table { min-width: 620px; white-space: nowrap; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.globalFn?.encrypt?.mathjax?.()
+})
+</script>
+
+<p>全息干涉测量[1]、电子散斑干涉测量[2]和条纹投影轮廓测量[3]等光学测量技术，因其非接触测量的特点，在科学与工程的许多领域颇受欢迎，并已被广泛用于测量位移、应变、表面轮廓和折射率等各种物理量。在所有这些技术中，被测物理量的信息都存储在二维条纹图案的相位中。因此，这些光学技术所实施测量的精度，从根本上取决于对记录条纹图案潜在相位分布的解调精度。</p>
+<p>过去几十年间，研究者投入了巨大精力来发展各种条纹分析技术。这些技术大致可分为两类：(1) 需要多幅条纹图案来提取相位信息的相移（PS）方法[4]；(2) 允许从单幅条纹图案中恢复相位的空间相位解调方法，如傅里叶变换（FT）[5]、窗口傅里叶变换（WFT）[6]和小波变换（WT）方法[7]。与空间相位解调方法相比，多次曝光的 PS 技术通常更稳健，能够实现逐像素、更高分辨率和更高精度的相位测量。此外，PS 测量对非均匀背景光强和条纹调制相当不敏感。然而，由于需要多次拍摄，这些方法难以应用于动态测量，且更容易受到外部扰动和振动的影响。因此，在许多应用中，人们希望从单幅条纹图案中提取相位，这属于空间条纹分析的范畴。PS 技术在逐像素基础上解调相位图；与之不同，空间方法对某像素的相位估计会受到该像素邻域、乃至条纹图案中所有像素的影响，这带来了更好的噪声容限，代价是在相位图的间断处和孤立区域附近性能较差[8,9]。</p>
+<p>深度学习是一种强大的机器学习技术，它采用具有多层结构、功能日益丰富的人工神经网络，并在数据充足的众多应用中取得了巨大成功[10,11]。本文中，我们据我们所知首次通过实验证明，使用深度神经网络可以显著提升从单幅条纹图案中解调相位的精度。具体而言，网络被训练用于预测若干中间结果，这些结果对于计算输入条纹图案的相位很有用。在网络训练期间，我们采集各种场景的 PS 条纹图像来生成训练数据。每条训练数据的训练标签（真值）是由 PS 算法计算得到的一对中间结果。经过适当训练后，神经网络可以“盲”地只接收一幅输入条纹图案，并以高保真度输出这些中间结果的相应估计。最后，借助深度学习估计出的中间结果，通过反正切函数即可恢复高精度的相位图。在条纹投影轮廓测量上的实验结果证实，与当前最先进的方法相比，这种基于深度学习的方法能够仅凭单幅条纹图案显著改善恢复相位的质量。</p>
+<p>这里，网络配置的灵感来自大多数相位解调技术的基本过程，现简要回顾如下。典型条纹图案的数学形式可表示为</p>
+
+\[
+I(x,y)=A(x,y)+B(x,y)\cos\phi(x,y), \tag{1}
+\]
+
+
+<p>其中 \(I(x,y)\) 是条纹图案的光强，\(A(x,y)\) 是背景光强，\(B(x,y)\) 是条纹振幅，\(\phi(x,y)\) 是待求的相位分布。这里 \(x\) 和 \(y\) 指像素坐标。在大多数相位解调技术中，背景光强 \(A(x,y)\) 被视为干扰项，应从总光强中去除。随后，由反三角函数恢复包裹相位图，该函数的自变量是一个比值，其分子表征相位正弦 [\(\sin\phi(x,y)\)]，分母表征相位余弦 [\(\cos\phi(x,y)\)]：</p>
+
+\[
+\phi(x,y)=\arctan\frac{M(x,y)}{D(x,y)}=\arctan\frac{cB(x,y)\sin\phi(x,y)}{cB(x,y)\cos\phi(x,y)}, \tag{2}
+\]
+
+
+<p>其中 \(c\) 是依赖于相位解调算法的常数（例如 FT 中 \(c=0.5\)，N 步 PS 中 \(c=N/2\)），\(M(x,y)\) 和 \(D(x,y)\) 分别表示分子项和分母项的简写。注意，\(M(x,y)\) 和 \(D(x,y)\) 的符号还可用于为每次 \(\phi(x,y)\) 的计算唯一定义一个象限。借助四象限相量空间，各点的相位值可在模 \(2\pi\) 意义下确定。</p>
+<p>为了模拟上述过程，构建了两个不同的卷积神经网络（CNN），它们按照图 1 级联连接。第一个卷积神经网络（CNN1）以原始条纹图案 \(I(x,y)\) 为输入，估计条纹图案的背景光强 \(A(x,y)\)。利用估计的背景图像 \(A(x,y)\) 和原始条纹图像 \(I(x,y)\)，训练第二个卷积神经网络（CNN2）预测反正切函数的分子 \(M(x,y)\) 和分母 \(D(x,y)\)，二者被送入后续的反正切函数 [式 (2)] 以获得最终相位分布 \(\phi(x,y)\)。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig1-method-flowchart.png" alt="所提方法的流程图"></p>
+<p><em>图 1. 所提方法的流程图。两个卷积网络（CNN1 和 CNN2）与反正切函数共同用于确定相位分布。对于 CNN1（红色），输入为条纹图像 I(x, y)，输出为估计的背景图像 A(x, y)。对于 CNN2（绿色），输入为条纹图像 I(x, y) 与 CNN1 预测的背景图像 A(x, y)，输出为分子 M(x, y) 和分母 D(x, y)。分子和分母随后被送入反正切函数以计算相位 φ(x, y)。</em></p>
+<p>为了生成用作训练两个卷积神经网络标签的真值数据，采用 N 步 PS 方法完成相位恢复。所采集的相应 N 幅 PS 条纹图案可表示为</p>
+
+\[
+I_n(x,y)=A(x,y)+B(x,y)\cos\left[\phi(x,y)-\delta_n\right], \tag{3}
+\]
+
+
+<p>其中索引 \(n=0,1,\dots,N-1\)，\(\delta_n\) 为相移量，等于 \(2\pi n/N\)。利用三角函数的正交性，背景光强可求得为</p>
+
+\[
+A(x,y)=\frac{1}{N}\sum_{n=0}^{N-1}I_n(x,y). \tag{4}
+\]
+
+
+<p>采用最小二乘法，相位可计算为</p>
+
+\[
+\phi(x,y)=\arctan\frac{\sum_{n=0}^{N-1}I_n(x,y)\sin\delta_n}{\sum_{n=0}^{N-1}I_n(x,y)\cos\delta_n}. \tag{5}
+\]
+
+
+<p>因此，式 (2) 中反正切函数的分子和分母可表示为</p>
+
+\[
+M(x,y)=\sum_{n=1}^{N-1}I_n(x,y)\sin\delta_n=\frac{N}{2}B(x,y)\sin\phi(x,y), \tag{6}
+\]
+
+
+
+\[
+D(x,y)=\sum_{n=0}^{N-1}I_n(x,y)\cos\delta_n=\frac{N}{2}B(x,y)\cos\phi(x,y). \tag{7}
+\]
+
+
+<p>上述表达式表明，分子 \(M(x,y)\) 与分母 \(D(x,y)\) 通过一种与背景图像 \(A(x,y)\) 有关的准线性关系，与式 (1) 中的原始条纹图案紧密相关。因此，在已知 \(A(x,y)\) 的情况下，深度神经网络可以轻松地学习到 \(M(x,y)\) 和 \(D(x,y)\)，这也为我们的网络设计提供了依据。需要指出的是，简单的输入–输出网络结构（将条纹图案 \(I(x,y)\) 直接映射到相位 \(\phi(x,y)\)）在我们的情形中表现不佳，因为它难以精确地跟随相位图中的相位包裹（\(2\pi\) 跳变）。因此，我们的深度神经网络并不直接估计相位，而是被训练用于预测中间结果，即式 (2) 中反正切函数的分子和分母，以获得更好的相位估计。为进一步验证所提方法的优越性，补充材料第 6 节给出了一项消融分析，实验比较了三种方法：(1) 直接估计相位 \(\phi(x,y)\)；(2) 不使用 \(A(x,y)\) 而预测 \(D(x,y)\) 和 \(M(x,y)\)；(3) 同时计算 \(A(x,y)\)、\(D(x,y)\) 和 \(M(x,y)\)。对比结果表明，我们的方法在相位重建精度上优于其他方法。</p>
+<p>为进一步揭示两个网络的内部结构，图 2 和图 3 给出了这两个卷积神经网络的示意图。各层或各块标注的尺寸表示其输出数据的大小。CNN1 的输入是一幅 \(W\times H\) 像素的原始条纹图案。随后，它依次经过一个卷积层、一组残差块（包含四个残差块）和两个卷积层处理。最后一层估计背景图像的灰度值。利用预测的背景光强和原始条纹图案，如图 3 所示，CNN2 计算分子项和分母项。在 CNN2 中，具有两个通道的输入数据在两条不同路径中分别按 ×1 和 ×2 下采样。在第二条路径中，数据先被下采样以获得高层感知，再被上采样以匹配原始尺寸。借助双尺度数据流路径，网络能够为分子和分母感知更多的表面细节。关于网络架构的更多细节见补充材料第 3 节。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig2-cnn1.png" alt="CNN1 示意图"></p>
+<p><em>图 2. CNN1 的示意图，由卷积层和若干残差块组成。</em></p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig3-cnn2.png" alt="CNN2 示意图"></p>
+<p><em>图 3. CNN2 的示意图。它比 CNN1 更复杂，还包含两个池化层、一个上采样层、一个拼接块以及一个线性激活的卷积层。</em></p>
+<p>所提方法的性能在条纹投影轮廓测量场景下得到了验证。实验包括两步：训练和测试。为获得训练数据的真值，我们生成空间频率 \(f=160\) 的 12 步 PS 图案，并通过投影仪（DLP 4100，Texas Instruments）将其投射到各种物体上。条纹图像由一台 8 位像素深度、分辨率为 \(1280\times800\) 的 CMOS 相机（V611，Vision Research Phantom）同步采集。为增强所提方法的泛化能力，训练物体最好具有不同的材质、颜色和反射率。此外，与传统条纹分析方法要求条纹具有足够信噪比或不含饱和像素类似，所提方法也更倾向于选择表面不过暗或不反光的物体。我们的训练数据集采集自 80 个场景，包含 960 幅条纹图案以及由 12 步 PS 方法得到的对应真值数据（光学装置和训练数据采集的细节见补充材料第 1、2 节）。由于 CNN2 的输入之一是 CNN1 的输出，因此先训练 CNN1，再用预测的背景光强和采集的条纹图案训练 CNN2。这两个神经网络采用 TensorFlow 框架（Google）实现，并在 GTX Titan 显卡（NVIDIA）上计算。为在训练过程中监测神经网络在未见数据上的精度，我们构建了一个验证集，其中包含来自 12 个场景的 144 幅条纹图像，这些场景与训练场景相互独立。关于网络训练的更多细节见补充材料第 3 节。</p>
+<p>为将训练好的神经网络与经典单帧方法（即 FT[5] 和 WFT[6]）进行对比测试，我们测量了一个包含两个孤立石膏模型的场景，如图 4(a) 所示。与右侧模型相比，左侧模型具有更复杂的表面，例如卷曲的头发和高挺的鼻梁。注意，该场景在训练阶段从未被我们的神经网络见过。以图 4(a) 为输入，训练好的 CNN1 预测出如图 4(b) 所示的背景光强。从放大视图中可以看出，条纹已被深度神经网络完全去除。随后，训练好的 CNN2 以条纹图案和预测的背景光强为输入，估计分子 \(M(x,y)\) 和分母 \(D(x,y)\)，结果分别如图 4(c) 和 4(d) 所示。相位由式 (2) 计算，如图 4(e) 所示。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig4-network-test.png" alt="网络测试结果"></p>
+<p><em>图 4. 使用训练好的网络对训练阶段未出现的场景进行测试。(a) 输入条纹图像 I(x, y)；(b) CNN1 预测的背景图像 A(x, y)；(c) 和 (d) CNN2 估计的分子 M(x, y) 与分母 D(x, y)；(e) 由 (c) 和 (d) 计算得到的相位 φ(x, y)。</em></p>
+<p>为了更便于评估估计相位的质量，我们采用多频时间相位展开[12]对其进行展开；其中，不同频率条纹图案的额外相位图由 PS 算法计算，随后用于展开通过深度学习得到的相位。为展示展开相位的精度，我们以参考相位图为基准计算相位误差；该参考相位图由 12 步 PS 方法获得，并采用相同策略展开。</p>
+<p>图 5(a)–5(c) 显示了这些方法的整体绝对相位误差，各方法计算得到的平均绝对误差（MAE）列于表 1。注意，为尽可能获得最佳结果，FT 和 WFT 中的可调参数（例如窗口尺寸）已仔细调优。FT 的结果表现出最明显的相位畸变，MAE 也最大，为 0.20 rad。WFT 的表现优于 FT，两个模型的误差都更少（MAE 0.19 rad）。在这些方法中，所提基于深度学习的方法误差最小，为 0.087 rad。此外，在训练阶段之后，我们的方法完全自动，无需手动搜索参数来优化性能。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig5-phase-errors.png" alt="相位误差对比"></p>
+<p><em>图 5. 不同方法的相位误差比较：(a) FT；(b) WFT；(c) 我们的方法；(d) 两个所选复杂区域相位误差的放大视图。</em></p>
+<p><strong>表 1. FT、WFT 与我们的方法的相位误差。</strong></p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>FT</th>
+<th>WFT</th>
+<th>我们的方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MAE (rad)</td>
+<td>0.20</td>
+<td>0.19</td>
+<td>0.087</td>
+</tr>
+</tbody></table>
+<p>为详细比较误差图，图 5(d) 给出了两个复杂区域的相位误差：左侧模型的头发和右侧模型的裙子。从图 5(d) 可以看到，FT 和 WFT 的结果中存在明显误差，主要集中于边界或深度突变区域。相比之下，我们的方法大幅降低了相位畸变，表明其在测量具有间断和孤立复杂表面的物体时性能显著提升。为进一步测试并比较我们的技术与 FT、WFT 的性能，补充材料第 7 节详细介绍了更多种类物体的测量，结果同样表明我们的方法在相位重建精度上优于 FT 和 WFT。</p>
+<p>为进行更直观的比较，我们通过立体三角测量[13]将展开相位转换为三维渲染几何，如图 6 所示。图 6(a) 显示，FT 的重建结果具有许多颗粒状畸变，这主要源于频域中不可避免的频谱泄漏与混叠。与 FT 相比，WFT 重建出的物体表面更平滑，但未能保留表面细节，例如左侧模型的眼睛和右侧模型裙子的褶皱，如图 6(b) 所示。在这些重建结果中，基于深度学习的方案获得了最高质量的三维重建 [图 6(c)]，在视觉上几乎重现了采用 12 步 PS 条纹图案的真值数据 [图 6(d)]。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig6-3d-reconstruction.png" alt="三维重建对比"></p>
+<p><em>图 6. 不同方法三维重建结果的比较：(a) FT；(b) WFT；(c) 我们的方法；(d) 由 12 步 PS 轮廓测量获得的真值。</em></p>
+<p>还应进一步说明，在上述实验中，条纹图案的载频是影响 FT 和 WFT 性能的关键因素；为获得具有合理精度和空间分辨率的结果，载频被设置得足够高（\(f=160\)）。然而，当载频相对较低时，它们分析条纹图案就可能变得困难。如补充材料第 4 节所示，当载频降至 60 时，FT 和 WFT 的重建质量分别退化至 0.28 rad 和 0.26 rad。相比之下，我们的方法始终能给出更精确的相位重建，相位误差为 0.10 rad。此外，为找到合适的图案，我们建议选择频率高、密度充足的条纹，但前提是不影响采集图案的对比度。补充材料第 5 节给出了网络训练最优频率选择的详细信息。</p>
+<p>最后，为定量确定学习到的相位在转换为所需物理量（即物体三维形貌）后的精度，我们测量了一对标准陶瓷球，其形状已基于三坐标测量机进行标定。图 7(a) 显示了被测陶瓷球。它们的半径分别为 25.398 和 25.403 mm，球心距为 100.069 mm。我们由所提方法获得的相位计算三维点云，再将三维点拟合到球面模型。重建结果如图 7(b) 所示，其中使用“jet”色图表示重建误差的数据值。重建球的半径分别为 25.413 和 25.420 mm，偏差分别为 15 和 17 μm。测得的球心距为 100.048 mm，误差为 −21 μm。由于测量尺寸与真值非常接近，该实验表明我们的方法不仅能仅凭单幅条纹图案提供可靠的相位信息，还能实现高精度的单帧三维测量。</p>
+<p><img src="/2026/10/30/fringe-pattern-analysis-deep-learning/fig7-sphere-accuracy.png" alt="标准球精度分析"></p>
+<p><em>图 7. 所提方法重建精度的定量分析。(a) 被测物体：一对标准球；(b) 显示测量精度的三维重建结果。</em></p>
+<p>本文展示了深度学习如何显著提升从单幅条纹图案中解调相位的精度。与现有的单帧方法相比，这种基于深度学习的技术通过快速预测背景图像并估计反正切函数的分子和分母，为条纹分析提供了一种框架，无需任何人工干预即可获得高精度、保边的相位重建。所提方法的有效性已在条纹投影轮廓测量场景下利用载频条纹图案得到验证。我们相信，在针对不同类型数据进行适当训练后，所提出的网络框架或其衍生方案也应适用于其他形式的条纹图案（例如指数相位条纹图案或闭合条纹图案）以及其他相位测量技术，具有极为广阔的应用前景。</p>
+<h2 id="致谢"><a href="#致谢" class="headerlink" title="致谢"></a>致谢</h2><p>本工作由国家自然科学基金（61722506、61705105 和 11574152）、国家重点研发计划（2017YFF0106403）、江苏省杰出青年基金（BK20170034）、中国博士后科学基金（2017M621747）以及江苏省博士后科研资助计划（1701038A）资助。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ol>
+<li>T. Kreis, <em>Handbook of Holographic Interferometry: Optical and Digital Methods</em>, John Wiley &amp; Sons, Hoboken, New Jersey (2006).</li>
+<li>P. K. Rastogi, <em>Digital Speckle Pattern Interferometry &amp; Related Techniques</em>, John Wiley &amp; Sons, Hoboken, New Jersey (2000).</li>
+<li>S. S. Gorthi and P. Rastogi, “Fringe projection techniques: whither we are?,” <em>Opt. Lasers Eng.</em> 48(2), 133–140 (2010).</li>
+<li>C. Zuo et al., “Phase shifting algorithms for fringe projection profilometry: a review,” <em>Opt. Lasers Eng.</em> 109, 23–59 (2018).</li>
+<li>X. Su and Q. Zhang, “Dynamic 3-D shape measurement method: a review,” <em>Opt. Lasers Eng.</em> 48(2), 191–204 (2010).</li>
+<li>Q. Kemao, “Two-dimensional windowed Fourier transform for fringe pattern analysis: principles, applications and implementations,” <em>Opt. Lasers Eng.</em> 45(2), 304–317 (2007).</li>
+<li>J. Zhong and J. Weng, “Spatial carrier-fringe pattern analysis by means of wavelet transform: wavelet transform profilometry,” <em>Appl. Opt.</em> 43(26), 4993–4998 (2004).</li>
+<li>L. Huang et al., “Comparison of Fourier transform, windowed Fourier transform, and wavelet transform methods for phase extraction from a single fringe pattern in fringe projection profilometry,” <em>Opt. Lasers Eng.</em> 48(2), 141–148 (2010).</li>
+<li>Z. Zhang et al., “Comparison of Fourier transform, windowed Fourier transform, and wavelet transform methods for phase calculation at discontinuities in fringe projection profilometry,” <em>Opt. Lasers Eng.</em> 50(8), 1152–1160 (2012).</li>
+<li>A. Sinha et al., “Lensless computational imaging through deep learning,” <em>Optica</em> 4(9), 1117–1125 (2017).</li>
+<li>Y. Rivenson et al., “Phase recovery and holographic image reconstruction using deep learning in neural networks,” <em>Light: Sci. Appl.</em> 7, 17141 (2018).</li>
+<li>C. Zuo et al., “Temporal phase unwrapping algorithms for fringe projection profilometry: a comparative review,” <em>Opt. Lasers Eng.</em> 85, 84–103 (2016).</li>
+<li>C. Zuo et al., “High-speed three-dimensional profilometry for multiple objects with complex shapes,” <em>Opt. Express</em> 20(17), 19493–19510 (2012).</li>
+</ol>
+<h2 id="作者简介"><a href="#作者简介" class="headerlink" title="作者简介"></a>作者简介</h2><p><strong>冯世杰</strong>，在南京理工大学获得光学工程博士学位，现任南京理工大学副教授。研究兴趣包括相位测量、高速三维成像、条纹投影、机器学习和计算机视觉。</p>
+<p><strong>陈钱</strong>，在南京理工大学电子工程与光电技术学院获得学士、硕士和博士学位，现任南京理工大学教授、副校长，入选长江学者特聘教授。他在光电成像与信息处理方面有广泛的研究兴趣，已发表 200 余篇期刊论文。其研究团队围绕中&#x2F;远波长红外热成像、超高灵敏度微光成像、非干涉定量相位成像以及高速三维传感与成像开发新技术与系统，特别应用于国防、工业和生物医学领域。他是 SPIE 和 OSA 会员。</p>
+<p><strong>顾国华</strong>，在南京理工大学获得学士、硕士和博士学位，现为南京理工大学教授。研究兴趣包括光学三维测量、条纹投影、红外成像和鬼成像。</p>
+<p><strong>陶天阳</strong>，在南京理工大学获得学士学位，现为南京理工大学博士四年级学生。研究兴趣包括多视角光学三维成像、计算机视觉和实时三维测量。</p>
+<p><strong>张良</strong>，在南京理工大学获得学士和硕士学位，现为南京理工大学博士四年级学生。研究兴趣包括高动态范围三维成像和计算机视觉。</p>
+<p><strong>胡岩</strong>，在武汉理工大学获得学士学位，现为南京理工大学博士四年级学生。研究兴趣包括显微成像、三维成像和系统标定。</p>
+<p><strong>尹维</strong>，南京理工大学博士二年级学生。研究兴趣包括深度学习、高速三维成像、条纹投影和计算成像。</p>
+<p><strong>左超</strong>，2009 年和 2014 年分别在南京理工大学（NJUST）获得学士和博士学位。2012 年至 2013 年在新加坡南洋理工大学光学与激光工程中心担任研究助理。现任南京理工大学电子工程与光电技术学院教授、智能计算成像实验室（<a target="_blank" rel="noopener" href="http://www.scilaboratory.com)负责人.他在计算成像和高速三维传感方面有广泛的研究兴趣,已发表/">www.scilaboratory.com）负责人。他在计算成像和高速三维传感方面有广泛的研究兴趣，已发表</a> 100 余篇同行评审期刊论文。入选国家自然科学基金优秀青年科学基金和江苏省杰出青年基金。他是 SPIE、OSA 和 IEEE 会员。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/%E6%9D%A1%E7%BA%B9%E5%88%86%E6%9E%90/">条纹分析</a><a class="post-meta__tags" href="/tags/%E7%9B%B8%E4%BD%8D%E6%B5%8B%E9%87%8F/">相位测量</a><a class="post-meta__tags" href="/tags/%E6%9D%A1%E7%BA%B9%E6%8A%95%E5%BD%B1/">条纹投影</a><a class="post-meta__tags" href="/tags/%E5%8D%95%E5%B8%A7%E7%9B%B8%E4%BD%8D%E6%81%A2%E5%A4%8D/">单帧相位恢复</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">条纹投影轮廓测量中的相移算法：综述</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Chao Zuo, Shijie Feng, Lei Huang, Tianyang Tao, Wei Yin, Qian Chen. Phase shifting algorithms for fringe projection profilometry: A review. Optics and Lasers in Engineering, 109 (2018) 23–59. DOI: 10.1016&#x2F;j.optlaseng.2018.04.019 收稿：2018 年 2 月 15 日；修回：2018 年 4 月 15 日；录用：2018 年 4 月 30 日；在线发表：2018 年 5 月 15 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像（SCI）实验室；d 美国布鲁克海文国家实验室 NSLS-II。 © 2018 Elsevier Ltd. 保留所有权利。 以下为论文全文的中文翻译。章节、公式 (1)–(158)、图 1–36 与参考文献 [1]–[266] 编号均与原...</div></div></div></a><a class="pagination-related" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">U-Net：用于生物医学图像分割的卷积网络</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Olaf Ronneberger, Philipp Fischer, Thomas Brox. U-Net: Convolutional Networks for Biomedical Image Segmentation. arXiv:1505.04597v1 [cs.CV], 2015. 单位：德国弗赖堡大学计算机科学系、BIOSS 生物信号研究中心。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  摘要人们普遍认为，成功训练深度网络需要数千个带标注的训练样本。本文提出一种网络与训练策略，它强烈依赖数据增强，从而更高效地利用可用的标注样本。该架构由一条用于捕获上下文的收缩路径和一条对称的、能够实现精确定位的扩张路径组成。我们表明，这样的网络可以从极少量图像端到端训练，并在 ISBI 电子显微镜图像堆栈中神经元结构分割挑战赛上优于此前的最佳方法（滑动窗口卷积网络）。使用在透射光显微图像（相差和 DIC）上训练的同一网络，我们在 2015 年 ISBI 细胞追踪挑战赛的这些类别中以较大优势获胜。此外，该网络速...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/10/07/fringe-projection-phase-learning/" title="从条纹到三维：相移、相位展开、深度学习与激光线宽"><img class="cover" src="/2026/10/07/fringe-projection-phase-learning/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">从条纹到三维：相移、相位展开、深度学习与激光线宽</div></div><div class="info-2"><div class="info-item-1">把明暗条纹投到一个石膏头像上，相机能看到鼻梁、卷发和脸颊上的条纹发生变化。接下来怎么把这些亮度值变成三维坐标？ 这件事最容易混淆的地方，是把“求出相位”“确定条纹编号”和“恢复三维位置”当成同一个步骤。再加上单帧解相、CNN、U-Net、MEMS 这些名词，原本的一条测量流程很快就变成了几组不相连的概念。 这篇从一个像素的亮度开始，把它们重新串起来。先手算四步相移，再解释相位展开和学习型解相，最后回到投影端：激光线为什么会把条纹抹平，条纹又为什么不是越密越好。只需要知道正弦、余弦描述周期变化，不需要先学过光学或神经网络。   先看整条测量流程 图中是功能流程，不是某一套装置的光路图。传统相移和学习型解相是两条可选路线；相位展开、几何标定仍需分别处理。 条纹投影轮廓术（Fringe Projection Profilometry，FPP）是一种结构光测量方法。投影器主动给物体加上已知规律的明暗标记，相机从另一个位置观察这些标记，再利用它们之间的几何对应关系恢复表面形状。 结构光（Structured Light）是更大的概念。正弦条纹、点阵、格雷码、随机散斑都可以作为光学编码。这里...</div></div></div></a><a class="pagination-related" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">U-Net：用于生物医学图像分割的卷积网络</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Olaf Ronneberger, Philipp Fischer, Thomas Brox. U-Net: Convolutional Networks for Biomedical Image Segmentation. arXiv:1505.04597v1 [cs.CV], 2015. 单位：德国弗赖堡大学计算机科学系、BIOSS 生物信号研究中心。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  摘要人们普遍认为，成功训练深度网络需要数千个带标注的训练样本。本文提出一种网络与训练策略，它强烈依赖数据增强，从而更高效地利用可用的标注样本。该架构由一条用于捕获上下文的收缩路径和一条对称的、能够实现精确定位的扩张路径组成。我们表明，这样的网络可以从极少量图像端到端训练，并在 ISBI 电子显微镜图像堆栈中神经元结构分割挑战赛上优于此前的最佳方法（滑动窗口卷积网络）。使用在透射光显微图像（相差和 DIC）上训练的同一网络，我们在 2015 年 ISBI 细胞追踪挑战赛的这些类别中以较大优势获胜。此外，该网络速...</div></div></div></a><a class="pagination-related" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">条纹投影轮廓测量中隐含的窗口平滑效应建模</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Min Han, Hao Jiang, Fengxiao Lei, Yibo Xing, Xiaohao Wang, Xinghui Li. Modeling window smoothing effect hidden in fringe projection profilometry. Measurement, 242 (2025) 115852. DOI: 10.1016&#x2F;j.measurement.2024.115852 收稿：2024 年 5 月 20 日；修回：2024 年 9 月 16 日；录用：2024 年 9 月 29 日；在线发表：2024 年 10 月 4 日。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  关键词： 条纹投影轮廓测量；激光束扫描；调制光强；建模 摘要基于微机电系统（MEMS）微振镜的三维重建被认为极具发展前景。然而，线激光器作为 MEMS 系统的唯一光源，其影响重建的机制尚不明确。为填补这一理论空白，我们首次提出可解释的激光影响模型，称为窗口平滑模型。该模型...</div></div></div></a><a class="pagination-related" href="/2026/10/07/optimal-fringe-frequency-calibration/" title="最优条纹频率怎么选：从误差公式到标定与推荐算法"><img class="cover" src="/2026/10/07/optimal-fringe-frequency-calibration/cover.svg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-07</div><div class="info-item-2">最优条纹频率怎么选：从误差公式到标定与推荐算法</div></div><div class="info-2"><div class="info-item-1">增加条纹数量，相同的位置变化会产生更大的相位变化，按理说更容易测准。可条纹太密时，相机看到的明暗起伏又会变弱，甚至接近噪声。到底该选哪一个频率？ 不能只挑画面最清楚的，也不能把别人的“最优 88 个周期”直接填进自己的设备。需要先测出系统在各个频率下的调制幅值，再把它与位置灵敏度放在同一个误差模型里比较。 这篇沿着“推导目标 → 采集标定数据 → 拟合 → 搜索 → 实测验收”展开。主线是扫描式条纹投影的窗口平滑模型；有关数据筛选、全局误差优化和近优集合的做法，会明确标为工程扩展。所有曲线都是本文公式计算的教学示意，不冒充硬件实验结果。   如果还不熟悉背景亮度 A、调制幅值 B、包裹相位和相位展开，可以先看条纹测量基础：相移、展开与深度学习。这里不再重复整套基础，重点回答频率怎样选。 先说清楚：选的是条纹数量，不是相移步数   量 本文记号 含义    条纹数量 f 规定投影范围内的完整周期数   空间频率 ν 单位空间长度内的周期数   条纹周期宽度 T_f 一次“亮→暗→亮”占据的长度   相移步数 N 一组相移图像的张数   投影帧率 fps 每秒投出多少幅图案   若投...</div></div></div></a><a class="pagination-related" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-10-30</div><div class="info-item-2">条纹投影轮廓测量中的相移算法：综述</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Chao Zuo, Shijie Feng, Lei Huang, Tianyang Tao, Wei Yin, Qian Chen. Phase shifting algorithms for fringe projection profilometry: A review. Optics and Lasers in Engineering, 109 (2018) 23–59. DOI: 10.1016&#x2F;j.optlaseng.2018.04.019 收稿：2018 年 2 月 15 日；修回：2018 年 4 月 15 日；录用：2018 年 4 月 30 日；在线发表：2018 年 5 月 15 日。 作者单位：a 南京理工大学电子工程与光电技术学院；b 江苏省光谱成像与智能感知重点实验室；c 南京理工大学智能计算成像（SCI）实验室；d 美国布鲁克海文国家实验室 NSLS-II。 © 2018 Elsevier Ltd. 保留所有权利。 以下为论文全文的中文翻译。章节、公式 (1)–(158)、图 1–36 与参考文献 [1]–[266] 编号均与原...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%91%98%E8%A6%81"><span class="toc-number">1.</span> <span class="toc-text">摘要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%87%B4%E8%B0%A2"><span class="toc-number">2.</span> <span class="toc-text">致谢</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E7%8C%AE"><span class="toc-number">3.</span> <span class="toc-text">参考文献</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%9C%E8%80%85%E7%AE%80%E4%BB%8B"><span class="toc-number">4.</span> <span class="toc-text">作者简介</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review">engineering-thermodynamics-review</a><time datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
