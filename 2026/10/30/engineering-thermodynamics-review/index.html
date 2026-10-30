@@ -1,21 +1,30 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>engineering-thermodynamics-review | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta property="og:type" content="article">
-<meta property="og:title" content="engineering-thermodynamics-review">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从状态到循环：工程热力学九章复习笔记 | Yourba的博客</title><meta name="author" content="Yourba"><meta name="copyright" content="Yourba"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="按「描述状态—记能量账—判断方向—计算循环」的主线串起工程热力学九章，每章给出核心公式、典型课后题的完整解法、次要题思路和易错点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从状态到循环：工程热力学九章复习笔记">
 <meta property="og:url" content="https://yourba.github.io/2026/10/30/engineering-thermodynamics-review/index.html">
 <meta property="og:site_name" content="Yourba的博客">
+<meta property="og:description" content="按「描述状态—记能量账—判断方向—计算循环」的主线串起工程热力学九章，每章给出核心公式、典型课后题的完整解法、次要题思路和易错点。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://yourba.github.io/img/avatar.jpg">
-<meta property="article:published_time" content="2026-10-30T11:16:38.000Z">
-<meta property="article:modified_time" content="2026-10-30T11:16:39.006Z">
+<meta property="og:image" content="https://yourba.github.io/2026/10/30/engineering-thermodynamics-review/cover.svg">
+<meta property="article:published_time" content="2026-10-30T11:30:00.000Z">
+<meta property="article:modified_time" content="2026-10-30T13:29:53.764Z">
 <meta property="article:author" content="Yourba">
+<meta property="article:tag" content="工程热力学">
+<meta property="article:tag" content="热力学第一定律">
+<meta property="article:tag" content="热力学第二定律">
+<meta property="article:tag" content="朗肯循环">
+<meta property="article:tag" content="制冷循环">
+<meta property="article:tag" content="湿空气">
+<meta property="article:tag" content="复习笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://yourba.github.io/img/avatar.jpg"><script type="application/ld+json">{
+<meta name="twitter:image" content="https://yourba.github.io/2026/10/30/engineering-thermodynamics-review/cover.svg"><script type="application/ld+json">{
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "engineering-thermodynamics-review",
+  "headline": "从状态到循环：工程热力学九章复习笔记",
   "url": "https://yourba.github.io/2026/10/30/engineering-thermodynamics-review/",
-  "image": "https://yourba.github.io/img/avatar.jpg",
-  "datePublished": "2026-10-30T11:16:38.000Z",
-  "dateModified": "2026-10-30T11:16:39.006Z",
+  "image": "https://yourba.github.io/2026/10/30/engineering-thermodynamics-review/cover.svg",
+  "datePublished": "2026-10-30T11:30:00.000Z",
+  "dateModified": "2026-10-30T13:29:53.764Z",
   "author": [
     {
       "@type": "Person",
@@ -152,8 +161,802 @@
   },
   autoDarkmode: false
 }</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
-  title: 'engineering-thermodynamics-review',
+  title: '从状态到循环：工程热力学九章复习笔记',
   isHighlightShrink: false,
-  isToc: false,
+  isToc: true,
   pageType: 'post'
-}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/cover_main.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">engineering-thermodynamics-review</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">engineering-thermodynamics-review</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T11:16:39.006Z" title="更新于 2026-10-30 19:16:39">2026-10-30</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"></article><div class="tag_share"></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">U-Net：用于生物医学图像分割的卷积网络</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Olaf Ronneberger, Philipp Fischer, Thomas Brox. U-Net: Convolutional Networks for Biomedical Image Segmentation. arXiv:1505.04597v1 [cs.CV], 2015. 单位：德国弗赖堡大学计算机科学系、BIOSS 生物信号研究中心。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  摘要人们普遍认为，成功训练深度网络需要数千个带标注的训练样本。本文提出一种网络与训练策略，它强烈依赖数据增强，从而更高效地利用可用的标注样本。该架构由一条用于捕获上下文的收缩路径和一条对称的、能够实现精确定位的扩张路径组成。我们表明，这样的网络可以从极少量图像端到端训练，并在 ISBI 电子显微镜图像堆栈中神经元结构分割挑战赛上优于此前的最佳方法（滑动窗口卷积网络）。使用在透射光显微图像（相差和 DIC）上训练的同一网络，我们在 2015 年 ISBI 细胞追踪挑战赛的这些类别中以较大优势获胜。此外，该网络速...</div></div></div></a><a class="pagination-related" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">条纹投影轮廓测量中隐含的窗口平滑效应建模</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Min Han, Hao Jiang, Fengxiao Lei, Yibo Xing, Xiaohao Wang, Xinghui Li. Modeling window smoothing effect hidden in fringe projection profilometry. Measurement, 242 (2025) 115852. DOI: 10.1016&#x2F;j.measurement.2024.115852 收稿：2024 年 5 月 20 日；修回：2024 年 9 月 16 日；录用：2024 年 9 月 29 日；在线发表：2024 年 10 月 4 日。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  关键词： 条纹投影轮廓测量；激光束扫描；调制光强；建模 摘要基于微机电系统（MEMS）微振镜的三维重建被认为极具发展前景。然而，线激光器作为 MEMS 系统的唯一光源，其影响重建的机制尚不明确。为填补这一理论空白，我们首次提出可解释的激光影响模型，称为窗口平滑模型。该模型...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">64</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="engineering-thermodynamics-review">engineering-thermodynamics-review</a><time datetime="2026-10-30T11:16:38.000Z" title="发表于 2026-10-30 19:16:38">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+}</script><link rel="stylesheet" href="/css/custom_styles.css"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">71</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Yourba的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">从状态到循环：工程热力学九章复习笔记</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友情链接</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">从状态到循环：工程热力学九章复习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-10-30T11:30:00.000Z" title="发表于 2026-10-30 19:30:00">2026-10-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-10-30T13:29:53.764Z" title="更新于 2026-10-30 21:29:53">2026-10-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">学习笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="container post-content" id="article-container"><p>工程热力学是我这学期最像“另一门语言”的课。第一章刚记住系统、边界和状态参数，第二章就摆出一串 Q、W、ΔU、ΔH；第三章开始算过程，第四章忽然转去讨论“能不能发生”；再往后，水蒸气、朗肯循环、制冷、湿空气，每一章都像换了一个话题。</p>
+<p>后来我把十份课件从头到尾理了一遍，才发现它其实一直在回答四个问题：</p>
+<ol>
+<li>系统现在处于什么状态？</li>
+<li>经历一个过程，能量怎么记账？</li>
+<li>这个过程能不能发生，最多能做多少功？</li>
+<li>把过程首尾相接，怎样把热变成功，或者把功变成冷？</li>
+</ol>
+<p>这四个问题分别对应状态描述、能量守恒、方向与极限、循环计算。把这条线抓住，公式就不再是散落的卡片。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/course-map.svg" alt="工程热力学的四个问题与九章内容"></p>
+<span id="more"></span>
+
+<h2 id="先把地图摊开"><a href="#先把地图摊开" class="headerlink" title="先把地图摊开"></a>先把地图摊开</h2><table>
+<thead>
+<tr>
+<th>要回答的问题</th>
+<th>对应章节</th>
+<th>主要工具</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>怎么描述状态</td>
+<td>第 1、3、6、9 章</td>
+<td>系统、状态参数、理想气体状态方程、水蒸气表、湿空气参数</td>
+</tr>
+<tr>
+<td>能量怎么守恒</td>
+<td>第 2 章</td>
+<td>闭口系、开口系、稳流能量方程、焓、四种功</td>
+</tr>
+<tr>
+<td>过程往哪走</td>
+<td>第 4 章</td>
+<td>第二定律、卡诺定理、熵、熵产、㶲</td>
+</tr>
+<tr>
+<td>怎么接成循环</td>
+<td>第 5、7、8 章</td>
+<td>内燃机循环、燃气轮机循环、朗肯循环、制冷循环</td>
+</tr>
+</tbody></table>
+<p>后面的章节安排基本按这个顺序展开。每章先列核心公式，再完整解一道典型题，其余题目只讲思路，最后列几个容易踩的坑。</p>
+<p>记号先约定好：$q$、$w$ 是单位质量工质吸收的热量和对外做的功，$Q$、$W$ 是总量；系统吸热为正，对外做功为正；$p$ 一律是绝对压力，$T$ 一律是热力学温度。热力学里相当一部分错误，来自这三个约定没有统一。</p>
+<h2 id="第-1-章-基本概念：先选系统，再谈别的"><a href="#第-1-章-基本概念：先选系统，再谈别的" class="headerlink" title="第 1 章 基本概念：先选系统，再谈别的"></a>第 1 章 基本概念：先选系统，再谈别的</h2><p>第一章的幻灯片看起来最碎：系统、边界、平衡、准静态、可逆、功、热、熵、循环。其实它们在回答同一个问题：你研究的对象是什么，它和外界交换什么。</p>
+<h3 id="系统是人为划定的"><a href="#系统是人为划定的" class="headerlink" title="系统是人为划定的"></a>系统是人为划定的</h3><p>锅炉只交换热，汽轮机只交换功，凝汽器既交换热也交换功。同一个电厂，取不同的设备做系统，边界上出现的项就不一样。</p>
+<p>取系统没有唯一答案，取法取决于你想算什么。第二章的充气题会把这一点演得很清楚：取储气罐为系统是开口系，取最终罐内气体为系统是闭口系，两种算法得到同一个结果，但方程的复杂程度差很多。</p>
+<p>几个分类要能脱口而出：闭口系不传质，开口系传质；绝热系不传热，孤立系不传热、不传功、不传质。开口系加上相关外界，就构成一个孤立系。这句话在第二定律里还会用到。</p>
+<h3 id="状态参数：只认绝对压力"><a href="#状态参数：只认绝对压力" class="headerlink" title="状态参数：只认绝对压力"></a>状态参数：只认绝对压力</h3><p>状态参数有两条硬特征：状态一定，参数一定；参数的变化只与初终态有关，与路径无关。数学上它是点函数，微分是全微分。</p>
+<p>压力是第一个坑。表压 $p_e&#x3D;p-p_b$，真空度 $p_v&#x3D;p_b-p$，它们都是相对于环境压力的读数，只有绝对压力 $p$ 才是状态参数，也只有绝对压力能代入状态方程。压力表读数不变，不代表工质压力不变——环境压力变了，表压也会跟着变。我一开始做题时，看到 0.5 MPa 就直接往状态方程里代，完全没注意题目给的是表压；后来养成习惯，先把所有压力换成绝对压力，再动笔。</p>
+<p>温度用热力学温度 $T$，单位 K；比容 $v&#x3D;1&#x2F;\rho$，单位 $\mathrm{m^3&#x2F;kg}$。这三个基本状态参数里，$p$ 和 $T$ 是强度参数，$v$ 是比参数；$U$、$H$、$S$ 是广延参数，$u$、$h$、$s$ 是比参数。比参数具有强度参数的性质，不随物质的量变化。</p>
+<h3 id="平衡、准静态、可逆"><a href="#平衡、准静态、可逆" class="headerlink" title="平衡、准静态、可逆"></a>平衡、准静态、可逆</h3><p>平衡的本质是不存在不平衡势：温差、压差、相变、化学势差。稳定不一定平衡，因为系统可能靠着外界维持一个不随时间变化的状态；平衡一定稳定。平衡是时间上的概念，均匀是空间上的概念，单相平衡态一定均匀。</p>
+<p>准静态过程是“随时接近平衡”的过程。工程判据是：外部作用时间远大于系统恢复平衡的弛豫时间。活塞式内燃机 2000 转&#x2F;分，活塞速度约 10 m&#x2F;s，压力波恢复平衡的速度是声速 350 m&#x2F;s，所以工程上很多过程可以按准静态处理。</p>
+<p>可逆过程 &#x3D; 准静态过程 + 无耗散效应。摩擦、电阻、非弹性变形、节流、自由膨胀、不同温度的传热、两种气体的混合，都会留下耗散或不可逆的痕迹。可逆过程不是“必须回到初态的过程”，而是“如果让系统回到初态，外界也能同时复原、不留痕迹”的过程。</p>
+<p>判断时先看有没有不平衡势，再看有没有耗散。缓慢加热水，以水为系统是准静态；如果活塞和缸壁有摩擦，以水加活塞为系统就不可逆；用搅拌器加热，无论多慢都不可逆，因为电功或机械功变成了热。</p>
+<h3 id="功和热都是过程量"><a href="#功和热都是过程量" class="headerlink" title="功和热都是过程量"></a>功和热都是过程量</h3><p>准静态下，容积变化功是</p>
+<p>$$w&#x3D;\int_{1}^{2} p\hspace{0.17em}\mathrm{d}v.$$</p>
+<p>这个式子只适用于准静态过程。不可逆过程中系统内部压力不均匀，不能用系统内部的 $p$ 去积分；如果取环境为系统，边界上的压力均匀，可以用环境压力算外界得到的功，但那不等于系统内部的实际做功。</p>
+<p>可逆过程中，热量可以写成</p>
+<p>$$q&#x3D;\int_{1}^{2} T\hspace{0.17em}\mathrm{d}s.$$</p>
+<p>所以 $p$-$v$ 图上的面积代表功，$T$-$s$ 图上的面积代表热。功和热都是过程量，路径不同，数值不同；内能、焓、熵是状态量，只看初终态。</p>
+<p>循环的净功是 $p$-$v$ 图围成的面积：正循环顺时针，净功为正，热效率</p>
+<p>$$\eta_t&#x3D;\frac{w_{\text{net}}}{q_1};$$</p>
+<p>逆循环逆时针，净功为负，制冷系数</p>
+<p>$$\varepsilon&#x3D;\frac{q_2}{w_{\text{net}}}.$$</p>
+<h3 id="典型题：1-14-和-1-16"><a href="#典型题：1-14-和-1-16" class="headerlink" title="典型题：1-14 和 1-16"></a>典型题：1-14 和 1-16</h3><p><strong>1-14</strong>：系统压力随容积的变化满足 $pV^{1.3}&#x3D;\text{常数}$，初态 $p_1&#x3D;600\ \mathrm{kPa}$、$V_1&#x3D;0.3\ \mathrm{m^3}$，膨胀到 $V_2&#x3D;0.5\ \mathrm{m^3}$，求膨胀功。</p>
+<p>先求终态压力：</p>
+<p>$$p_2&#x3D;p_1\left(\frac{V_1}{V_2}\right)^{1.3}&#x3D;600\times\left(\frac{0.3}{0.5}\right)^{1.3}&#x3D;308.9\ \mathrm{kPa}.$$</p>
+<p>多变过程的功为</p>
+<p>$$W&#x3D;\frac{p_1V_1-p_2V_2}{n-1}<br>&#x3D;\frac{600\times0.3-308.9\times0.5}{1.3-1}<br>&#x3D;85.3\ \mathrm{kJ}.$$</p>
+<p>结果是正的，说明气体膨胀、对外做功。如果过程反过来，从 $0.5\ \mathrm{m^3}$ 压缩到 $0.3\ \mathrm{m^3}$，功就是 $-85.3\ \mathrm{kJ}$，大小相同、符号相反。</p>
+<p><strong>1-16</strong>：$1\ \mathrm{kg}$ 气体在 $p$-$v$ 图上从 $A(p_1,v_1)$ 沿直线到 $B(p_2,v_2)$，再定容到 $C$，最后定压回到 $A$。求循环净功；如果按 $A\to C\to B\to A$ 走，净功怎么变。</p>
+<p>直线 $AB$ 下的面积是梯形，$B\to C$ 定容不做功，$C\to A$ 定压做负功。三项相加，净功正好是三角形面积：</p>
+<p>$$w_{\text{net}}&#x3D;\frac{1}{2}(p_2-p_1)(v_2-v_1).$$</p>
+<p>反向走，面积大小不变，符号相反：</p>
+<p>$$w_{\text{net}}’&#x3D;-\frac{1}{2}(p_2-p_1)(v_2-v_1).$$</p>
+<p>这道题不需要任何工质性质，只考“面积就是功”和“方向决定符号”。</p>
+<p>1-13 更直接：定压膨胀 $W&#x3D;p(V_2-V_1)&#x3D;0.5\times10^6\times(0.8-0.4)&#x3D;200\ \mathrm{kJ}$。1-7 的关键不在计算，而在先把表 A、表 B 的读数换成绝对压力，再判断真空室和 I、II 室的压力关系；顶面受力要用绝对压力差乘面积。</p>
+<h3 id="这一章最容易错的地方"><a href="#这一章最容易错的地方" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>把表压或真空度当成状态参数，代进 $pV&#x3D;mRT$；</li>
+<li>用摄氏度代进状态方程，忘记换成 K；</li>
+<li>认为气体膨胀一定对外做功——真空自由膨胀没有做功对象；</li>
+<li>把准静态当成可逆，忽略摩擦和耗散；</li>
+<li>用 $\int p\hspace{0.17em}\mathrm{d}v$ 算不可逆过程的实际功。</li>
+</ul>
+<h2 id="第-2-章-第一定律：一本能量账，三种写法"><a href="#第-2-章-第一定律：一本能量账，三种写法" class="headerlink" title="第 2 章 第一定律：一本能量账，三种写法"></a>第 2 章 第一定律：一本能量账，三种写法</h2><p>第一定律的表述只有一句：能量守恒。难的是在不同系统上把账记对。</p>
+<h3 id="闭口系：最基础的一本账"><a href="#闭口系：最基础的一本账" class="headerlink" title="闭口系：最基础的一本账"></a>闭口系：最基础的一本账</h3><p>闭口系不传质，能量方程是</p>
+<p>$$Q&#x3D;\Delta U+W,\qquad q&#x3D;\Delta u+w.$$</p>
+<p>它对任何工质、任何过程都成立。内能是状态量，$U$ 是广延参数，$u$ 是比参数；内能的零点可以人为规定，所以只有 $\Delta u$ 有意义。</p>
+<p>如果过程可逆，$w&#x3D;\int p\hspace{0.17em}\mathrm{d}v$，于是</p>
+<p>$$q&#x3D;\Delta u+\int p\hspace{0.17em}\mathrm{d}v.$$</p>
+<p>再结合可逆过程 $q&#x3D;\int T\hspace{0.17em}\mathrm{d}s$，得到</p>
+<p>$$T\hspace{0.17em}\mathrm{d}s&#x3D;\mathrm{d}u+p\hspace{0.17em}\mathrm{d}v.$$</p>
+<p>这个式子后面算熵变会反复用。它的适用条件是简单可压缩系统、可逆过程，不要拿它去算不可逆过程。</p>
+<h3 id="开口系：多了推进功，就有了焓"><a href="#开口系：多了推进功，就有了焓" class="headerlink" title="开口系：多了推进功，就有了焓"></a>开口系：多了推进功，就有了焓</h3><p>开口系有质量进出，除了内能，还要把工质带进带出的推进功算进去。推进功是 $pv$，不是 $\int p\hspace{0.17em}\mathrm{d}v$——工质在进出时容积没有变化，只是被外界推着走。</p>
+<p>把推进功并进内能，就得到焓：</p>
+<p>$$h&#x3D;u+pv.$$</p>
+<p>开口系能量方程的微分形式是</p>
+
+$$\delta Q+\delta m_{\text{in}}\left(u+pv+\frac{c^2}{2}+gz\right)_{\text{in}}
+-\delta m_{\text{out}}\left(u+pv+\frac{c^2}{2}+gz\right)_{\text{out}}
+-\delta W_{\text{net}}=\mathrm{d}E_{\text{cv}}.$$
+
+
+<p>稳定流动时，控制体内部能量不随时间变化，方程简化为</p>
+<p>$$q&#x3D;\Delta h+\frac{\Delta c^2}{2}+g\Delta z+w_s.$$</p>
+<p>这里 $w_s$ 是轴功。工程上把动能、位能的变化并入技术功：</p>
+<p>$$w_t&#x3D;w_s+\frac{\Delta c^2}{2}+g\Delta z.$$</p>
+<p>可逆稳流时，技术功还可以写成</p>
+<p>$$w_t&#x3D;-\int_{1}^{2} v\hspace{0.17em}\mathrm{d}p.$$</p>
+<p>几种功的关系是</p>
+<p>$$w&#x3D;w_t+\Delta(pv),\qquad w_t&#x3D;w_s+\frac{\Delta c^2}{2}+g\Delta z.$$</p>
+<p>闭口系交换的是容积变化功 $w$，开口系交换的是轴功 $w_s$；一般情况下动能、位能变化可以忽略，$w_t\approx w_s$。</p>
+<p>几个常用设备的简化结果要背下来：</p>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>简化条件</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>汽轮机、透平</td>
+<td>绝热，忽略动能、位能变化</td>
+<td>$w_s&#x3D;h_1-h_2$</td>
+</tr>
+<tr>
+<td>压气机、泵</td>
+<td>绝热，忽略动能、位能变化</td>
+<td>$w_s&#x3D;h_2-h_1$</td>
+</tr>
+<tr>
+<td>换热器</td>
+<td>无轴功，忽略动能、位能变化</td>
+<td>$q&#x3D;h_2-h_1$</td>
+</tr>
+<tr>
+<td>喷管</td>
+<td>绝热，无轴功</td>
+<td>$c_2&#x3D;\sqrt{2\times1000(h_1-h_2)+c_1^2}$</td>
+</tr>
+<tr>
+<td>节流阀</td>
+<td>绝热，无轴功</td>
+<td>$h_1&#x3D;h_2$</td>
+</tr>
+</tbody></table>
+<p>节流过程焓不变，但熵增加，是典型的不可逆过程。不要把“焓不变”误当成“可逆”。喷管公式里 $h$ 用 $\mathrm{kJ&#x2F;kg}$，所以根号内乘了 1000；如果 $h$ 用 $\mathrm{J&#x2F;kg}$，就不需要这个因子。</p>
+<h3 id="充气和放气：进出来的是焓"><a href="#充气和放气：进出来的是焓" class="headerlink" title="充气和放气：进出来的是焓"></a>充气和放气：进出来的是焓</h3><p>充气问题的关键是：进入系统的气体带进来的是焓，不是内能。取储气罐为开口系，绝热充气时</p>
+<p>$$\mathrm{d}U_{\text{cv}}&#x3D;h\hspace{0.17em}\mathrm{d}m.$$</p>
+<p>如果罐内原来是真空，积分后得到 $u’&#x3D;h$：充进去的气体内能等于气源焓。如果罐内有原有气体，就要把开口系能量方程从初态积到终态，或者换一个闭口系来取。</p>
+<p>放气问题相反：瓶内剩余气体在向外推气体，经历的是绝热膨胀。理想气体绝热放气时，瓶内剩余气体满足</p>
+<p>$$\frac{T_2}{T_1}&#x3D;\left(\frac{p_2}{p_1}\right)^{\frac{k-1}{k}}.$$</p>
+<p>这个式子在 3-13 里会用到。</p>
+<h3 id="典型题：2-18-燃气轮机装置"><a href="#典型题：2-18-燃气轮机装置" class="headerlink" title="典型题：2-18 燃气轮机装置"></a>典型题：2-18 燃气轮机装置</h3><p>题目给了一个燃气轮机装置：压气机进口 $h_1&#x3D;290\ \mathrm{kJ&#x2F;kg}$，压缩后 $h_2&#x3D;580\ \mathrm{kJ&#x2F;kg}$；空气以 $c_2&#x3D;20\ \mathrm{m&#x2F;s}$ 进入燃烧室，定压吸热 $q&#x3D;670\ \mathrm{kJ&#x2F;kg}$；燃气经喷管绝热膨胀到 $h_{3’}&#x3D;800\ \mathrm{kJ&#x2F;kg}$，再进入动叶，动叶中燃气状态不变，离开动叶时 $c_4&#x3D;100\ \mathrm{m&#x2F;s}$。空气流量 $100\ \mathrm{kg&#x2F;s}$，燃料发热量 $43960\ \mathrm{kJ&#x2F;kg}$，忽略燃料质量对能量转换的影响。</p>
+<p>（1）压气机耗功：</p>
+<p>$$P_c&#x3D;\dot m(h_2-h_1)&#x3D;100\times(580-290)&#x3D;2.9\times10^4\ \mathrm{kW}&#x3D;29\ \mathrm{MW}.$$</p>
+<p>（2）燃料消耗量。燃烧室定压，忽略动能差，空气吸热等于燃料放热：</p>
+<p>$$\dot m q&#x3D;\dot m_f Q_f,$$</p>
+<p>$$\dot m_f&#x3D;\frac{100\times670}{43960}&#x3D;1.52\ \mathrm{kg&#x2F;s}&#x3D;5.49\ \mathrm{t&#x2F;h}.$$</p>
+<p>（3）喷管出口速度。燃烧室出口焓</p>
+<p>$$h_3&#x3D;h_2+q&#x3D;580+670&#x3D;1250\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>喷管绝热、无轴功，能量方程为</p>
+<p>$$h_3+\frac{c_3^2}{2}&#x3D;h_{3’}+\frac{c_{3’}^2}{2}.$$</p>
+<p>取 $c_3\approx c_2&#x3D;20\ \mathrm{m&#x2F;s}$，得</p>
+<p>$$c_{3’}&#x3D;\sqrt{2(h_3-h_{3’})\times1000+c_3^2}<br>&#x3D;\sqrt{2\times450\times1000+400}<br>&#x3D;949\ \mathrm{m&#x2F;s}.$$</p>
+<p>（4）燃气透平功率。动叶中 $h$ 不变，透平做功等于动能降：</p>
+<p>$$P_t&#x3D;\dot m\left[\left(h_{3’}+\frac{c_{3’}^2}{2}\right)-\left(h_4+\frac{c_4^2}{2}\right)\right]<br>&#x3D;\dot m\frac{c_{3’}^2-c_4^2}{2}<br>&#x3D;44.5\ \mathrm{MW}.$$</p>
+<p>（5）装置净功率：</p>
+<p>$$P_{\text{net}}&#x3D;P_t-P_c&#x3D;44.5-29.0&#x3D;15.5\ \mathrm{MW}.$$</p>
+<p>这道题把稳流能量方程的几个典型部件串在一起：压气机看焓升，燃烧室看焓差，喷管把焓变成动能，动叶再把动能变成轴功。如果取喷管加动叶为一个系统，直接用 $h_3-h_4$ 加动能差，结果一样。选系统不同，账的写法不同，这是第一定律最值得练的地方。</p>
+<h3 id="其余题只讲思路"><a href="#其余题只讲思路" class="headerlink" title="其余题只讲思路"></a>其余题只讲思路</h3><ul>
+<li><strong>2-9、2-10 充气</strong>：取储气罐为开口系，进入的是焓；绝热充真空罐时 $u’&#x3D;h$，有原有气体时积分能量方程。</li>
+<li><strong>2-15 汽轮机</strong>：轴功 $P&#x3D;\dot m[(h_1-h_2)+(c_1^2-c_2^2)&#x2F;2]$；冷却水流量由凝汽器热平衡 $\dot m(h_2-h_3)&#x3D;\dot m_w c_p\Delta T$ 求。</li>
+<li><strong>2-16 压气机</strong>：先用闭口系 $q&#x3D;\Delta u+w$ 求压缩功，再用 $w_t&#x3D;w-\Delta(pv)$ 求轴功，最后乘质量流量。</li>
+<li><strong>2-17 喷管</strong>：绝热稳流，$c_2&#x3D;\sqrt{2\times1000c_p(T_1-T_2)+c_1^2}$，$c_p$ 用 $\mathrm{kJ&#x2F;(kg\cdot K)}$。</li>
+<li><strong>2-5</strong>：同一初终态，$\Delta u$ 相同，$q$ 和 $w$ 可以不同，因为它们是过程量。</li>
+<li><strong>2-6、2-7 活塞突然卸载</strong>：过程不可逆，但初终态是平衡态；用第一定律加“理想气体内能只与温度有关”求终态。</li>
+</ul>
+<h3 id="这一章最容易错的地方-1"><a href="#这一章最容易错的地方-1" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>把闭口系的 $Q&#x3D;\Delta U+W$ 直接套到开口系，忘记推进功；</li>
+<li>把焓 $h$ 当成内能 $u$，或者反过来；</li>
+<li>高速喷管里忽略动能项；</li>
+<li>把节流当成可逆膨胀，只看 $h_1&#x3D;h_2$，不看熵增；</li>
+<li>充气时把进入系统的能量写成内能，而不是焓。</li>
+</ul>
+<h2 id="第-3-章-理想气体：把过程变成曲线"><a href="#第-3-章-理想气体：把过程变成曲线" class="headerlink" title="第 3 章 理想气体：把过程变成曲线"></a>第 3 章 理想气体：把过程变成曲线</h2><p>理想气体是这门课的第一个“可计算模型”。它的价值在于：只要知道两个状态参数，其余参数都能算出来；只要知道过程方程，功、热、熵变都能积分。</p>
+<h3 id="状态方程与适用条件"><a href="#状态方程与适用条件" class="headerlink" title="状态方程与适用条件"></a>状态方程与适用条件</h3><p>理想气体遵循克拉贝龙方程：</p>
+<p>$$pV&#x3D;mRT,\qquad pv&#x3D;RT,\qquad pV&#x3D;nR_mT.$$</p>
+<p>$R_m&#x3D;8.314\ \mathrm{kJ&#x2F;(kmol\cdot K)}$ 是通用气体常数，与气体种类无关；$R&#x3D;R_m&#x2F;M$ 是气体常数，与气体种类有关。计算时注意三件事：绝对压力、热力学温度、单位统一。</p>
+<p>理想气体模型假设分子之间没有作用力、分子本身不占容积。实际气体在压力低、温度高、远离液态时接近理想气体。单原子和双原子气体（He、O$_2$、N$_2$、空气、CO、H$_2$）在常压到几兆帕、常温以上可以按理想气体处理；水蒸气一般不行，但湿空气中的水蒸气分压很低，可以当理想气体。</p>
+<h3 id="内能、焓、熵只跟温度有关"><a href="#内能、焓、熵只跟温度有关" class="headerlink" title="内能、焓、熵只跟温度有关"></a>内能、焓、熵只跟温度有关</h3><p>焦耳实验说明：理想气体绝热自由膨胀时温度不变。没有分子间作用力，内能只由分子动能决定，所以 $u&#x3D;u(T)$；又因为 $h&#x3D;u+pv&#x3D;u+RT$，所以 $h&#x3D;h(T)$。</p>
+<p>定容比热和定压比热定义为</p>
+<p>$$c_v&#x3D;\left(\frac{\partial u}{\partial T}\right)_v,\qquad<br>c_p&#x3D;\left(\frac{\partial h}{\partial T}\right)_p.$$</p>
+<p>对理想气体，</p>
+<p>$$c_p-c_v&#x3D;R,\qquad k&#x3D;\frac{c_p}{c_v}.$$</p>
+<p>内能、焓、熵变分别为</p>
+<p>$$\Delta u&#x3D;\int_{1}^{2} c_v\hspace{0.17em}\mathrm{d}T,\qquad<br>\Delta h&#x3D;\int_{1}^{2} c_p\hspace{0.17em}\mathrm{d}T,$$</p>
+<p>$$\Delta s&#x3D;c_v\ln\frac{T_2}{T_1}+R\ln\frac{v_2}{v_1}<br>&#x3D;c_p\ln\frac{T_2}{T_1}-R\ln\frac{p_2}{p_1}.$$</p>
+<p>比热有三种算法：定比热、真实比热、平均比热。定比热最简单，温度范围大时误差也大；真实比热按多项式积分；平均比热查表。作业里的 3-5 就是让你分别用平均比热表和理论定摩尔热容算定容加热，比较两种结果。</p>
+<h3 id="四种基本过程"><a href="#四种基本过程" class="headerlink" title="四种基本过程"></a>四种基本过程</h3><table>
+<thead>
+<tr>
+<th>过程</th>
+<th>过程方程</th>
+<th>参数关系</th>
+<th>$w$</th>
+<th>$w_t$</th>
+<th>$q$</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定容</td>
+<td>$v&#x3D;\text{const}$</td>
+<td>$p&#x2F;T&#x3D;\text{const}$</td>
+<td>$0$</td>
+<td>$v(p_1-p_2)$</td>
+<td>$\Delta u&#x3D;c_v\Delta T$</td>
+</tr>
+<tr>
+<td>定压</td>
+<td>$p&#x3D;\text{const}$</td>
+<td>$v&#x2F;T&#x3D;\text{const}$</td>
+<td>$p\Delta v&#x3D;R\Delta T$</td>
+<td>$0$</td>
+<td>$\Delta h&#x3D;c_p\Delta T$</td>
+</tr>
+<tr>
+<td>定温</td>
+<td>$T&#x3D;\text{const}$</td>
+<td>$pv&#x3D;\text{const}$</td>
+<td>$RT\ln(v_2&#x2F;v_1)$</td>
+<td>同 $w$</td>
+<td>同 $w$</td>
+</tr>
+<tr>
+<td>绝热</td>
+<td>$pv^k&#x3D;\text{const}$</td>
+<td>$Tv^{k-1}&#x3D;\text{const}$</td>
+<td>$\dfrac{p_1v_1-p_2v_2}{k-1}$</td>
+<td>$k w$</td>
+<td>$0$</td>
+</tr>
+<tr>
+<td>多变</td>
+<td>$pv^n&#x3D;\text{const}$</td>
+<td>$Tv^{n-1}&#x3D;\text{const}$</td>
+<td>$\dfrac{p_1v_1-p_2v_2}{n-1}$</td>
+<td>$n w$</td>
+<td>$c_n\Delta T$</td>
+</tr>
+</tbody></table>
+<p>多变过程的比热是</p>
+<p>$$c_n&#x3D;c_v\frac{n-k}{n-1}.$$</p>
+<p>$n&#x3D;0$ 是定压，$n&#x3D;1$ 是定温，$n&#x3D;k$ 是绝热，$n\to\infty$ 是定容。记住这四个极限，多变过程就不会混。</p>
+<p>$p$-$v$ 图上，定容是竖线，定压是水平线，定温是双曲线，绝热线比定温线陡。$T$-$s$ 图上，定容和定压是上凸曲线，定温是水平线，绝热是竖线。作图题先看 $T$ 和 $s$ 的变化方向：$T$ 升、$s$ 增，终态在右上；$T$ 降、$s$ 减，终态在左下。</p>
+<p>下面这张图取空气（$R&#x3D;0.287\ \mathrm{kJ&#x2F;(kg\cdot K)}$，$k&#x3D;1.4$）从同一初态（$p_1&#x3D;200\ \mathrm{kPa}$、$T_1&#x3D;300\ \mathrm{K}$）出发做四个加热过程，可以直接对着看曲线的相对陡度：p-v 图上绝热线（蓝）比定温线（紫）陡，T-s 图上定容线（橙）比定压线（绿）陡，四条线都指向右上方（$T$ 升、$s$ 增）。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/ideal-gas-processes.svg" alt="理想气体四种基本过程的 p-v 图与 T-s 图"></p>
+<h3 id="压气机"><a href="#压气机" class="headerlink" title="压气机"></a>压气机</h3><p>理论压气功是技术功 $w_t&#x3D;\int v\hspace{0.17em}\mathrm{d}p$。同样的初终压力，等温压缩最省功，绝热压缩次之，多变压缩居中。实际压气机有水套冷却，接近等温但不等温；没有冷却时接近绝热。</p>
+<p>分级压缩、中间冷却可以进一步省功。两级压缩时，每级增压比相等，总耗功最小：</p>
+<p>$$\pi_{\text{opt}}&#x3D;\sqrt{\pi_{\text{total}}}.$$</p>
+<p>$m$ 级时 $\pi_{\text{opt}}&#x3D;\pi_{\text{total}}^{1&#x2F;m}$。级数越多越省功，但结构复杂、成本高，工程上一般 2~4 级。</p>
+<p>余隙容积不影响单位产气量的理论耗功，但会降低容积效率。余隙比一般取 0.03~0.08，太大时产气量明显下降。</p>
+<h3 id="典型题：3-13-氧气瓶放气"><a href="#典型题：3-13-氧气瓶放气" class="headerlink" title="典型题：3-13 氧气瓶放气"></a>典型题：3-13 氧气瓶放气</h3><p>氧气瓶容积 $V&#x3D;0.04\ \mathrm{m^3}$，初态 $p_1&#x3D;147.1\ \mathrm{bar}$、$t_1&#x3D;20^\circ\mathrm{C}$，迅速放气到 $p_2&#x3D;73.55\ \mathrm{bar}$。题目有三问：快速放气后的温度和放出的质量、关闭阀门后的变化、缓慢放气与快速放气的比较。</p>
+<p>（1）迅速放气，瓶壁来不及换热，按绝热处理；瓶内剩余气体经历可逆绝热膨胀（理想气体，$k&#x3D;1.4$）：</p>
+<p>$$\frac{T_2}{T_1}&#x3D;\left(\frac{p_2}{p_1}\right)^{\frac{k-1}{k}}<br>&#x3D;\left(\frac{73.55}{147.1}\right)^{0.2857}&#x3D;0.8203.$$</p>
+<p>$$T_2&#x3D;293.15\times0.8203&#x3D;240.5\ \mathrm{K}&#x3D;-32.7^\circ\mathrm{C}.$$</p>
+<p>初态质量：</p>
+<p>$$m_1&#x3D;\frac{p_1V}{RT_1}<br>&#x3D;\frac{147.1\times10^5\times0.04}{259.8\times293.15}&#x3D;7.73\ \mathrm{kg}.$$</p>
+<p>终态质量：</p>
+<p>$$m_2&#x3D;\frac{p_2V}{RT_2}<br>&#x3D;\frac{73.55\times10^5\times0.04}{259.8\times240.5}&#x3D;4.71\ \mathrm{kg}.$$</p>
+<p>放出的质量：</p>
+<p>$$\Delta m&#x3D;m_1-m_2&#x3D;3.02\ \mathrm{kg}.$$</p>
+<p>放气后瓶内温度降到 $-32.7^\circ\mathrm{C}$，这不是算错，而是绝热膨胀的结果：瓶内气体对外推流出气体做功，内能下降。若瓶壁导热很好，温度会回升，就不能用这个式子。</p>
+<p>（2）关闭阀门后，瓶内气体温度低于环境温度，会从外界吸热，最终回到 $20^\circ\mathrm{C}$；体积不变，压力按</p>
+<p>$$p_3&#x3D;p_2\frac{T_1}{T_2}&#x3D;73.55\times\frac{293.15}{240.5}&#x3D;89.6\ \mathrm{bar}$$</p>
+<p>回升。</p>
+<p>（3）如果放气极慢，瓶内气体始终与外界热平衡，按等温放气，终态质量</p>
+<p>$$m_2’&#x3D;\frac{p_2V}{RT_1}&#x3D;3.86\ \mathrm{kg},$$</p>
+<p>放出 $3.87\ \mathrm{kg}$，比快速放气多。原因是快速放气时瓶内温度低、密度大，同样压力下留住了更多质量。</p>
+<h3 id="其余题只讲思路-1"><a href="#其余题只讲思路-1" class="headerlink" title="其余题只讲思路"></a>其余题只讲思路</h3><ul>
+<li><strong>3-2</strong>：状态方程直接算，注意用绝对压力和 K。</li>
+<li><strong>3-5</strong>：定容加热，$q&#x3D;\Delta u&#x3D;\int c_v\hspace{0.17em}\mathrm{d}T$；用平均比热表或双原子理论 $c_v&#x3D;5R&#x2F;2$ 计算并比较。</li>
+<li><strong>3-8</strong>：氩气定内能（定温）膨胀，$T$ 不变，$\Delta u&#x3D;0$，$q&#x3D;w&#x3D;RT\ln(v_2&#x2F;v_1)$，再用熵变公式。</li>
+<li><strong>3-10</strong>：同一初态分别定熵压缩和定温压缩，比较终压；定熵用 $pv^k&#x3D;\text{const}$，定温用 $pv&#x3D;\text{const}$。</li>
+<li><strong>3-20</strong>：压气机分级压缩，最佳增压比 $\pi_{\text{opt}}&#x3D;\sqrt{\pi_{\text{total}}}$，再算各级耗功。</li>
+</ul>
+<h3 id="这一章最容易错的地方-2"><a href="#这一章最容易错的地方-2" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>把 $c_p-c_v&#x3D;R$ 用到实际气体或水蒸气；</li>
+<li>认为定温过程 $q&#x3D;w$ 对任何工质都成立——它只对理想气体等温过程成立；</li>
+<li>把绝热过程当成等熵过程，忽略不可逆；</li>
+<li>用表压或摄氏度代入 $pV&#x3D;mRT$；</li>
+<li>多变指数 $n$ 和绝热指数 $k$ 混用。</li>
+</ul>
+<h2 id="第-4-章-第二定律：方向、上限与损失"><a href="#第-4-章-第二定律：方向、上限与损失" class="headerlink" title="第 4 章 第二定律：方向、上限与损失"></a>第 4 章 第二定律：方向、上限与损失</h2><p>第一定律管“账平不平”，第二定律管“这事能不能发生”。一个过程即使能量守恒，也可能根本不能自发进行；一个热机即使没有摩擦，也不可能把从单一热源吸的热全部变成功。</p>
+<h3 id="两种表述"><a href="#两种表述" class="headerlink" title="两种表述"></a>两种表述</h3><p>开尔文-普朗克表述：不可能从单一热源取热，并使之完全转变为有用功而不产生其他影响。克劳修斯表述：不可能把热从低温物体传到高温物体而不引起其他变化。</p>
+<p>两种表述等价。违反一种，必然违反另一种；证明方法是反证法，用一台违反一种表述的机器去带动一台可逆机，最终得到违反另一种表述的结果。</p>
+<p>第二类永动机不违反第一定律，它只是从单一热源取热、全部变成功，或者把热从低温搬到高温而不付代价。它违反的是第二定律。</p>
+<h3 id="卡诺循环与卡诺定理"><a href="#卡诺循环与卡诺定理" class="headerlink" title="卡诺循环与卡诺定理"></a>卡诺循环与卡诺定理</h3><p>卡诺循环由两个定温过程和两个绝热过程组成。热机效率</p>
+<p>$$\eta_{t,C}&#x3D;1-\frac{T_2}{T_1}.$$</p>
+<p>它只取决于两个恒温热源的温度，与工质性质无关。$T_1$ 越高、$T_2$ 越低，效率越高；$T_1&#x3D;T_2$ 时效率为零，单热源热机不可能；即使 $T_2&#x3D;0\ \mathrm{K}$，效率也小于 100%。</p>
+<p>逆卡诺循环的制冷系数和制热系数分别为</p>
+<p>$$\varepsilon_C&#x3D;\frac{T_2}{T_0-T_2},\qquad<br>\varepsilon_C’&#x3D;\frac{T_1}{T_1-T_0}.$$</p>
+<p>卡诺定理：在两个不同温度的恒温热源之间工作的一切热机，可逆热机的热效率最高；一切可逆热机的效率相同，且与工质无关；不可逆热机的效率低于同温限的可逆热机。</p>
+<p>多热源可逆热机的效率低于同温限的卡诺热机；如果采用完全回热，吸热和放热的多变指数相同，效率可以等于卡诺效率，这就是概括性卡诺循环。</p>
+<h3 id="熵与克劳修斯不等式"><a href="#熵与克劳修斯不等式" class="headerlink" title="熵与克劳修斯不等式"></a>熵与克劳修斯不等式</h3><p>克劳修斯不等式：</p>
+<p>$$\oint \frac{\delta Q}{T}\le 0.$$</p>
+<p>可逆循环取等号，不可逆循环取小于号，大于零的循环不可能实现。这里的 $T$ 是热源温度，热量符号相对于循环取。</p>
+<p>熵的定义是</p>
+<p>$$\mathrm{d}s&#x3D;\frac{\delta q_{\text{rev}}}{T}.$$</p>
+<p>熵是状态参数，不可逆过程的熵变可以任选一条连接同样初终态的可逆路径来计算。任意过程的熵变可以分成两部分：</p>
+<p>$$\Delta s&#x3D;s_f+s_g,\qquad s_f&#x3D;\int\frac{\delta q}{T},\qquad s_g\ge0.$$</p>
+<p>$s_f$ 是熵流，可正可负；$s_g$ 是熵产，永远非负。熵产是过程不可逆程度的度量。绝热可逆过程 $s_g&#x3D;0$，绝热不可逆过程 $s_g&gt;0$。这两个词我最初总是混：看到 $\Delta s&gt;0$ 就以为熵产一定大于零，其实可逆等温吸热也会让熵增加，熵产可以是零。</p>
+<p>孤立系统熵增原理：</p>
+<p>$$\Delta S_{\text{iso}}\ge0.$$</p>
+<p>可逆过程取等号，不可逆过程大于零，小于零的过程不可能发生。这是第二定律最常用的判据。</p>
+<h3 id="㶲与作功能力损失"><a href="#㶲与作功能力损失" class="headerlink" title="㶲与作功能力损失"></a>㶲与作功能力损失</h3><p>能量有品位。机械能、电能可以全部变成功，是高级能量；环境中的内能理论上不能变成功；热能只能部分变成功，是低级能量。</p>
+<p>㶲（exergy）的定义是：系统从任意状态可逆地变化到与环境平衡的状态时，理论上可以转换为其他能量形式的那部分能量。稳流工质的比㶲是</p>
+<p>$$e_x&#x3D;h-h_0-T_0(s-s_0).$$</p>
+<p>闭口系的比㶲是</p>
+<p>$$e_x&#x3D;u-u_0+p_0(v-v_0)-T_0(s-s_0).$$</p>
+<p>热量㶲是</p>
+<p>$$e_{x,Q}&#x3D;\left(1-\frac{T_0}{T}\right)Q.$$</p>
+<p>不可逆过程造成的作功能力损失为</p>
+<p>$$I&#x3D;T_0 S_{g,\text{iso}}.$$</p>
+<p>这个式子把“熵产”和“损失了多少功”联系起来。算㶲损时，先算孤立系熵产，再乘环境温度。</p>
+<h3 id="典型题：温差传热加不可逆膨胀（课件例题）"><a href="#典型题：温差传热加不可逆膨胀（课件例题）" class="headerlink" title="典型题：温差传热加不可逆膨胀（课件例题）"></a>典型题：温差传热加不可逆膨胀（课件例题）</h3><p>某热机工作在 $T_1&#x3D;800\ \mathrm{K}$ 和 $T_2&#x3D;285\ \mathrm{K}$ 之间，吸热 $q_1&#x3D;600\ \mathrm{kJ&#x2F;kg}$，环境温度 $T_0&#x3D;285\ \mathrm{K}$。</p>
+<p>（1）卡诺机：</p>
+<p>$$\eta_C&#x3D;1-\frac{285}{800}&#x3D;0.6438,$$</p>
+<p>$$w_C&#x3D;q_1\eta_C&#x3D;386.2\ \mathrm{kJ&#x2F;kg},\qquad<br>q_2&#x3D;q_1-w_C&#x3D;213.8\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>（2）若高温侧传热有 50 K 温差，低温侧有 15 K 温差，绝热膨胀不可逆引起熵增 $0.25\ \mathrm{kJ&#x2F;(kg\cdot K)}$，求循环功、热效率、孤立系熵增和㶲损。</p>
+<p>高温侧工质吸热温度 $750\ \mathrm{K}$，低温侧工质放热温度 $300\ \mathrm{K}$。对循环取熵平衡：</p>
+<p>$$\frac{q_1}{750}-\frac{q_2}{300}+0.25&#x3D;0,$$</p>
+<p>$$q_2&#x3D;300\times(0.8+0.25)&#x3D;315\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>$$w&#x3D;q_1-q_2&#x3D;600-315&#x3D;285\ \mathrm{kJ&#x2F;kg},\qquad<br>\eta&#x3D;\frac{285}{600}&#x3D;0.475.$$</p>
+<p>孤立系熵产由三部分组成：高温侧温差传热、绝热膨胀、低温侧温差传热。</p>
+<p>$$s_{g,\text{iso}}&#x3D;\left(\frac{600}{750}-\frac{600}{800}\right)+0.25+\left(\frac{315}{285}-\frac{315}{300}\right)<br>&#x3D;0.05+0.25+0.0553&#x3D;0.3553\ \mathrm{kJ&#x2F;(kg\cdot K)}.$$</p>
+<p>作功能力损失：</p>
+<p>$$i&#x3D;T_0s_{g,\text{iso}}&#x3D;285\times0.3553&#x3D;101.3\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>和卡诺机相比，少做了 $386.2-285&#x3D;101.2\ \mathrm{kJ&#x2F;kg}$ 的功，正好等于 $T_0S_g$。这不是巧合，是第二定律的账。</p>
+<h3 id="其余题只讲思路-2"><a href="#其余题只讲思路-2" class="headerlink" title="其余题只讲思路"></a>其余题只讲思路</h3><ul>
+<li><strong>4-3 串联卡诺机</strong>：总效率等于同温限单个卡诺机，因为中间热源只是传热媒介，可逆时总熵产为零。</li>
+<li><strong>4-4、4-6 判方向</strong>：4-4 用卡诺效率或 $\oint\delta Q&#x2F;T$ 判循环可逆、不可逆还是不可能；4-6 由熵增和熵流算熵产，再判断过程性质。</li>
+<li><strong>4-9、4-11 熵产</strong>：先定孤立系边界，再把各部分的熵流加起来。</li>
+<li><strong>4-16、4-19 㶲损</strong>：先算 $S_{g,\text{iso}}$，再乘 $T_0$；注意 $T_0$ 是环境温度，不是热源温度。</li>
+<li><strong>判断“能不能实现”</strong>：算 $\oint\delta Q&#x2F;T$ 或 $\Delta S_{\text{iso}}$，出现负值就是不可能。</li>
+</ul>
+<h3 id="这一章最容易错的地方-3"><a href="#这一章最容易错的地方-3" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>认为绝热过程一定 $\Delta s&#x3D;0$——只有可逆绝热才是；</li>
+<li>把熵流和熵产混为一谈，看到 $\Delta s&gt;0$ 就说“熵产大于零”；</li>
+<li>用热源温度以外的温度算熵流；</li>
+<li>循环的 $\Delta S&#x3D;0$ 和孤立系的 $\Delta S_{\text{iso}}&gt;0$ 不矛盾：循环工质回到初态，熵变为零，但熵产留在了孤立系里；</li>
+<li>算㶲损时用错环境温度。</li>
+</ul>
+<h2 id="第-5-章-气体动力循环：把过程接成圈"><a href="#第-5-章-气体动力循环：把过程接成圈" class="headerlink" title="第 5 章 气体动力循环：把过程接成圈"></a>第 5 章 气体动力循环：把过程接成圈</h2><p>动力循环的通用套路是：升压是前提，加热是手段，作功是目的，放热是保障。顺序不能变，步骤不能缺。内燃机和燃气轮机都是这个套路，区别只在加热方式和工质。</p>
+<h3 id="内燃机理想循环"><a href="#内燃机理想循环" class="headerlink" title="内燃机理想循环"></a>内燃机理想循环</h3><p>活塞式内燃机先压缩空气，再加热（燃烧），然后膨胀做功，最后放热（排气）。理想化时假设工质数量不变、定比热理想气体、闭口循环、燃烧用外界加热代替、排气用放热代替、多变过程按绝热处理、不可逆按可逆处理。</p>
+<p>三种理想循环：</p>
+<ul>
+<li>定容加热循环（Otto）：汽油机，加热在定容下完成；</li>
+<li>定压加热循环（Diesel）：低速柴油机，加热在定压下完成；</li>
+<li>混合加热循环：高速柴油机，先定容后定压。</li>
+</ul>
+<p>Otto 循环热效率：</p>
+<p>$$\eta_{\text{Otto}}&#x3D;1-\frac{1}{\varepsilon^{k-1}}.$$</p>
+<p>Diesel 循环热效率：</p>
+<p>$$\eta_{\text{Diesel}}&#x3D;1-\frac{1}{\varepsilon^{k-1}}\cdot\frac{\rho^k-1}{k(\rho-1)}.$$</p>
+<p>其中 $\varepsilon&#x3D;v_1&#x2F;v_2$ 是压缩比，$\rho&#x3D;v_3&#x2F;v_2$ 是预胀比。混合加热循环多一个定容增压比 $\lambda&#x3D;p_3&#x2F;p_2$，公式更复杂，但趋势一样：压缩比越大、$k$ 越大，效率越高；预胀比越大，效率越低。</p>
+<p>汽油机压缩比受爆燃限制，一般 5<del>10；柴油机压缩比可以到 14</del>21，所以柴油机效率通常高于汽油机。</p>
+<p>下图画的是同一个压缩比（$\varepsilon&#x3D;8$）、同一个吸热量（$q_{\text{in}}&#x3D;800\ \mathrm{kJ&#x2F;kg}$，$T_1&#x3D;300\ \mathrm{K}$、$p_1&#x3D;100\ \mathrm{kPa}$）下的两个循环：灰色是共用的定熵压缩和放热线，橙色实线是 Otto（定容加热），绿色虚线是 Diesel（定压加热）。p-v 图上两条吸热线起点相同，T-s 图上定压加热线更靠右，同样的吸热量温升更小，这就是 $\rho^k-1$ 那一项拖低 Diesel 效率的几何解释。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/otto-diesel-pv-ts.svg" alt="Otto 循环与 Diesel 循环的 p-v 图与 T-s 图对比"></p>
+<h3 id="勃雷登循环"><a href="#勃雷登循环" class="headerlink" title="勃雷登循环"></a>勃雷登循环</h3><p>燃气轮机按勃雷登循环工作：压气机绝热压缩、燃烧室定压加热、透平绝热膨胀、排气定压放热。理想循环热效率：</p>
+<p>$$\eta_{\text{Brayton}}&#x3D;1-\frac{1}{\pi^{\frac{k-1}{k}}},$$</p>
+<p>其中 $\pi&#x3D;p_2&#x2F;p_1$ 是增压比。这个式子和卡诺效率形式很像，但 $\pi$ 不是温度比，不要混。</p>
+<p>循环净功最大时的最佳增压比：</p>
+<p>$$\pi_{\text{opt}}&#x3D;\left(\frac{T_3}{T_1}\right)^{\frac{k}{2(k-1)}}.$$</p>
+<p>提高增压比可以提高效率，但净功先增后减；$T_3$ 受材料耐热限制，不能无限提高。</p>
+<p>回热用透平排气预热压气机出口空气，可以减少燃烧室加热量。间冷把压气机分级、中间冷却，再热把透平分级、中间再热。间冷和再热一般都要配合回热，否则效率可能不升反降。无穷多级间冷、再热加完全回热，极限就是概括性卡诺循环。</p>
+<p>勃雷登循环的 p-v 图和 T-s 图长这样（取 $T_1&#x3D;300\ \mathrm{K}$、$p_1&#x3D;100\ \mathrm{kPa}$、$\pi&#x3D;8$、$T_3&#x3D;1200\ \mathrm{K}$）：两个定压过程在 p-v 图上是两条水平线，T-s 图上 2→3 与 3→4 两段曲线下的面积分别对应吸热量与放热量，两个定熵过程则是竖线。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/brayton-pv-ts.svg" alt="勃雷登循环的 p-v 图与 T-s 图"></p>
+<h3 id="典型题：5-2-Otto-循环"><a href="#典型题：5-2-Otto-循环" class="headerlink" title="典型题：5-2 Otto 循环"></a>典型题：5-2 Otto 循环</h3><p>压缩比 $\varepsilon&#x3D;7.5$ 的 Otto 循环，吸气状态 $p_1&#x3D;98\ \mathrm{kPa}$、$T_1&#x3D;285\ \mathrm{K}$。分别取 $k&#x3D;1.3$ 和 $k&#x3D;1.4$，求压缩终了的压力、温度和循环热效率。</p>
+<p>定熵压缩：</p>
+<p>$$T_2&#x3D;T_1\varepsilon^{k-1},\qquad p_2&#x3D;p_1\varepsilon^k.$$</p>
+<p>$k&#x3D;1.3$：</p>
+<p>$$T_2&#x3D;285\times7.5^{0.3}&#x3D;521.6\ \mathrm{K},$$</p>
+<p>$$p_2&#x3D;98\times7.5^{1.3}&#x3D;1345\ \mathrm{kPa},$$</p>
+<p>$$\eta&#x3D;1-\frac{1}{7.5^{0.3}}&#x3D;0.454.$$</p>
+<p>$k&#x3D;1.4$：</p>
+<p>$$T_2&#x3D;285\times7.5^{0.4}&#x3D;638.1\ \mathrm{K},$$</p>
+<p>$$p_2&#x3D;98\times7.5^{1.4}&#x3D;1646\ \mathrm{kPa},$$</p>
+<p>$$\eta&#x3D;1-\frac{1}{7.5^{0.4}}&#x3D;0.553.$$</p>
+<p>同样的压缩比，$k$ 从 1.3 提高到 1.4，效率从 45.4% 提高到 55.3%。实际气体的 $k$ 随温度变化，工程计算要取平均温度下的值。</p>
+<h3 id="其余题只讲思路-3"><a href="#其余题只讲思路-3" class="headerlink" title="其余题只讲思路"></a>其余题只讲思路</h3><ul>
+<li><strong>5-7 混合加热循环</strong>：已知 $T_1$、$q_1$ 和压缩比，先定熵压缩求 $T_2$，再由定容、定压吸热求 $T_3$、$T_4$，最后定熵膨胀求 $T_5$，用 $q_2&#x3D;c_v(T_5-T_1)$ 算放热。</li>
+<li><strong>5-8</strong>：已知各点温度，直接算 $q_1$、$q_2$，再和同温限卡诺效率比较。</li>
+<li><strong>5-9 勃雷登循环</strong>：$\pi&#x3D;5$、$T_1&#x3D;293\ \mathrm{K}$、$T_3&#x3D;1173\ \mathrm{K}$，算得 $T_2&#x3D;464\ \mathrm{K}$、$T_4&#x3D;741\ \mathrm{K}$，$w_{\text{comp}}&#x3D;172\ \mathrm{kJ&#x2F;kg}$、$w_{\text{turb}}&#x3D;435\ \mathrm{kJ&#x2F;kg}$，净功 $263\ \mathrm{kJ&#x2F;kg}$，效率 36.9%；乘以 4 kg&#x2F;s，压气机 688 kW、透平 1738 kW、净功率 1051 kW。</li>
+<li><strong>5-13 回热</strong>：理想回热时压气机出口被加热到透平出口温度，$T_{2R}&#x3D;T_4$，回热量 $q_{\text{reg}}&#x3D;h_4-h_2$；燃烧室加热量减少同样的量，净功不变，效率提高。</li>
+</ul>
+<h3 id="这一章最容易错的地方-4"><a href="#这一章最容易错的地方-4" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>Otto 用压缩比 $\varepsilon$，Brayton 用增压比 $\pi$，两个符号不要混；</li>
+<li>温度必须用 K；</li>
+<li>Diesel 的预胀比 $\rho&#x3D;1$ 时退化为 Otto；</li>
+<li>实际循环要乘压气机绝热效率和透平相对内效率，不能直接用理想公式；</li>
+<li>回热、间冷、再热的 T-s 图要会画，否则很容易把吸热、放热段搞错。</li>
+</ul>
+<h2 id="第-6-章-水蒸气：图表比公式重要"><a href="#第-6-章-水蒸气：图表比公式重要" class="headerlink" title="第 6 章 水蒸气：图表比公式重要"></a>第 6 章 水蒸气：图表比公式重要</h2><p>水蒸气是实际气体的代表。它不能按 $pV&#x3D;mRT$ 算，必须查水蒸气表或焓熵图。这一章的重点不是推导，而是判断状态、查对参数。</p>
+<h3 id="一点两线三区五态"><a href="#一点两线三区五态" class="headerlink" title="一点两线三区五态"></a>一点两线三区五态</h3><p>水的 $p$-$T$ 图上有三相点、临界点、饱和液线、饱和汽线和三相线。$p$-$v$ 图和 $T$-$s$ 图上分成三个单相区和三个两相区。</p>
+<p>五个状态：未饱和水（过冷水）、饱和水、湿饱和蒸汽、干饱和蒸汽、过热蒸汽。饱和温度和饱和压力一一对应；湿蒸汽的 $p$ 和 $T$ 不独立，必须再给一个参数，通常用干度 $x$。</p>
+<p>干度定义为</p>
+<p>$$x&#x3D;\frac{m_g}{m_g+m_f}.$$</p>
+<p>湿蒸汽的参数按质量加权：</p>
+<p>$$v&#x3D;v’+x(v’’-v’),$$</p>
+<p>$$h&#x3D;h’+x(h’’-h’),$$</p>
+<p>$$s&#x3D;s’+x(s’’-s’).$$</p>
+<p>上标一撇是饱和水，两撇是干饱和蒸汽。</p>
+<h3 id="状态判断和查表"><a href="#状态判断和查表" class="headerlink" title="状态判断和查表"></a>状态判断和查表</h3><p>给定 $p$、$T$，先查该压力下的饱和温度 $T_s(p)$：$T&lt;T_s$ 是未饱和水，$T&#x3D;T_s$ 是饱和状态，$T&gt;T_s$ 是过热蒸汽。</p>
+<p>给定 $p$ 和 $v$（或 $h$、$s$），先查该压力下的 $v’$、$v’’$：落在两者之间就是湿蒸汽，用干度公式反算 $x$；小于 $v’$ 是未饱和水；大于 $v’’$ 是过热蒸汽。</p>
+<p>查表时注意：饱和表有按温度排列和按压力排列两种；过热表给出 $p$、$T$ 下的 $v$、$h$、$s$；焓熵图用于快速找点和画过程线。</p>
+<h3 id="水蒸气的热力过程"><a href="#水蒸气的热力过程" class="headerlink" title="水蒸气的热力过程"></a>水蒸气的热力过程</h3><p>定压过程：$q&#x3D;\Delta h$，$w_t&#x3D;0$。锅炉、凝汽器、换热器都是定压过程。</p>
+<p>绝热过程：$q&#x3D;0$，汽轮机 $w_s&#x3D;h_1-h_2&gt;0$，水泵 $w_s&#x3D;h_1-h_2&lt;0$（耗功）。实际过程不可逆，用内效率修正：</p>
+<p>$$\eta_{oi}&#x3D;\frac{h_1-h_{2’}}{h_1-h_2}.$$</p>
+<p>节流过程：$h_1&#x3D;h_2$，但熵增加，是典型不可逆过程。制冷循环里的膨胀阀就是节流。</p>
+<p>定温、定容过程在水蒸气设备里较少见，但 T-s 图和 h-s 图上要能画出来。</p>
+<p>h-s 图（莫里耶图）上，饱和线呈拱形，过热区在右上方，湿蒸汽区在饱和线下方；定压线在过热区逐渐上翘，湿蒸汽区里定压线就是直线（温度不变）。下面这张图用第 7 章朗肯循环的例题数据画出来（$p_1&#x3D;3\ \mathrm{MPa}$、$t_1&#x3D;420^\circ\mathrm{C}$，膨胀到 $p_2&#x3D;0.005\ \mathrm{MPa}$）：1→2 是汽轮机定熵膨胀（竖直向下的直线，出口干度 $x&#x3D;0.823$），2→3 是凝汽器定压放热（沿 p₂ 线走向饱和水），3→4 是水泵增压（焓只升高约 3 kJ&#x2F;kg，图上几乎与 3 重合），4→1 沿 p₁ 线回到过热区。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/rankine-hs.svg" alt="水蒸气的 h-s 图与朗肯循环各过程"></p>
+<h3 id="典型题：6-3-锅炉耗煤量"><a href="#典型题：6-3-锅炉耗煤量" class="headerlink" title="典型题：6-3 锅炉耗煤量"></a>典型题：6-3 锅炉耗煤量</h3><p>锅炉产汽 $20\ \mathrm{t&#x2F;h}$，蒸汽压力 $4.5\ \mathrm{MPa}$、温度 $480^\circ\mathrm{C}$；给水压力 $4.5\ \mathrm{MPa}$、温度 $30^\circ\mathrm{C}$；锅炉效率 0.8，煤的发热量 $30000\ \mathrm{kJ&#x2F;kg}$。求每小时耗煤量。</p>
+<p>查水蒸气表：</p>
+<p>$$h_{\text{fw}}\approx129.8\ \mathrm{kJ&#x2F;kg},\qquad<br>h_{\text{steam}}\approx3393.9\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>每千克蒸汽吸热：</p>
+<p>$$q&#x3D;h_{\text{steam}}-h_{\text{fw}}&#x3D;3264.1\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>每小时吸热：</p>
+<p>$$Q&#x3D;\dot m q&#x3D;20000\times3264.1&#x3D;6.528\times10^7\ \mathrm{kJ&#x2F;h}.$$</p>
+<p>耗煤量：</p>
+<p>$$\dot m_{\text{coal}}&#x3D;\frac{Q}{0.8\times30000}&#x3D;2720\ \mathrm{kg&#x2F;h}&#x3D;2.72\ \mathrm{t&#x2F;h}.$$</p>
+<p>6-7 是凝汽器：乏汽真空度 0.094 MPa、大气压 0.1 MPa，绝对压力 0.006 MPa，干度 0.9。查表得 $v’&#x3D;0.001006\ \mathrm{m^3&#x2F;kg}$、$v’’&#x3D;23.73\ \mathrm{m^3&#x2F;kg}$，湿蒸汽比容 $v&#x3D;21.36\ \mathrm{m^3&#x2F;kg}$，凝结成饱和水后体积缩小约 21224 倍；每千克乏汽放热约 $2174\ \mathrm{kJ&#x2F;kg}$。这道题考的是干度和“凝结后体积急剧缩小”，不是理想气体。</p>
+<h3 id="这一章最容易错的地方-5"><a href="#这一章最容易错的地方-5" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>用水蒸气当理想气体，套 $pV&#x3D;mRT$ 和 $c_p-c_v&#x3D;R$；</li>
+<li>湿蒸汽只用 $p$、$T$ 两个参数，忘了干度；</li>
+<li>查表时把 $h’$ 和 $h’’$ 用反；</li>
+<li>汽轮机做功符号搞错，$w_s&#x3D;h_1-h_2$ 是输出功；</li>
+<li>忽略汽轮机内效率，把实际过程当等熵。</li>
+</ul>
+<h2 id="第-7-章-蒸汽动力循环：朗肯为什么打败卡诺"><a href="#第-7-章-蒸汽动力循环：朗肯为什么打败卡诺" class="headerlink" title="第 7 章 蒸汽动力循环：朗肯为什么打败卡诺"></a>第 7 章 蒸汽动力循环：朗肯为什么打败卡诺</h2><p>蒸汽动力循环用水的相变来工作。为什么不用卡诺循环？因为卡诺循环的压缩过程落在两相区，湿蒸汽压缩困难；汽轮机末级湿度太大会打坏叶片；等温吸热在锅炉里也不好实现。朗肯循环把压缩放在液态，设备简单，还能把蒸汽过热，所以成了火电厂的基本循环。</p>
+<h3 id="朗肯循环"><a href="#朗肯循环" class="headerlink" title="朗肯循环"></a>朗肯循环</h3><p>四个设备：锅炉、汽轮机、凝汽器、给水泵。</p>
+<ul>
+<li>1→2 汽轮机绝热膨胀，$w_{\text{turb}}&#x3D;h_1-h_2$；</li>
+<li>2→3 凝汽器定压放热，$q_2&#x3D;h_2-h_3$；</li>
+<li>3→4 给水泵绝热压缩，$w_{\text{pump}}&#x3D;h_4-h_3\approx v’(p_1-p_2)$；</li>
+<li>4→1 锅炉定压吸热，$q_1&#x3D;h_1-h_4$。</li>
+</ul>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/rankine-ts.svg" alt="朗肯循环的 T-s 图"></p>
+<p>热效率：</p>
+<p>$$\eta_t&#x3D;\frac{w_{\text{turb}}-w_{\text{pump}}}{q_1}&#x3D;\frac{(h_1-h_2)-(h_4-h_3)}{h_1-h_4}.$$</p>
+<p>泵功通常只占 0.8%~1%，粗略计算可以忽略；但题目要求不忽略时，必须算进去。</p>
+<p>汽耗率表示每输出 $1\ \mathrm{kW\cdot h}$ 功消耗的蒸汽量：</p>
+<p>$$d&#x3D;\frac{3600}{w_{\text{turb}}-w_{\text{pump}}}\quad[\mathrm{kg&#x2F;(kW\cdot h)}].$$</p>
+<h3 id="参数对效率的影响"><a href="#参数对效率的影响" class="headerlink" title="参数对效率的影响"></a>参数对效率的影响</h3><p>提高初温 $t_1$：平均吸热温度提高，效率提高，同时排汽干度提高，对汽轮机有利。受材料耐热限制。</p>
+<p>提高初压 $p_1$：效率提高，但排汽干度下降，末级叶片容易受蚀。所以高参数机组一般配合再热。</p>
+<p>降低乏汽压力 $p_2$：效率提高，但受环境温度和冷却水温度限制，大型机组 $p_2$ 约 0.0035<del>0.005 MPa，对应的饱和温度已经接近 27</del>33℃。</p>
+<p>再热：把蒸汽在汽轮机中间抽出来，回到锅炉再加热，然后继续膨胀。再热本身不一定提高效率，但可以提高排汽干度，为采用更高初压创造条件。再热压力一般取 $p_b\approx(0.2\sim0.3)p_1$。</p>
+<p>回热：从汽轮机中间抽汽，加热给水。抽汽量用混合式回热器的能量平衡求：</p>
+<p>$$\alpha h_a+(1-\alpha)h_{4’}&#x3D;h_4.$$</p>
+<p>回热能提高平均吸热温度，但循环比功减小、汽耗率增加。</p>
+<p>热电联产、燃气-蒸汽联合循环是进一步提高能量利用率的方向。联合循环把燃气轮机的高温排气用于加热蒸汽，效率可以到 60%。</p>
+<h3 id="典型题：朗肯循环计算（课件例题）"><a href="#典型题：朗肯循环计算（课件例题）" class="headerlink" title="典型题：朗肯循环计算（课件例题）"></a>典型题：朗肯循环计算（课件例题）</h3><p>蒸汽动力循环按朗肯循环工作，汽轮机入口 $p_1&#x3D;3\ \mathrm{MPa}$、$t_1&#x3D;420^\circ\mathrm{C}$，排汽压力 $p_2&#x3D;0.005\ \mathrm{MPa}$。求每千克蒸汽的净功和热效率。</p>
+<p>查表：</p>
+<p>$$h_1&#x3D;3277.0\ \mathrm{kJ&#x2F;kg},\qquad s_1&#x3D;6.9897\ \mathrm{kJ&#x2F;(kg\cdot K)}.$$</p>
+<p>排汽压力下：</p>
+<p>$$h’&#x3D;137.8\ \mathrm{kJ&#x2F;kg},\qquad h’’&#x3D;2561.2\ \mathrm{kJ&#x2F;kg},$$</p>
+<p>$$s’&#x3D;0.4762,\qquad s’’&#x3D;8.3930.$$</p>
+<p>定熵膨胀 $s_2&#x3D;s_1$，求干度：</p>
+<p>$$x_2&#x3D;\frac{6.9897-0.4762}{8.3930-0.4762}&#x3D;0.8227.$$</p>
+<p>$$h_2&#x3D;h’+x_2(h’’-h’)&#x3D;137.8+0.8227\times2423.4&#x3D;2131.0\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>汽轮机做功：</p>
+<p>$$w_{\text{turb}}&#x3D;h_1-h_2&#x3D;1146.0\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>泵功：</p>
+<p>$$w_{\text{pump}}&#x3D;v’(p_1-p_2)&#x3D;0.001005\times(3000-5)&#x3D;3.0\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>锅炉吸热：</p>
+<p>$$q_1&#x3D;h_1-(h’+w_{\text{pump}})&#x3D;3277.0-140.8&#x3D;3136.2\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>热效率：</p>
+<p>$$\eta_t&#x3D;\frac{w_{\text{turb}}-w_{\text{pump}}}{q_1}&#x3D;\frac{1146.0-3.0}{3136.2}&#x3D;0.3644.$$</p>
+<p>净功约 $1143\ \mathrm{kJ&#x2F;kg}$，热效率约 36.4%。如果不忽略泵功，结果会略有差别；这道题里泵功只占 0.3% 左右，但计算时要写清楚。</p>
+<h3 id="其余题只讲思路-4"><a href="#其余题只讲思路-4" class="headerlink" title="其余题只讲思路"></a>其余题只讲思路</h3><ul>
+<li><strong>再热循环</strong>：吸热量分成锅炉和再热器两段，汽轮机功分成高压缸和低压缸两段；再热压力越高，再热段吸热温度越高，但排汽干度越低。</li>
+<li><strong>回热循环</strong>：先求抽汽量 $\alpha$，再算 $1-\alpha$ 千克工质在汽轮机里的功和锅炉里的吸热；T-s 图上各点质量不同，面积不再直接代表热和功。</li>
+<li><strong>热电联产</strong>：用背压式或抽汽式机组，把做过功的蒸汽用于供热；评价指标是能量利用系数，但要考虑热和电的品位差异。</li>
+</ul>
+<h3 id="这一章最容易错的地方-6"><a href="#这一章最容易错的地方-6" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>忽略泵功却又在公式里保留 $h_4-h_3$；</li>
+<li>排汽干度 $x_2$ 算出大于 1，说明排汽在过热区，不能再用湿蒸汽公式；</li>
+<li>再热循环的吸热量忘记加再热段；</li>
+<li>回热抽汽量用错能量平衡边界；</li>
+<li>把 T-s 图上的面积直接当功，忽略各点质量不同。</li>
+</ul>
+<h2 id="第-8-章-制冷循环：把动力循环倒过来"><a href="#第-8-章-制冷循环：把动力循环倒过来" class="headerlink" title="第 8 章 制冷循环：把动力循环倒过来"></a>第 8 章 制冷循环：把动力循环倒过来</h2><p>制冷循环和热泵循环都是逆循环：输入功，把热从低温搬到高温。动力循环是正向的，制冷和热泵是反向的；动力循环追求效率，制冷循环追求制冷系数。</p>
+<h3 id="制冷系数与热泵系数"><a href="#制冷系数与热泵系数" class="headerlink" title="制冷系数与热泵系数"></a>制冷系数与热泵系数</h3><p>制冷系数：</p>
+<p>$$\varepsilon&#x3D;\frac{q_2}{w_{\text{net}}}&#x3D;\frac{q_2}{q_1-q_2}.$$</p>
+<p>热泵系数：</p>
+<p>$$\varepsilon’&#x3D;\frac{q_1}{w_{\text{net}}}&#x3D;\frac{q_1}{q_1-q_2}.$$</p>
+<p>逆卡诺循环的制冷系数和热泵系数分别为</p>
+<p>$$\varepsilon_C&#x3D;\frac{T_2}{T_0-T_2},\qquad<br>\varepsilon_C’&#x3D;\frac{T_1}{T_1-T_0}.$$</p>
+<p>$T_2$ 是冷库温度，$T_0$ 是环境温度，$T_1$ 是供热温度。冷库温度越低、环境温度越高，制冷系数越小。</p>
+<p>制冷量常用冷吨表示。1 冷吨是 1 吨 0℃ 饱和水在 24 小时内冻成 0℃ 冰所需的冷量，约 3.86 kJ&#x2F;s；美国冷吨约 3.517 kJ&#x2F;s。</p>
+<h3 id="空气压缩制冷"><a href="#空气压缩制冷" class="headerlink" title="空气压缩制冷"></a>空气压缩制冷</h3><p>空气压缩制冷是逆勃雷登循环：压气机绝热压缩、冷却器等压放热、膨胀机绝热膨胀、冷藏室等压吸热。理想制冷系数：</p>
+<p>$$\varepsilon&#x3D;\frac{1}{\pi^{\frac{k-1}{k}}-1}.$$</p>
+<p>它比同温限的逆卡诺循环低，因为吸热和放热不是定温的。空气回热可以降低膨胀机入口温度，但不改变制冷系数，只适用于小压比、大流量的叶轮式压气机。</p>
+<p>空气压缩制冷的根本问题是 $q_2&#x3D;c_p(T_1-T_4)$ 很小，制冷能力低。所以工程上主要用蒸气压缩制冷。</p>
+<h3 id="蒸气压缩制冷"><a href="#蒸气压缩制冷" class="headerlink" title="蒸气压缩制冷"></a>蒸气压缩制冷</h3><p>四个部件：压缩机、冷凝器、节流阀、蒸发器。</p>
+<ul>
+<li>1→2 压缩机绝热压缩；</li>
+<li>2→3 冷凝器定压放热，出口是饱和液；</li>
+<li>3→4 节流阀绝热节流，$h_4&#x3D;h_3$；</li>
+<li>4→1 蒸发器定压吸热，出口是干饱和蒸汽。</li>
+</ul>
+<p>制冷系数：</p>
+<p>$$\varepsilon&#x3D;\frac{q_2}{w}&#x3D;\frac{h_1-h_4}{h_2-h_1}.$$</p>
+<p>节流阀代替膨胀机，会损失一部分功、少从冷库取走一些热量，但设备大大简化，开度容易调节，利大于弊。</p>
+<p>制冷循环在压焓（lg p-h）图上看最直观：纵轴是对数压力，饱和线呈拱形把图分成三块，左边是液态区，拱内是两相区，右边是气态区。四个部件各占一条线：1→2 压缩（穿过两相区上方进入气态区的斜线），2→3 冷凝（沿冷凝压力的水平线横穿两相区），3→4 节流（竖直向下的虚线，焓不变），4→1 蒸发（沿蒸发压力的水平线）。下面这张图按 R134a 的量级画示意（$p_{\text{evap}}&#x3D;0.133\ \mathrm{MPa}$ 对应 $-20^\circ\mathrm{C}$，$p_{\text{cond}}&#x3D;0.77\ \mathrm{MPa}$ 对应 $30^\circ\mathrm{C}$，临界点约 $4.06\ \mathrm{MPa}$），各点焓值就是后面例题查图的数。</p>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/vapor-compression-ph.svg" alt="R134a 蒸气压缩制冷循环的 lg p-h 图"></p>
+<p>压缩机入口用干饱和蒸汽，是为了避免“液击”；冷凝器出口用饱和液，是为了让节流后干度合适。过冷可以增加制冷量，过热可以防止液击，但都会影响循环性能。</p>
+<h3 id="典型题：HFC134a-蒸气压缩制冷循环（课件例题）"><a href="#典型题：HFC134a-蒸气压缩制冷循环（课件例题）" class="headerlink" title="典型题：HFC134a 蒸气压缩制冷循环（课件例题）"></a>典型题：HFC134a 蒸气压缩制冷循环（课件例题）</h3><p>以 HFC134a 为工质的制冷机，蒸发温度 $-20^\circ\mathrm{C}$，压缩机入口为干饱和蒸汽，冷凝温度 $30^\circ\mathrm{C}$，冷凝器出口为饱和液，制冷量 $1\ \mathrm{kW}$。查压焓图得：</p>
+<p>$$h_1&#x3D;385\ \mathrm{kJ&#x2F;kg},\qquad h_2&#x3D;420\ \mathrm{kJ&#x2F;kg},\qquad h_3&#x3D;245\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>节流后 $h_4&#x3D;h_3&#x3D;245\ \mathrm{kJ&#x2F;kg}$。</p>
+<p>单位质量制冷量：</p>
+<p>$$q_2&#x3D;h_1-h_4&#x3D;385-245&#x3D;140\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>压缩机耗功：</p>
+<p>$$w&#x3D;h_2-h_1&#x3D;420-385&#x3D;35\ \mathrm{kJ&#x2F;kg}.$$</p>
+<p>制冷系数：</p>
+<p>$$\varepsilon&#x3D;\frac{140}{35}&#x3D;4.0.$$</p>
+<p>制冷量 $1\ \mathrm{kW}$ 时，压缩机功率：</p>
+<p>$$P&#x3D;\frac{Q_2}{\varepsilon}&#x3D;\frac{1}{4.0}&#x3D;0.25\ \mathrm{kW}.$$</p>
+<p>制冷剂流量：</p>
+<p>$$\dot m&#x3D;\frac{Q_2}{q_2}&#x3D;\frac{1}{140}&#x3D;0.00714\ \mathrm{kg&#x2F;s}&#x3D;25.7\ \mathrm{kg&#x2F;h}.$$</p>
+<p>8-6 是带理想回热的逆勃雷登循环，工作温度 290 K 和 220 K，增压比 5，输入功率 3 kW。先算各点温度，再用 $q_2&#x3D;c_p(T_1-T_{2R})$ 和 $\varepsilon&#x3D;q_2&#x2F;w$。回热不改变制冷系数，但可以降低膨胀机入口温度，改善运行。</p>
+<h3 id="这一章最容易错的地方-7"><a href="#这一章最容易错的地方-7" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>把节流当成等熵膨胀，忘记 $h$ 不变、熵增加；</li>
+<li>制冷系数用 $q_1$ 而不是 $q_2$；</li>
+<li>热泵系数和制冷系数混用；</li>
+<li>冷凝器出口当成湿蒸汽，实际上通常是饱和液；</li>
+<li>压缩机入口带液，造成液击。</li>
+</ul>
+<h2 id="第-9-章-湿空气：空调里的混合气体"><a href="#第-9-章-湿空气：空调里的混合气体" class="headerlink" title="第 9 章 湿空气：空调里的混合气体"></a>第 9 章 湿空气：空调里的混合气体</h2><p>湿空气是干空气和水蒸气的混合物。它和一般理想混合气体最大的区别是：水蒸气的含量会变化，而且水蒸气可能凝结。空调、通风、烘干、冷却塔都离不开这一章。</p>
+<h3 id="混合气体"><a href="#混合气体" class="headerlink" title="混合气体"></a>混合气体</h3><p>混合气体的成分可以用质量成分 $g_i$ 或摩尔成分 $x_i$ 表示：</p>
+<p>$$\sum g_i&#x3D;1,\qquad \sum x_i&#x3D;1.$$</p>
+<p>平均摩尔质量和折合气体常数：</p>
+<p>$$M_{\text{mix}}&#x3D;\sum x_iM_i,\qquad<br>R_{\text{mix}}&#x3D;\frac{R_m}{M_{\text{mix}}}&#x3D;\sum g_iR_i.$$</p>
+<p>道尔顿分压定律：混合气体的总压力等于各组分分压力之和。分容积定律：总容积等于各组分在混合气体温度和压力下的分容积之和。容积成分等于摩尔成分。</p>
+<p>混合气体的总参数具有加和性，但比参数要用质量加权或摩尔加权。同温同压下理想气体绝热混合的熵增为</p>
+<p>$$\Delta S_{\text{mix}}&#x3D;-R_m\sum n_i\ln x_i.$$</p>
+<p>这个式子只与摩尔成分有关，与气体种类无关。若把同种气体也代进去，公式会给出非零的“混合熵增”，但同种气体同温同压混合实际上没有熵增；这个矛盾叫吉布斯佯谬。</p>
+<h3 id="湿空气的基本参数"><a href="#湿空气的基本参数" class="headerlink" title="湿空气的基本参数"></a>湿空气的基本参数</h3><p>湿空气 &#x3D; 干空气 + 水蒸气。水蒸气分压 $p_v$ 很低，可以当理想气体；干空气也当理想气体。</p>
+<p>绝对湿度是每立方米湿空气中水蒸气的质量；相对湿度是</p>
+<p>$$\phi&#x3D;\frac{p_v}{p_s(T)},$$</p>
+<p>其中 $p_s(T)$ 是同温度下的饱和水蒸气压力。$\phi&#x3D;0$ 是干空气，$\phi&#x3D;1$ 是饱和湿空气，$0&lt;\phi&lt;1$ 是未饱和湿空气。</p>
+<p>含湿量（比湿度）以 1 kg 干空气为基准：</p>
+<p>$$d&#x3D;0.622\frac{p_v}{p-p_v}\quad[\mathrm{kg\ 水蒸气&#x2F;kg\ 干空气}].$$</p>
+<p>湿空气的焓也以 1 kg 干空气为基准：</p>
+<p>$$h&#x3D;1.005t+d(2501+1.86t)\quad[\mathrm{kJ&#x2F;kg\ 干空气}].$$</p>
+<p>露点温度 $T_d$ 是湿空气在 $p_v$ 不变时冷却到饱和的温度：</p>
+<p>$$T_d&#x3D;T_s(p_v).$$</p>
+<p>湿球温度是湿纱布包住温度计、空气流过时达到的稳定温度，它接近绝热饱和温度。干球温度、湿球温度、露点温度三者的关系要能在 h-d 图上标出来。</p>
+<h3 id="湿空气的过程"><a href="#湿空气的过程" class="headerlink" title="湿空气的过程"></a>湿空气的过程</h3><ul>
+<li>单纯加热或冷却：$d$ 不变，$h$ 变，$\phi$ 变；</li>
+<li>冷却去湿：先冷却到露点，再继续冷却，水蒸气凝结，$d$ 下降；</li>
+<li>绝热加湿：喷水时 $h$ 近似不变、$d$ 增加；喷蒸汽时 $h$ 和 $d$ 都增加；</li>
+<li>加热加湿：既加热又喷水，$h$ 和 $d$ 都增加；</li>
+<li>绝热混合：质量守恒和焓守恒，混合点在 h-d 图上位于两状态点的连线上，按质量反比分配。</li>
+</ul>
+<p><img src="/2026/10/30/engineering-thermodynamics-review/psychrometric.svg" alt="湿空气的 h-d 图：加热、冷却到露点、继续冷却去湿"></p>
+<h3 id="典型例：30℃、60-的湿空气"><a href="#典型例：30℃、60-的湿空气" class="headerlink" title="典型例：30℃、60% 的湿空气"></a>典型例：30℃、60% 的湿空气</h3><p>$t&#x3D;30^\circ\mathrm{C}$、$\phi=60\%$、$p&#x3D;101.325\ \mathrm{kPa}$。查表 $p_s(30^\circ\mathrm{C})&#x3D;4.246\ \mathrm{kPa}$。</p>
+<p>$$p_v&#x3D;\phi p_s&#x3D;0.6\times4.246&#x3D;2.548\ \mathrm{kPa}.$$</p>
+<p>$$d&#x3D;0.622\times\frac{2.548}{101.325-2.548}&#x3D;0.01604\ \mathrm{kg&#x2F;kg\ 干空气}.$$</p>
+<p>$$h&#x3D;1.005\times30+0.01604\times(2501+1.86\times30)&#x3D;71.2\ \mathrm{kJ&#x2F;kg\ 干空气}.$$</p>
+<p>露点：</p>
+<p>$$T_d&#x3D;T_s(2.548\ \mathrm{kPa})\approx21.4^\circ\mathrm{C}.$$</p>
+<p>如果把这团空气加热到 $50^\circ\mathrm{C}$，含湿量不变，相对湿度变为</p>
+<p>$$\phi&#x3D;\frac{2.548}{12.352}&#x3D;0.206,$$</p>
+<p>也就是从 60% 降到约 21%。这就是冬天供暖后室内感觉干燥的原因：温度升高，饱和压力升高，相对湿度下降，但实际水蒸气含量没变。</p>
+<h3 id="这一章最容易错的地方-8"><a href="#这一章最容易错的地方-8" class="headerlink" title="这一章最容易错的地方"></a>这一章最容易错的地方</h3><ul>
+<li>含湿量的分母写成 $p$，而不是 $p-p_v$；</li>
+<li>把相对湿度当成质量分数；</li>
+<li>把露点和湿球温度混为一谈；</li>
+<li>加热过程以为含湿量会变；</li>
+<li>湿空气的焓忘记以 1 kg 干空气为基准。</li>
+</ul>
+<h2 id="把九章压成一张表"><a href="#把九章压成一张表" class="headerlink" title="把九章压成一张表"></a>把九章压成一张表</h2><p>遇到题，按下面五步走：</p>
+<ol>
+<li><strong>选系统</strong>：闭口、开口还是稳流？要不要把相关外界一起取成孤立系？</li>
+<li><strong>认工质</strong>：理想气体、水蒸气、湿空气还是混合气体？</li>
+<li><strong>认过程</strong>：定容、定压、定温、绝热、多变、节流、混合还是循环？</li>
+<li><strong>查已知</strong>：$p$、$T$、$v$、$h$、$s$、$x$ 中知道哪些？压力和温度是不是绝对值和 K？</li>
+<li><strong>选账本</strong>：第一定律、第二定律、状态方程还是水蒸气表？</li>
+</ol>
+<p>最后检查符号、单位、可逆性和干度。</p>
+<table>
+<thead>
+<tr>
+<th>题目关键词</th>
+<th>先想什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>表压、真空度</td>
+<td>换成绝对压力</td>
+</tr>
+<tr>
+<td>缓慢、准静态</td>
+<td>可以用 $\int p\hspace{0.17em}\mathrm{d}v$</td>
+</tr>
+<tr>
+<td>摩擦、节流、自由膨胀、混合</td>
+<td>不可逆，算熵产</td>
+</tr>
+<tr>
+<td>汽轮机、透平</td>
+<td>$w_s&#x3D;h_1-h_2$</td>
+</tr>
+<tr>
+<td>压气机、泵</td>
+<td>$w_s&#x3D;h_2-h_1$</td>
+</tr>
+<tr>
+<td>喷管</td>
+<td>$c_2&#x3D;\sqrt{2\times1000(h_1-h_2)+c_1^2}$，$h$ 用 kJ&#x2F;kg</td>
+</tr>
+<tr>
+<td>充气</td>
+<td>进入的是焓，$u’&#x3D;h$（真空罐）</td>
+</tr>
+<tr>
+<td>放气</td>
+<td>剩余气体绝热膨胀，$T_2&#x2F;T_1&#x3D;(p_2&#x2F;p_1)^{(k-1)&#x2F;k}$</td>
+</tr>
+<tr>
+<td>湿蒸汽</td>
+<td>先判断状态，再算干度</td>
+</tr>
+<tr>
+<td>朗肯循环</td>
+<td>定熵膨胀求 $x_2$，再算 $h_2$</td>
+</tr>
+<tr>
+<td>制冷循环</td>
+<td>节流 $h$ 不变，COP 用 $q_2&#x2F;w$</td>
+</tr>
+<tr>
+<td>湿空气</td>
+<td>$d&#x3D;0.622p_v&#x2F;(p-p_v)$，焓以干空气为基准</td>
+</tr>
+</tbody></table>
+<h2 id="课后题地图"><a href="#课后题地图" class="headerlink" title="课后题地图"></a>课后题地图</h2><p>照片覆盖第 1–6 章和第 8 章，共 116 道习题；第 7 章没有课后题照片，第 9 章只有课件作业题号（9-3、9-6、9-8）。下面按章列出题号和一句话思路，前面已经完整算过的题不再重复。</p>
+<table>
+<thead>
+<tr>
+<th>章</th>
+<th>题号范围</th>
+<th>精讲与重点</th>
+<th>其余题的共同套路</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1-1~1-16</td>
+<td>精讲 1-14、1-16；重点 1-4、1-6、1-7、1-8、1-13</td>
+<td>压力计题先化绝对压力；温标题列线性关系；功的题看过程方程和 p-v 面积</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2-1~2-18</td>
+<td>精讲 2-18；重点 2-3、2-5、2-9、2-14、2-15、2-16、2-17</td>
+<td>充气取罐为开口系；放气取剩余气体；换热器看焓差；喷管看动能</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3-1~3-21</td>
+<td>精讲 3-13；重点 3-2、3-5、3-8、3-10、3-20</td>
+<td>先认过程再套表；压气机看级数和余隙；熵变与路径无关</td>
+</tr>
+<tr>
+<td>4</td>
+<td>4-1~4-21</td>
+<td>精讲课件例；重点 4-4、4-6、4-9、4-11、4-16、4-19</td>
+<td>判方向算 $\oint\delta Q&#x2F;T$ 或 $\Delta S_{\text{iso}}$；熵变选可逆路径；㶲损 $&#x3D;T_0S_g$</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5-1~5-19</td>
+<td>精讲 5-2；重点 5-7、5-8、5-9、5-13</td>
+<td>Otto 用 $\varepsilon$；Diesel 用 $\rho$；Brayton 用 $\pi$；回热看 $T_4$ 与 $T_2$</td>
+</tr>
+<tr>
+<td>6</td>
+<td>6-1~6-10</td>
+<td>精讲 6-3；重点 6-1、6-7</td>
+<td>查表先判状态；湿蒸汽算干度；定压 $q&#x3D;\Delta h$，绝热 $w_s&#x3D;h_1-h_2$</td>
+</tr>
+<tr>
+<td>8</td>
+<td>8-1~8-11</td>
+<td>精讲课件 HFC134a 例；重点 8-5、8-6、8-9</td>
+<td>卡诺逆循环先算 COP；空气制冷用 $\pi$；蒸气压缩用 $h$，节流 $h$ 不变</td>
+</tr>
+<tr>
+<td>9</td>
+<td>课件 9-3、9-6、9-8</td>
+<td>精讲 30℃&#x2F;60% 湿空气</td>
+<td>混合气体用分压&#x2F;分容积；湿空气用 $\phi$、$d$、$h$、露点</td>
+</tr>
+</tbody></table>
+<p>几条值得单独记的题：</p>
+<ul>
+<li><strong>1-15 气球膨胀</strong>：压力正比于直径，$p&#x3D;kD$，$V&#x3D;\pi D^3&#x2F;6$，$W&#x3D;\int p\hspace{0.17em}\mathrm{d}V$；不能直接用 $p\Delta V$。</li>
+<li><strong>2-3 填表</strong>：每行用 $Q&#x3D;\Delta U+W$，整个循环 $\sum Q&#x3D;\sum W$，缺的数就能补齐。</li>
+<li><strong>3-21 余隙容积</strong>：余隙不改变单位产气量的理论耗功，但容积效率随余隙比增大而下降；三种多变指数下结论一致。</li>
+<li><strong>4-11 摩擦定温压缩</strong>：无摩擦时气体熵变只由体积比决定；有摩擦时多耗的功变成热，热源熵变和总熵变都要重算。</li>
+<li><strong>5-15 回热度</strong>：回热度 92% 表示实际回热量占理想回热量的 92%，先算理想回热，再乘 0.92。</li>
+<li><strong>6-8 刚性容器加热</strong>：定容过程，$q&#x3D;\Delta u$；如果容器装满水，温度升高一点压力就会升得很高，工程上不能装满。</li>
+<li><strong>8-8 制冷剂对比</strong>：教材题是比较 R12 和 HFC134a，方法完全一样，只是查的工质表不同；课件例题取的是 HFC134a 的那一组数据。</li>
+</ul>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>复习到最后，我把九章的内容压缩成一张 A4 纸：左边是四个问题，右边是每章的公式和一道典型题。考试时不可能现推所有公式，但只要先选对系统、认出工质和过程，剩下的就是查表、代公式、检查符号。</p>
+<p>如果这篇笔记只能留下一句话，我会留这一句：先问“系统是什么”，再问“能量从哪进、从哪出”，最后问“这个过程的熵产在哪”。这三问能挡住大部分错误。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B7%A5%E7%A8%8B%E7%83%AD%E5%8A%9B%E5%AD%A6/">工程热力学</a><a class="post-meta__tags" href="/tags/%E7%83%AD%E5%8A%9B%E5%AD%A6%E7%AC%AC%E4%B8%80%E5%AE%9A%E5%BE%8B/">热力学第一定律</a><a class="post-meta__tags" href="/tags/%E7%83%AD%E5%8A%9B%E5%AD%A6%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B/">热力学第二定律</a><a class="post-meta__tags" href="/tags/%E6%9C%97%E8%82%AF%E5%BE%AA%E7%8E%AF/">朗肯循环</a><a class="post-meta__tags" href="/tags/%E5%88%B6%E5%86%B7%E5%BE%AA%E7%8E%AF/">制冷循环</a><a class="post-meta__tags" href="/tags/%E6%B9%BF%E7%A9%BA%E6%B0%94/">湿空气</a><a class="post-meta__tags" href="/tags/%E5%A4%8D%E4%B9%A0%E7%AC%94%E8%AE%B0/">复习笔记</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">U-Net：用于生物医学图像分割的卷积网络</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Olaf Ronneberger, Philipp Fischer, Thomas Brox. U-Net: Convolutional Networks for Biomedical Image Segmentation. arXiv:1505.04597v1 [cs.CV], 2015. 单位：德国弗赖堡大学计算机科学系、BIOSS 生物信号研究中心。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  摘要人们普遍认为，成功训练深度网络需要数千个带标注的训练样本。本文提出一种网络与训练策略，它强烈依赖数据增强，从而更高效地利用可用的标注样本。该架构由一条用于捕获上下文的收缩路径和一条对称的、能够实现精确定位的扩张路径组成。我们表明，这样的网络可以从极少量图像端到端训练，并在 ISBI 电子显微镜图像堆栈中神经元结构分割挑战赛上优于此前的最佳方法（滑动窗口卷积网络）。使用在透射光显微图像（相差和 DIC）上训练的同一网络，我们在 2015 年 ISBI 细胞追踪挑战赛的这些类别中以较大优势获胜。此外，该网络速...</div></div></div></a><a class="pagination-related" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">条纹投影轮廓测量中隐含的窗口平滑效应建模</div></div><div class="info-2"><div class="info-item-1"> 原文信息 Min Han, Hao Jiang, Fengxiao Lei, Yibo Xing, Xiaohao Wang, Xinghui Li. Modeling window smoothing effect hidden in fringe projection profilometry. Measurement, 242 (2025) 115852. DOI: 10.1016&#x2F;j.measurement.2024.115852 收稿：2024 年 5 月 20 日；修回：2024 年 9 月 16 日；录用：2024 年 9 月 29 日；在线发表：2024 年 10 月 4 日。 以下为论文全文的中文翻译。章节、公式、图、表和参考文献编号均与原文一致；图内英文标注与参考文献保留原文。  关键词： 条纹投影轮廓测量；激光束扫描；调制光强；建模 摘要基于微机电系统（MEMS）微振镜的三维重建被认为极具发展前景。然而，线激光器作为 MEMS 系统的唯一光源，其影响重建的机制尚不明确。为填补这一理论空白，我们首次提出可解释的激光影响模型，称为窗口平滑模型。该模型...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Yourba</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">71</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/yourba"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的博客！</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E6%8A%8A%E5%9C%B0%E5%9B%BE%E6%91%8A%E5%BC%80"><span class="toc-number">1.</span> <span class="toc-text">先把地图摊开</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-1-%E7%AB%A0-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%EF%BC%9A%E5%85%88%E9%80%89%E7%B3%BB%E7%BB%9F%EF%BC%8C%E5%86%8D%E8%B0%88%E5%88%AB%E7%9A%84"><span class="toc-number">2.</span> <span class="toc-text">第 1 章 基本概念：先选系统，再谈别的</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%98%AF%E4%BA%BA%E4%B8%BA%E5%88%92%E5%AE%9A%E7%9A%84"><span class="toc-number">2.1.</span> <span class="toc-text">系统是人为划定的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%8F%82%E6%95%B0%EF%BC%9A%E5%8F%AA%E8%AE%A4%E7%BB%9D%E5%AF%B9%E5%8E%8B%E5%8A%9B"><span class="toc-number">2.2.</span> <span class="toc-text">状态参数：只认绝对压力</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E8%A1%A1%E3%80%81%E5%87%86%E9%9D%99%E6%80%81%E3%80%81%E5%8F%AF%E9%80%86"><span class="toc-number">2.3.</span> <span class="toc-text">平衡、准静态、可逆</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%9F%E5%92%8C%E7%83%AD%E9%83%BD%E6%98%AF%E8%BF%87%E7%A8%8B%E9%87%8F"><span class="toc-number">2.4.</span> <span class="toc-text">功和热都是过程量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A1-14-%E5%92%8C-1-16"><span class="toc-number">2.5.</span> <span class="toc-text">典型题：1-14 和 1-16</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9"><span class="toc-number">2.6.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-2-%E7%AB%A0-%E7%AC%AC%E4%B8%80%E5%AE%9A%E5%BE%8B%EF%BC%9A%E4%B8%80%E6%9C%AC%E8%83%BD%E9%87%8F%E8%B4%A6%EF%BC%8C%E4%B8%89%E7%A7%8D%E5%86%99%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">第 2 章 第一定律：一本能量账，三种写法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AD%E5%8F%A3%E7%B3%BB%EF%BC%9A%E6%9C%80%E5%9F%BA%E7%A1%80%E7%9A%84%E4%B8%80%E6%9C%AC%E8%B4%A6"><span class="toc-number">3.1.</span> <span class="toc-text">闭口系：最基础的一本账</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%A3%E7%B3%BB%EF%BC%9A%E5%A4%9A%E4%BA%86%E6%8E%A8%E8%BF%9B%E5%8A%9F%EF%BC%8C%E5%B0%B1%E6%9C%89%E4%BA%86%E7%84%93"><span class="toc-number">3.2.</span> <span class="toc-text">开口系：多了推进功，就有了焓</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%85%E6%B0%94%E5%92%8C%E6%94%BE%E6%B0%94%EF%BC%9A%E8%BF%9B%E5%87%BA%E6%9D%A5%E7%9A%84%E6%98%AF%E7%84%93"><span class="toc-number">3.3.</span> <span class="toc-text">充气和放气：进出来的是焓</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A2-18-%E7%87%83%E6%B0%94%E8%BD%AE%E6%9C%BA%E8%A3%85%E7%BD%AE"><span class="toc-number">3.4.</span> <span class="toc-text">典型题：2-18 燃气轮机装置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E9%A2%98%E5%8F%AA%E8%AE%B2%E6%80%9D%E8%B7%AF"><span class="toc-number">3.5.</span> <span class="toc-text">其余题只讲思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-1"><span class="toc-number">3.6.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-3-%E7%AB%A0-%E7%90%86%E6%83%B3%E6%B0%94%E4%BD%93%EF%BC%9A%E6%8A%8A%E8%BF%87%E7%A8%8B%E5%8F%98%E6%88%90%E6%9B%B2%E7%BA%BF"><span class="toc-number">4.</span> <span class="toc-text">第 3 章 理想气体：把过程变成曲线</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E6%96%B9%E7%A8%8B%E4%B8%8E%E9%80%82%E7%94%A8%E6%9D%A1%E4%BB%B6"><span class="toc-number">4.1.</span> <span class="toc-text">状态方程与适用条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E8%83%BD%E3%80%81%E7%84%93%E3%80%81%E7%86%B5%E5%8F%AA%E8%B7%9F%E6%B8%A9%E5%BA%A6%E6%9C%89%E5%85%B3"><span class="toc-number">4.2.</span> <span class="toc-text">内能、焓、熵只跟温度有关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B%E7%A7%8D%E5%9F%BA%E6%9C%AC%E8%BF%87%E7%A8%8B"><span class="toc-number">4.3.</span> <span class="toc-text">四种基本过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E6%B0%94%E6%9C%BA"><span class="toc-number">4.4.</span> <span class="toc-text">压气机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A3-13-%E6%B0%A7%E6%B0%94%E7%93%B6%E6%94%BE%E6%B0%94"><span class="toc-number">4.5.</span> <span class="toc-text">典型题：3-13 氧气瓶放气</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E9%A2%98%E5%8F%AA%E8%AE%B2%E6%80%9D%E8%B7%AF-1"><span class="toc-number">4.6.</span> <span class="toc-text">其余题只讲思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-2"><span class="toc-number">4.7.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-4-%E7%AB%A0-%E7%AC%AC%E4%BA%8C%E5%AE%9A%E5%BE%8B%EF%BC%9A%E6%96%B9%E5%90%91%E3%80%81%E4%B8%8A%E9%99%90%E4%B8%8E%E6%8D%9F%E5%A4%B1"><span class="toc-number">5.</span> <span class="toc-text">第 4 章 第二定律：方向、上限与损失</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E7%A7%8D%E8%A1%A8%E8%BF%B0"><span class="toc-number">5.1.</span> <span class="toc-text">两种表述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%A1%E8%AF%BA%E5%BE%AA%E7%8E%AF%E4%B8%8E%E5%8D%A1%E8%AF%BA%E5%AE%9A%E7%90%86"><span class="toc-number">5.2.</span> <span class="toc-text">卡诺循环与卡诺定理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%86%B5%E4%B8%8E%E5%85%8B%E5%8A%B3%E4%BF%AE%E6%96%AF%E4%B8%8D%E7%AD%89%E5%BC%8F"><span class="toc-number">5.3.</span> <span class="toc-text">熵与克劳修斯不等式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E3%B6%B2%E4%B8%8E%E4%BD%9C%E5%8A%9F%E8%83%BD%E5%8A%9B%E6%8D%9F%E5%A4%B1"><span class="toc-number">5.4.</span> <span class="toc-text">㶲与作功能力损失</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A%E6%B8%A9%E5%B7%AE%E4%BC%A0%E7%83%AD%E5%8A%A0%E4%B8%8D%E5%8F%AF%E9%80%86%E8%86%A8%E8%83%80%EF%BC%88%E8%AF%BE%E4%BB%B6%E4%BE%8B%E9%A2%98%EF%BC%89"><span class="toc-number">5.5.</span> <span class="toc-text">典型题：温差传热加不可逆膨胀（课件例题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E9%A2%98%E5%8F%AA%E8%AE%B2%E6%80%9D%E8%B7%AF-2"><span class="toc-number">5.6.</span> <span class="toc-text">其余题只讲思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-3"><span class="toc-number">5.7.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-5-%E7%AB%A0-%E6%B0%94%E4%BD%93%E5%8A%A8%E5%8A%9B%E5%BE%AA%E7%8E%AF%EF%BC%9A%E6%8A%8A%E8%BF%87%E7%A8%8B%E6%8E%A5%E6%88%90%E5%9C%88"><span class="toc-number">6.</span> <span class="toc-text">第 5 章 气体动力循环：把过程接成圈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E7%87%83%E6%9C%BA%E7%90%86%E6%83%B3%E5%BE%AA%E7%8E%AF"><span class="toc-number">6.1.</span> <span class="toc-text">内燃机理想循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8B%83%E9%9B%B7%E7%99%BB%E5%BE%AA%E7%8E%AF"><span class="toc-number">6.2.</span> <span class="toc-text">勃雷登循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A5-2-Otto-%E5%BE%AA%E7%8E%AF"><span class="toc-number">6.3.</span> <span class="toc-text">典型题：5-2 Otto 循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E9%A2%98%E5%8F%AA%E8%AE%B2%E6%80%9D%E8%B7%AF-3"><span class="toc-number">6.4.</span> <span class="toc-text">其余题只讲思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-4"><span class="toc-number">6.5.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-6-%E7%AB%A0-%E6%B0%B4%E8%92%B8%E6%B0%94%EF%BC%9A%E5%9B%BE%E8%A1%A8%E6%AF%94%E5%85%AC%E5%BC%8F%E9%87%8D%E8%A6%81"><span class="toc-number">7.</span> <span class="toc-text">第 6 章 水蒸气：图表比公式重要</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E7%82%B9%E4%B8%A4%E7%BA%BF%E4%B8%89%E5%8C%BA%E4%BA%94%E6%80%81"><span class="toc-number">7.1.</span> <span class="toc-text">一点两线三区五态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8A%B6%E6%80%81%E5%88%A4%E6%96%AD%E5%92%8C%E6%9F%A5%E8%A1%A8"><span class="toc-number">7.2.</span> <span class="toc-text">状态判断和查表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B4%E8%92%B8%E6%B0%94%E7%9A%84%E7%83%AD%E5%8A%9B%E8%BF%87%E7%A8%8B"><span class="toc-number">7.3.</span> <span class="toc-text">水蒸气的热力过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A6-3-%E9%94%85%E7%82%89%E8%80%97%E7%85%A4%E9%87%8F"><span class="toc-number">7.4.</span> <span class="toc-text">典型题：6-3 锅炉耗煤量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-5"><span class="toc-number">7.5.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-7-%E7%AB%A0-%E8%92%B8%E6%B1%BD%E5%8A%A8%E5%8A%9B%E5%BE%AA%E7%8E%AF%EF%BC%9A%E6%9C%97%E8%82%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E6%89%93%E8%B4%A5%E5%8D%A1%E8%AF%BA"><span class="toc-number">8.</span> <span class="toc-text">第 7 章 蒸汽动力循环：朗肯为什么打败卡诺</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%97%E8%82%AF%E5%BE%AA%E7%8E%AF"><span class="toc-number">8.1.</span> <span class="toc-text">朗肯循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E5%AF%B9%E6%95%88%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">8.2.</span> <span class="toc-text">参数对效率的影响</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9A%E6%9C%97%E8%82%AF%E5%BE%AA%E7%8E%AF%E8%AE%A1%E7%AE%97%EF%BC%88%E8%AF%BE%E4%BB%B6%E4%BE%8B%E9%A2%98%EF%BC%89"><span class="toc-number">8.3.</span> <span class="toc-text">典型题：朗肯循环计算（课件例题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E9%A2%98%E5%8F%AA%E8%AE%B2%E6%80%9D%E8%B7%AF-4"><span class="toc-number">8.4.</span> <span class="toc-text">其余题只讲思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-6"><span class="toc-number">8.5.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-8-%E7%AB%A0-%E5%88%B6%E5%86%B7%E5%BE%AA%E7%8E%AF%EF%BC%9A%E6%8A%8A%E5%8A%A8%E5%8A%9B%E5%BE%AA%E7%8E%AF%E5%80%92%E8%BF%87%E6%9D%A5"><span class="toc-number">9.</span> <span class="toc-text">第 8 章 制冷循环：把动力循环倒过来</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%B6%E5%86%B7%E7%B3%BB%E6%95%B0%E4%B8%8E%E7%83%AD%E6%B3%B5%E7%B3%BB%E6%95%B0"><span class="toc-number">9.1.</span> <span class="toc-text">制冷系数与热泵系数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E6%B0%94%E5%8E%8B%E7%BC%A9%E5%88%B6%E5%86%B7"><span class="toc-number">9.2.</span> <span class="toc-text">空气压缩制冷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%92%B8%E6%B0%94%E5%8E%8B%E7%BC%A9%E5%88%B6%E5%86%B7"><span class="toc-number">9.3.</span> <span class="toc-text">蒸气压缩制冷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E9%A2%98%EF%BC%9AHFC134a-%E8%92%B8%E6%B0%94%E5%8E%8B%E7%BC%A9%E5%88%B6%E5%86%B7%E5%BE%AA%E7%8E%AF%EF%BC%88%E8%AF%BE%E4%BB%B6%E4%BE%8B%E9%A2%98%EF%BC%89"><span class="toc-number">9.4.</span> <span class="toc-text">典型题：HFC134a 蒸气压缩制冷循环（课件例题）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-7"><span class="toc-number">9.5.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC-9-%E7%AB%A0-%E6%B9%BF%E7%A9%BA%E6%B0%94%EF%BC%9A%E7%A9%BA%E8%B0%83%E9%87%8C%E7%9A%84%E6%B7%B7%E5%90%88%E6%B0%94%E4%BD%93"><span class="toc-number">10.</span> <span class="toc-text">第 9 章 湿空气：空调里的混合气体</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E6%B0%94%E4%BD%93"><span class="toc-number">10.1.</span> <span class="toc-text">混合气体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B9%BF%E7%A9%BA%E6%B0%94%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8F%82%E6%95%B0"><span class="toc-number">10.2.</span> <span class="toc-text">湿空气的基本参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B9%BF%E7%A9%BA%E6%B0%94%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="toc-number">10.3.</span> <span class="toc-text">湿空气的过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E4%BE%8B%EF%BC%9A30%E2%84%83%E3%80%8160-%E7%9A%84%E6%B9%BF%E7%A9%BA%E6%B0%94"><span class="toc-number">10.4.</span> <span class="toc-text">典型例：30℃、60% 的湿空气</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%99%E4%B8%80%E7%AB%A0%E6%9C%80%E5%AE%B9%E6%98%93%E9%94%99%E7%9A%84%E5%9C%B0%E6%96%B9-8"><span class="toc-number">10.5.</span> <span class="toc-text">这一章最容易错的地方</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8A%8A%E4%B9%9D%E7%AB%A0%E5%8E%8B%E6%88%90%E4%B8%80%E5%BC%A0%E8%A1%A8"><span class="toc-number">11.</span> <span class="toc-text">把九章压成一张表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BE%E5%90%8E%E9%A2%98%E5%9C%B0%E5%9B%BE"><span class="toc-number">12.</span> <span class="toc-text">课后题地图</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">13.</span> <span class="toc-text">最后</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/phase-shifting-algorithms-fpp-review/" title="条纹投影轮廓测量中的相移算法：综述">条纹投影轮廓测量中的相移算法：综述</a><time datetime="2026-10-30T14:30:00.000Z" title="发表于 2026-10-30 22:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/fringe-pattern-analysis-deep-learning/" title="基于深度学习的条纹图案分析">基于深度学习的条纹图案分析</a><time datetime="2026-10-30T13:20:00.000Z" title="发表于 2026-10-30 21:20:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/unet-convolutional-networks-biomedical-image-segmentation/" title="U-Net：用于生物医学图像分割的卷积网络">U-Net：用于生物医学图像分割的卷积网络</a><time datetime="2026-10-30T12:00:00.000Z" title="发表于 2026-10-30 20:00:00">2026-10-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/10/30/engineering-thermodynamics-review/" title="从状态到循环：工程热力学九章复习笔记"><img src="/2026/10/30/engineering-thermodynamics-review/cover.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从状态到循环：工程热力学九章复习笔记"/></a><div class="content"><a class="title" href="/2026/10/30/engineering-thermodynamics-review/" title="从状态到循环：工程热力学九章复习笔记">从状态到循环：工程热力学九章复习笔记</a><time datetime="2026-10-30T11:30:00.000Z" title="发表于 2026-10-30 19:30:00">2026-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/10/30/window-smoothing-effect-translation/" title="条纹投影轮廓测量中隐含的窗口平滑效应建模">条纹投影轮廓测量中隐含的窗口平滑效应建模</a><time datetime="2026-10-30T10:40:00.000Z" title="发表于 2026-10-30 18:40:00">2026-10-30</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2026 By Yourba</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><div class="js-pjax"><script>(() => {
+  const loadMathjax = () => {
+    if (!window.MathJax) {
+      window.MathJax = {
+        loader: {
+          load: [
+            // Four font extension packages (optional)
+            //- '[tex]/bbm',
+            //- '[tex]/bboldx',
+            //- '[tex]/dsfont',
+            '[tex]/mhchem'
+          ],
+          paths: {
+            'mathjax-newcm': '[mathjax]/../@mathjax/mathjax-newcm-font',
+
+            //- // Four font extension packages (optional)
+            //- 'mathjax-bbm-extension': '[mathjax]/../@mathjax/mathjax-bbm-font-extension',
+            //- 'mathjax-bboldx-extension': '[mathjax]/../@mathjax/mathjax-bboldx-font-extension',
+            //- 'mathjax-dsfont-extension': '[mathjax]/../@mathjax/mathjax-dsfont-font-extension',
+            'mathjax-mhchem-extension': '[mathjax]/../@mathjax/mathjax-mhchem-font-extension'
+          }
+        },
+        output: {
+          font: 'mathjax-newcm',
+        },
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          tags: 'none',
+          packages: {
+            '[+]': [
+              'mhchem'
+            ]
+          }
+        },
+        chtml: {
+          scale: 1.1
+        },
+        options: {
+          enableMenu: true,
+          menuOptions: {
+            settings: {
+              enrich: false  // Turn off Braille and voice narration text automatic generation
+            }
+          },
+          renderActions: {
+            findScript: [10, doc => {
+              for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+                const display = !!node.type.match(/; *mode=display/)
+                const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+                const text = document.createTextNode('')
+                node.parentNode.replaceChild(text, node)
+                math.start = {node: text, delim: '', n: 0}
+                math.end = {node: text, delim: '', n: 0}
+                doc.math.push(math)
+              }
+            }, '']
+          }
+        }
+      }
+
+      const script = document.createElement('script')
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax/tex-mml-chtml.min.js'
+      script.id = 'MathJax-script'
+      script.async = true
+      document.head.appendChild(script)
+    } else {
+      MathJax.startup.document.state(0)
+      MathJax.texReset()
+      MathJax.typesetPromise()
+    }
+  }
+
+  btf.addGlobalFn('encrypt', loadMathjax, 'mathjax')
+  window.pjax ? loadMathjax() : window.addEventListener('load', loadMathjax)
+})()</script></div><script src="/js/custom.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
